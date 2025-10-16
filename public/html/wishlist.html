@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Juegos deseados — Ludex</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome (iconos) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS de la vista -->
+  <link rel="stylesheet" href="../css/views.css">
+
+  <!-- CSS del submenú (asegúrate la ruta sea correcta) -->
+  <link rel="stylesheet" href="../css/submenu.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="page-header">
+    <div class="page-left">
+      <!-- pequeño círculo/brand -->
+      <svg class="brand-mark" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+      </svg>
+
+      <!-- título de la sección -->
+      <span class="page-title">Juegos deseados</span>
+    </div>
+
+    <!-- icons a la derecha (carrito + perfil) -->
+    <div class="topbar-right">
+      <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+      </button>
+      <button class="icon-btn" aria-label="Perfil" title="Perfil">
+        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+      </button>
+    </div>
+  </header>
+
+  <!-- Placeholder para inyectar el submenú (botón, overlay, nav lateral y bottom-nav móvil) -->
+  <div id="submenu-container"></div>
+
+  <!-- Main content -->
+  <main class="container" id="mainContent">
+    <section class="wishlist-meta">
+      <div class="wishlist-head">
+        <div class="star-mark">⭐</div>
+        <div>
+          <h3>Juegos Deseados</h3>
+          <p class="muted">5 juegos · Última actualización: hace 2 días</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wishlist-grid">
+      <!-- grid of thumbnails -->
+      <div class="grid">
+        <div class="thumb-card"><img src="images/game1.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <div class="thumb-card"><img src="images/game2.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <div class="thumb-card"><img src="images/game3.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <div class="thumb-card"><img src="images/game4.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <div class="thumb-card"><img src="images/game1.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <div class="thumb-card"><img src="images/game2.jpg" alt=""><div class="thumb-overlay">❤</div></div>
+        <!-- add more as needed -->
+      </div>
+    </section>
+  </main>
+
+  <!-- script de la vista (si aplica) -->
+  <script src="../js/browse.js" defer></script>
+
+  <!-- Script que carga el submenú (asegúrate la ruta sea la correcta desde esta vista) -->
+  <script src="../js/submenu.js"></script>
+</body>
+</html>

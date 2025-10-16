@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recuperar contraseña — Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/recovery.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="back-btn" id="backBtn" aria-label="Volver">←</button>
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden focusable="false"><circle cx="12" cy="12" r="10" fill="#3366ff"/></svg>
+        <span class="brand-name">Ludex</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="card" id="step1" aria-labelledby="title-step1">
+      <h1 id="title-step1" class="card-title">Cambiar Contraseña</h1>
+      <p class="card-sub">Introduce tu correo electrónico y te enviaremos un código o enlace para restablecer la contraseña.</p>
+
+      <form id="form-send" class="form">
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input id="email" type="email" name="email" placeholder="tu@correo.com" required autocomplete="email">
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="sendBtn">Enviar correo de verificación</button>
+        </div>
+      </form>
+
+      <p class="hint muted">¿Recibiste el código? <button class="btn-link" id="gotoStep2">Ir a cambiar contraseña</button></p>
+    </section>
+
+    <!-- STEP 2 (initially hidden) -->
+    <section class="card hidden" id="step2" aria-labelledby="title-step2">
+      <h1 id="title-step2" class="card-title">Cambiar Contraseña</h1>
+      <p class="card-sub">Introduce el código que recibiste y la nueva contraseña.</p>
+
+      <form id="form-reset" class="form">
+        <label class="field">
+          <span class="field-label">Código de verificación</span>
+          <input id="code" type="text" name="code" placeholder="Código (6 dígitos)" inputmode="numeric" maxlength="6" required>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Nueva contraseña</span>
+          <input id="newPassword" type="password" name="newPassword" placeholder="Nueva contraseña" minlength="6" required autocomplete="new-password">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Confirma contraseña</span>
+          <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirmar contraseña" minlength="6" required autocomplete="new-password">
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="resetBtn"><a href="./login.html">Cambiar Contraseña</a></button>
+        </div>
+      </form>
+
+      <p class="hint muted">Volver a <button class="btn-link" id="backToStep1">enviar correo</button></p>
+    </section>
+  </main>
+
+  <script src="../js/recovery.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verificación en dos pasos — Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/verification.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <!-- Cambia por tu logo / svg -->
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden focusable="false">
+          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+        </svg>
+        <span class="brand-name">Ludex</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="verify-card" role="region" aria-labelledby="verify-title">
+      <h1 id="verify-title" class="title">Verificación en dos pasos</h1>
+      <p class="subtitle">Introduce el código de verificación enviado a tu correo electrónico para completar el registro.</p>
+
+      <div class="shield" aria-hidden="true">
+        <!-- ornamental shield -->
+        <svg width="60" height="60" viewBox="0 0 24 24"><path fill="#3366ff" d="M12 2l7 3v5c0 5-3.7 9.7-7 12-3.3-2.3-7-7-7-12V5l7-3z"/></svg>
+      </div>
+
+      <form id="verifyForm" class="form" autocomplete="off" novalidate>
+        <label for="code" class="sr-only">Código de verificación</label>
+
+        <!-- Single input for code -->
+        <input id="code" name="code" type="text" inputmode="numeric" pattern="\d{6}" maxlength="6"
+               placeholder="Código de verificación" aria-label="Código de verificación" required>
+
+        <button type="submit" class="btn primary" id="verifyBtn"><a href="./browse.html">Verificar</a></button>
+
+        <div class="meta-row">
+          <button type="button" class="btn-link" id="resendBtn">Reenviar código</button>
+          <span class="muted">¿No llegó? Revisa tu carpeta de SPAM.</span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+
+    (function(){
+      const codeInput = document.getElementById('code');
+      const form = document.getElementById('verifyForm');
+
+      // allow only digits on input
+      codeInput.addEventListener('input', (e) => {
+        const digits = e.target.value.replace(/\D/g,'').slice(0,6);
+        e.target.value = digits;
+      });
+
+      // allow paste cleanup
+      codeInput.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+        codeInput.value = text;
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = codeInput.value.trim();
+        if(code.length !== 6){
+          alert('Introduce un código de 6 dígitos.');
+          codeInput.focus();
+          return;
+        }
+     
+        alert('Código verificado (placeholder): ' + code);
+      });
+
+      document.getElementById('resendBtn').addEventListener('click', function(){
+    
+        alert('Código reenviado (placeholder).');
+      });
+
+
+      window.addEventListener('load', () => {
+        setTimeout(()=>{ codeInput.focus(); }, 300);
+      });
+    })();
+  </script>
+</body>
+</html>

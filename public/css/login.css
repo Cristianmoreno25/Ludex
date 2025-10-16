@@ -1,0 +1,140 @@
+:root{
+  --bg:#ffffff;
+  --surface:#fbfdff;
+  --muted:#6b7280;
+  --accent:#3366ff;
+  --accent-2:#4f7bff;
+  --card:#fbfdff;
+  --radius:12px;
+  --shadow:0 12px 40px rgba(18,27,64,0.06);
+  --max-width-mobile:420px;
+  --card-width:460px;
+  --illus-width:520px;
+}
+
+/* Reset & base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0}
+html, body { overflow-x: hidden; } 
+body{
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:#0f172a;
+  background: linear-gradient(180deg,var(--surface),var(--bg));
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Page layout mobile-first: single column */
+.page{
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:28px 18px;
+  gap:18px;
+}
+
+/* Illustration (hidden on mobile) */
+.illus{ display:none; flex:0 0 var(--illus-width); align-items:center; justify-content:center; }
+.illus-img{ max-width:100%; height:auto; display:block; border-radius:12px; }
+
+/* Card (right) */
+.card{
+  width:100%;
+  max-width:var(--card-width);
+  background:var(--card);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:20px;
+  box-sizing:border-box;
+}
+
+/* Header */
+.card-header{ text-align:center; margin-bottom:6px; }
+.logo{ display:flex; justify-content:center; align-items:center; margin-bottom:8px; }
+.brand-title{ margin:0; font-weight:700; font-size:20px; }
+
+/* Social top row (Google + Facebook) */
+.social-row{ display:flex; gap:12px; flex-direction:column; margin-bottom:10px; }
+.btn.social{
+  display:inline-flex; align-items:center; gap:10px; padding:12px; border-radius:10px;
+  border:1px solid rgba(15,23,42,0.06); background:white; box-shadow:0 6px 20px rgba(18,27,64,0.04);
+  font-weight:700; color:#111827; cursor:pointer; width:100%;
+}
+.btn.social svg{ vertical-align:middle; }
+
+/* On wider screens, social buttons inline */
+@media(min-width:600px){
+  .social-row{ flex-direction:row; }
+}
+
+/* Divider */
+.divider{ text-align:center; margin:12px 0; position:relative; }
+.divider::before{ content:''; display:block; height:1px; background:rgba(15,23,42,0.06); width:100%; position:absolute; top:50%; left:0; z-index:0; }
+.divider span{ background:transparent; display:inline-block; padding:4px 12px; position:relative; z-index:1; font-size:13px; color:var(--muted); }
+
+/* Form */
+.form{ display:flex; flex-direction:column; gap:12px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field-label{ font-size:13px; color:var(--muted); font-weight:600; }
+input[type="text"], input[type="password"]{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.08);
+  font-size:14px;
+  outline:none;
+  background:white;
+}
+input:focus{ box-shadow:0 8px 28px rgba(51,102,255,0.06); border-color:rgba(51,102,255,0.12); }
+
+/* password wrapper */
+.pw-wrapper{ position:relative; display:flex; align-items:center; }
+.pw-wrapper input{ padding-right:42px; }
+.pw-toggle{ position:absolute; right:8px; background:transparent; border:0; padding:6px; cursor:pointer; }
+
+/* Aux row */
+.aux-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:6px; }
+.checkbox-inline{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
+.checkbox-inline input{ width:16px; height:16px; }
+
+/* Buttons */
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; border-radius:12px; border:0; cursor:pointer; font-weight:600; }
+.btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; width:100%; font-size:16px; box-shadow:0 12px 36px rgba(51,102,255,0.14); border-radius:10px; }
+.link-btn{ background:transparent; color:var(--muted); border:0; font-weight:600; padding:10px; }
+
+.social-bottom{ display:flex; gap:12px; margin-top:8px; justify-content:space-between; }
+.social-bottom .btn.social{ width:48%; }
+
+/* Secondary / small text */
+.secondary{ text-align:center; margin-top:6px; }
+.small{ font-size:13px; color:var(--muted); text-align:center; margin-top:10px; }
+.link{ color:var(--accent); text-decoration:none; font-weight:700; }
+.link-lite{ color:var(--muted); font-size:14px; text-decoration:none; }
+
+/* Desktop layout: show illustration left, card right; no document scroll */
+@media (min-width:900px){
+  .page{
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:40px;
+    align-items:center;
+    justify-content:center;
+    padding:40px;
+    height:100vh;
+    overflow:hidden;
+  }
+
+  .illus{ display:flex; }
+  .card{ max-width:420px; padding:28px; border-radius:16px; }
+
+  /* show social top inline, hide bottom if exists */
+  .social-row.social-top{ display:flex; }
+  .social-row.social-bottom{ display:none; }
+
+  /* ensure no page scrolling */
+  html, body { overflow: hidden; }
+}
+
+/* focus */
+button:focus, input:focus, a:focus{ outline:3px solid rgba(51,102,255,0.12); outline-offset:3px; }

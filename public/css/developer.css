@@ -1,0 +1,295 @@
+/* =================== RESET + BASE =================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: #111;
+  color: #eee;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =================== HEADER =================== */
+.topbar.dev {
+  background-color: #1b1b1b;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #333;
+  position: relative; 
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #3366ff; 
+}
+
+/* =================== MAIN =================== */
+.main {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  /* nuevo: ancho máximo */
+  max-width: 1200px;  /* puedes ajustar este valor (ej: 1000px, 1100px) */
+  margin: 0 auto;     /* centra el contenido */
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-header.with-link h2 {
+  flex: 1;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* =================== GAME CARDS =================== */
+.game-card {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.game-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.game-card .meta {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.game-card .desc {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.actions {
+  margin-top: 0.5rem;
+}
+/* =================== EXIT BUTTON =================== */
+.btn-exit-dev {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #eee;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-exit-dev:hover {
+  color: #4f7bff;
+  transform: scale(1.1);
+}
+
+/* En móviles (<= 768px) ocultamos el botón */
+@media (max-width: 768px) {
+  .btn-exit-dev {
+    display: none;
+  }
+}
+/* =================== BUTTONS =================== */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn.primary {
+  background-color: #4f7bff;
+  color: #fff;
+}
+
+.btn.secondary {
+  background-color: #555;
+  color: #fff;
+}
+
+.btn.danger {
+  background-color: #ff3b3b;
+  color: #fff;
+}
+
+.btn.small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.align-end {
+  align-self: flex-end;
+}
+
+/* Botón principal grande */
+.btn.primary.large {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 0.9rem 1rem;
+  background-color: #3366ff;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 14px; /* Bordes más redondeados */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn.primary.large:hover {
+  background-color: #2954d1;
+  transform: scale(1.02);
+}
+
+/* =================== STATS CARDS =================== */
+.stats-card {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.chart.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chart.bars .bar {
+  height: 18px;
+  border-radius: 5px;
+  background-color: #4f7bff;
+  width: 60%;
+}
+
+.chart.bars .bar:nth-child(2) {
+  width: 80%;
+}
+
+.chart.bars .bar:nth-child(3) {
+  width: 45%;
+}
+
+.chart.bars .bar:nth-child(4) {
+  width: 65%;
+}
+
+.chart.line {
+  position: relative;
+  height: 150px;
+}
+
+.chart.line .spark {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150"><polyline fill="none" stroke="%234f7bff" stroke-width="2" points="0,120 40,100 80,110 120,70 160,80 200,60 240,75 280,65 300,55"/></svg>') no-repeat center/cover;
+}
+
+/* =================== HELP CARD =================== */
+.help-card {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* =================== BOTTOM NAV =================== */
+.bottom-nav.dev {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1b1b1b;
+  display: none; /* oculto en escritorio */
+  justify-content: space-around;
+  padding: 0.5rem 0;
+  border-top: 1px solid #333;
+}
+
+.bottom-nav.dev .nav-btn {
+  color: #aaa;
+  font-size: 1.4rem;
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+}
+.bottom-nav.dev .nav-btn:hover {
+  color: #4f7bff;
+  transform: scale(1.1);
+}
+
+.bottom-nav.dev .nav-btn.active {
+  color: #4f7bff;
+}
+
+/* Solo en pantallas pequeñas mostramos el nav */
+@media (max-width: 768px) {
+  .bottom-nav.dev {
+    display: flex;
+  }
+}

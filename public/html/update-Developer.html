@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir Juego - Ludex</title>
+  <link rel="stylesheet" href="../css/update-Developer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <header class="header">
+    <h1>Actualizacion a juegos.</h1>
+    <button class="close-btn">&times;</button>
+
+      <script>
+     document.querySelector(".close-btn").addEventListener("click", () => {
+        window.location.href = "developer.html";
+    });
+    </script>
+  </header>
+
+  <!-- Progreso de pasos -->
+
+
+  <!-- Formulario -->
+  <main class="form-container">
+    <section>
+      <h2>Información del Juego</h2>
+      <label for="email">E-mail</label>
+      <input type="email" id="email" value="desarrollador@ejemplo.com" disabled>
+      
+      <div class="form-group">
+        <label for="nombre">Nombre del Juego</label>
+        <input type="text" id="nombre" placeholder="Ej: Aventura Épica">
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Un emocionante juego de aventuras."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="genero">Género</label>
+        <select id="genero">
+          <option>Acción</option>
+          <option>Aventura</option>
+          <option>Estrategia</option>
+          <option>RPG</option>
+          <option>Deportes</option>
+        </select>
+      </div>
+    </section>
+   <!-- Caja para cargar archivo -->
+    <section class="upload-box">
+      <h3>Carga Archivo Zip</h3>
+      <div class="file-input">
+        <input type="file" id="archivo" accept=".zip">
+      </div>
+      <button class="btn-primary" onclick="window.location.href='developer.html';">Terminar</button>
+    </section>
+  </main>
+
+ <!-- NAV INFERIOR  -->
+  <nav class="bottom-nav dev" aria-label="Navegación">
+    <a class="nav-btn" aria-label="Inicio" href="./developer.html">
+      <i class="fa-solid fa-house"></i>
+     </a>
+      <a class="nav-btn active" aria-label="Panel de desarrollador" href="./Profile.html">
+    <i class="fa-solid fa-user-gear"></i>
+   </a>
+</nav>
+
+</body>
+</html>

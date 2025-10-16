@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Juego — Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/product.css">
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar" role="banner">
+    <div class="topbar-left">
+      <button class="icon-btn" aria-label="Volver" id="backBtn">←</button>
+      <div class="brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><circle cx="12" cy="12" r="10" fill="#3366ff"/></svg>
+        <span class="brand-name">Ludex</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="icon-btn" aria-label="Carrito" title="Carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><path d="M6 6h15l-1.5 9h-11z" fill="none" stroke="#111" stroke-width="1.2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Product panel -->
+    <article class="product">
+      <div class="media">
+        <img src="images/game-detail.jpg" alt="Portada del juego" class="media-img">
+      </div>
+
+      <div class="meta">
+        <h1 class="title">Juego</h1>
+        <p class="subtitle">Compra y juega ahora</p>
+
+        <div class="actions-row">
+          <button class="btn primary btn-buy" aria-label="Comprar">Comprar</button>
+
+          <!-- Favorite toggle -->
+          <label class="fav-toggle" title="Agregar a favoritos">
+            <input type="checkbox" id="fav" aria-label="Marcar favorito">
+            <span class="star" aria-hidden>★</span>
+          </label>
+        </div>
+
+        <p class="description">
+          Explora el mundo de aventuras en este juego emocionante. Disfruta de gráficos impresionantes y una jugabilidad adictiva. ¡No te lo pierdas!
+        </p>
+
+        <!-- tags / pills -->
+        <div class="tags" aria-hidden="false" role="list">
+          <button class="pill">#Accion</button>
+          <button class="pill">#Aventura</button>
+          <button class="pill">#Multijugador</button>
+        </div>
+
+        <!-- trailer thumbnail -->
+        <div class="trailer">
+          <div class="trailer-thumb" role="button" aria-label="Reproducir tráiler">
+            <img src="images/trailer-thumb.jpg" alt="Tráiler del juego">
+            <div class="play">▶</div>
+            <div class="trailer-meta">
+              <div class="tm-left">
+                <strong>Tráiler del Juego</strong>
+                <span class="muted">Disponible · 2 hrs de</span>
+              </div>
+              <button class="btn small ghost" aria-label="Reproducir">▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- "Ver Tráiler" section and sorting -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Ver Tráiler</h2>
+        <div class="sort">
+          <label for="sortSelect" class="sr-only">Ordenar por</label>
+          <select id="sortSelect" aria-label="Ordenar por">
+            <option value="recent">Recientes</option>
+            <option value="popular">Popular</option>
+            <option value="oldest">Antiguo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Updates / feed -->
+      <div class="feed">
+        <article class="feed-item">
+          <div class="feed-thumb">
+            <img src="images/game1.jpg" alt="">
+          </div>
+          <div class="feed-body">
+            <h3 class="feed-title">Actualizaciones Recientes</h3>
+            <p class="feed-meta muted">Última · 45 min</p>
+            <p class="feed-text">Sumérgete en un mundo lleno de retos y sorpresas. Conoce a los personajes y descubre sus historias.</p>
+            <div class="feed-actions">
+              <button class="icon-ghost" aria-label="Compartir">🔗</button>
+              <button class="icon-ghost" aria-label="Más">⋯</button>
+              <button class="icon-play" aria-label="Reproducir">▶</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div class="feed-thumb">
+            <img src="images/game2.jpg" alt="">
+          </div>
+          <div class="feed-body">
+            <h3 class="feed-title">Características del Juego</h3>
+            <p class="feed-meta muted">Compatible · 1h</p>
+            <p class="feed-text">Únete a la comunidad de jugadores y comparte tus experiencias. Atrévete a jugar y descubre lo que te espera.</p>
+            <div class="feed-actions">
+              <button class="icon-ghost" aria-label="Compartir">🔗</button>
+              <button class="icon-ghost" aria-label="Más">⋯</button>
+              <button class="icon-play" aria-label="Reproducir">▶</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-btn" aria-label="Inicio">🏠</button>
+    <button class="nav-btn" aria-label="Notificaciones">🔔</button>
+    <button class="nav-btn" aria-label="Juegos deseados">⭐</button>
+    <button class="nav-btn" aria-label="Librería">📚</button>
+  </nav>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const favInput = document.getElementById('fav');
+      favInput && favInput.addEventListener('change', function () {
+        if (favInput.checked) {
+          favInput.parentElement.classList.add('on');
+        } else {
+          favInput.parentElement.classList.remove('on');
+        }
+      });
+ 
+      const backBtn = document.getElementById('backBtn');
+      backBtn && backBtn.addEventListener('click', function(){ window.history.back(); });
+    });
+  </script>
+</body>
+</html>

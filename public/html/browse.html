@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ludex — Buscar juegos</title>
+
+  <!-- Bootstrap CSS (v5) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Tu CSS principal -->
+  <link rel="stylesheet" href="../css/browse.css">
+
+  <!-- CSS del submenú (menú único) -->
+  <link rel="stylesheet" href="../css/submenu.css">
+
+  <!-- Estilos específicos para el carousel (puedes moverlos a browse.css) -->
+  <style>
+    :root {
+      --carousel-height: 320px; /* altura por defecto (móvil) */
+    }
+    @media (min-width: 768px) {
+      :root { --carousel-height: 420px; } /* altura en pantallas >= md */
+    }
+    @media (min-width: 1200px) {
+      :root { --carousel-height: 520px; } /* altura en pantallas muy grandes */
+    }
+
+    /* Forzar todas las slides a la misma altura y que la imagen cubra */
+    .carousel, .carousel-inner, .carousel-item {
+      height: var(--carousel-height);
+    }
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;      /* recorta y centra para llenar el contenedor */
+      object-position: center;
+      display: block;
+    }
+
+    /* Mejora la legibilidad del caption */
+    .carousel-caption {
+      background: linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.15));
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.9rem;
+      backdrop-filter: blur(2px);
+      max-width: 85%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Ocultar controles en pantallas muy pequeñas si lo deseas (opcional) */
+    @media (max-width: 420px) {
+      .carousel-caption { font-size: 0.9rem; }
+    }
+
+    /* Si tu layout principal tiene espacio fijo, añade separación */
+    .carousel-section { margin-top: 1rem; margin-bottom: 1.25rem; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <svg class="brand-mark-mobile" width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+        </svg>
+        <span class="brand-name">Ludex</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+      </button>
+      <button class="icon-btn" aria-label="Perfil" title="Perfil">
+        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+      </button>
+    </div>
+  </header>
+
+  <!-- Placeholder donde se inyectará el submenú (botón, overlay, nav lateral y bottom-nav) -->
+  <div id="submenu-container"></div>
+
+  <main class="main" id="mainContent">
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35" stroke="#666" stroke-width="1.6" fill="none"/><circle cx="11" cy="11" r="6" stroke="#666" stroke-width="1.6" fill="none"/></svg>
+        <input type="search" id="search" placeholder="Search games, tags, titles..." aria-label="Buscar juegos">
+        <button class="clear" id="clearSearch" aria-label="Clear search">✕</button>
+      </div>
+    </div>
+
+    <!-- Filters pills -->
+    <section class="filters" id="filtersSection">
+      <div class="filter-group" id="categories" aria-label="Categorias" role="tablist">
+        <button class="pill active category-pill" data-category="All Games">All Games</button>
+        <button class="pill category-pill" data-category="Adventure">Adventure</button>
+        <button class="pill category-pill" data-category="RPG">RPG</button>
+        <button class="pill category-pill" data-category="Puzzle">Puzzle</button>
+        <button class="pill category-pill" data-category="Simulation">Simulation</button>
+        <button class="pill category-pill" data-category="Strategy">Strategy</button>
+      </div>
+
+      <div class="filter-group small" id="prices" aria-label="Precios">
+        <button class="pill active price-pill" data-price="all">Todos</button>
+        <button class="pill price-pill" data-price="free">Gratuitos</button>
+        <button class="pill price-pill" data-price="lt5">Menores de 5$</button>
+        <button class="pill price-pill" data-price="lt15">Menores de 15$</button>
+      </div>
+    </section>
+
+    <!-- ========== CAROUSEL ========== -->
+    <section class="container carousel-section">
+      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" aria-label="Carrusel de banners">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+
+        <div class="carousel-inner">
+          <!-- Slide 1: Islas flotantes -->
+          <div class="carousel-item active">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODAwIDQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxzdHlsZT4KICAgICAgICBAa2V5ZnJhbWVzIGZsb2F0IHsgMCUgeyB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTsgfSA1MCUgeyB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoLTEwcHgpOyB9IDEwMCUgeyB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMHB4KTsgfSB9CiAgICAgICAgQGtleWZyYW1lcyBwdWxzZSB7IDAlIHsgb3BhY2l0eTogMC44OyB9IDUwJSwge29wYWNpdHk6IDE7IH0gMTAwJSB7IG9wYWNpdHk6IDAuODsgfSB9CiAgICAgICAgLmZsb2F0aW5nLWlzbGFuZC0xIHsgYW5pbWF0aW9uOiBmbG9hdCA2cyBlYXNlLWluLW91dCBpbmZpbml0ZTsgfQogICAgICAgIC5mbG9hdGluZy1pc2xhbmQtMiB7IGFuaW1hdGlvbjogZmxvYXQgOHMgZWFzZS1pbi1vdXQgaW5maW5pdGUgcmV2ZXJzZTsgfQogICAgICAgIC5wb3J0YWwtZ2xvdyB7IGFuaW1hdGlvbjogcHVsc2UgNHMgZWFzZS1pbi1vdXQgaW5maW5pdGU7IH0KICAgIDwvc3R5bGU+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImcxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2EwZTlmZjsgc3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2MxYzhmZjsgc3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICAgPGZpbHRlciBpZD0iZjEiIHg9Ii01MCUiIHk9Ii01MCUiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiPgogICAgICAgICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIxMCIgcmVzdWx0PSJibHVyIi8+CiAgICAgICAgICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYmx1ciIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICAgICAgICA8L2ZpbHRlcj4KICAgIDwvZGVmcz4KICAgIDxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDUwIiBmaWxsPSJ1cmwoI2cxKSIgLz4KICAgIDxnIGNsYXNzPSJwb3J0YWwtZ2xvdyI+CiAgICAgICAgPGNpcmNsZSBjeD0iNDAwIiBjeT0iMjI1IiByPSI4MCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC44IiBmaWx0ZXI9InVybCgjZjEpIi8+CiAgICAgICAgPGNpcmNsZSBjeD0iNDAwIiBjeT0iMjI1IiByPSI2MCIgZmlsbD0iI2UwZTdmZiIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjIyNSIgcj0iNDAiIGZpbGw9IiNmZmZmZmYiLz4KICAgIDwvZz4KICAgIDxnIGNsYXNzPSJmbG9hdGluZy1pc2xhbmQtMSI+CiAgICAgICAgPHBhdGggZD0iTSAxNTAsMjgwIEMgMTAwLDI1MCAxMjAsMzUwIDIwMCwzNjAgUyAzMDAsMzgwIDI4MCwzMzAgUyAyMDAsMzEwIDE1MCwyODAgWiIgZmlsbD0iI2I5ZmJjMCIgb3BhY2l0eT0iMC45Ii8+CiAgICAgICAgPHBhdGggZD0iTSAxNDUsMjg1IEMgOTUsMjU1IDExNSwzNTUgMTk1LDM2NSBTIDI5NSwzODUgMjc1LDMzNSBTIDE5NSwzMTUgMTQ1LDI4NSBaIiBmaWxsPSIjOThmNWUxIiBvcGFjaXR5PSIwLjkiLz4KICAgIDwvZz4KICAgIDxnIGNsYXNzPSJmbG9hdGluZy1pc2xhbmQtMiI+CiAgICAgICAgPHBhdGggZD0iTSA1NTAsMTUwIEMgNTAwLDEyMCA1MjAsMjIwIDYwMCwyMzAgUyA3MDAsMjUwIDY4MCwyMDAgUyA2MDAsMTgwIDU1MCwxNTAgWiIgZmlsbD0iI2ZkZTRjZiIgb3BhY2l0eT0iMC45Ii8+CiAgICAgICAgPHBhdGggZD0iTSA1NDUsMTU1IEMgNDk1LDEyNSA1MTUsMjI1IDU5NSwyMzUgUyA2OTUsMjU1IDY3NSwyMDUgUyA1OTUsMTg1IDU0NSwxNTUgWiIgZmlsbD0iI2Y4YWQ5ZCIgb3BhY2l0eT0iMC45Ii8+CiAgICA8L2c+Cjwvc3ZnPg=="
+              class="d-block w-100"
+              alt="Banner con islas flotantes y un portal brillante."
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Explora Mundos Infinitos</h5>
+              <p>Aventuras épicas y nuevos horizontes te esperan en nuestra selección.</p>
+            </div>
+          </div>
+
+          <!-- Slide 2: Cristal Geométrico -->
+          <div class="carousel-item">
+            <img
+              src="../images/img-1.png"
+              class="d-block w-100"
+              alt="Banner con un cristal geométrico brillante en tonos rosados."
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Joyas Ocultas y Ofertas</h5>
+              <p>Descubre tesoros indie y descuentos exclusivos cada semana.</p>
+            </div>
+          </div>
+
+          <!-- Slide 3: Ondas de energía -->
+          <div class="carousel-item">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODAwIDQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImczIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFEMkI2NCIgLz4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRjhDRERBIiAvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICAgICAgPHBhdGggaWQ9IndhdmVQYXRoIiBkPSJNIC0yMDAgMjI1IFAgLTEwMCAxNTAgMCAyMjUgVCAyMDAgMjI1IFQgNDAwIDIyNSBUIDYwMCAyMjUgVCA4MDAgMjI1IFQgMTAwMCAyMjUgViA0NTAgSCAtMjAwIFoiIC8+CiAgICA8L2RlZnM+CiAgICA8cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgZmlsbD0idXJsKCNnMykiIC8+CiAgICA8dXNlIHhsaW5rOmhyZWY9IiN3YXZlUGF0aCIgZmlsbD0iI2I5ZmJjMCIgb3BhY2l0eT0iMC4zIj4KICAgICAgICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InRyYW5zbGF0ZSIgZnJvbT0iMCwwIiB0bz0iMjAwLDAiIGR1cj0iOHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPgogICAgPC91c2U+CiAgICA8dXNlIHhsaW5rOmhyZWY9IiN3YXZlUGF0aCIgZmlsbD0iIzk4ZjVlMSIgb3BhY2l0eT0iMC40Ij4KICAgICAgICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InRyYW5zbGF0ZSIgZnJvbT0iMCw1IiB0bz0iLTIwMCw1IiBkdXI9IjEyczIiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPgogICAgPC91c2U+CiAgICA8dXNlIHhsaW5rOmhyZWY9IiN3YXZlUGF0aCIgZmlsbD0iI2EwZTlmZiIgb3BhY2l0eT0iMC41Ij4KICAgICAgICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InRyYW5zbGF0ZSIgZnJvbT0iMCwtNSIgdG89IjIwMCwtNSIgZHVyPSIxMHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPgogICAgPC91c2U+Cjwvc3ZnPg=="
+              class="d-block w-100"
+              alt="Banner abstracto con ondas de energía fluidas."
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Sumérgete en la Acción</h5>
+              <p>Vive la intensidad de los juegos más trepidantes del momento.</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev" aria-label="Anterior">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next" aria-label="Siguiente">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+    </section>
+    <!-- ========== FIN CAROUSEL ========== -->
+
+    <!-- Content -->
+    <section class="catalog" id="catalog">
+      <div class="section-head">
+        <h2>En venta</h2>
+        <a class="see-all" href="#">Mostrar todo</a>
+      </div>
+
+      <div class="cards cards-sale" id="cardsGrid">
+        <!-- Sample cards... -->
+        <article class="card" data-category="RPG" data-price="2" data-title="Juego de rol">
+          <div class="card-media"><img src="images/game1.jpg" alt="Juego de rol"><span class="badge sale">-30%</span><button class="fav">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de rol</a></h3><p class="card-sub">$3 <span class="muted"> $2 / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        </article>
+
+        <article class="card" data-category="Action" data-price="1" data-title="Juego de Guerra">
+          <div class="card-media"><img src="images/game2.jpg" alt="Juego de guerra"><span class="badge sale">-30%</span><button class="fav">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de Guerra</a></h3><p class="card-sub">$1 $1 / por</p><button class="btn small primary">Añadir al carrito</button></div>
+        </article>
+
+        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa">
+          <div class="card-media"><img src="images/game3.jpg" alt="Juego de mesa"><button class="fav">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de mesa</a></h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        </article>
+
+        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas">
+          <div class="card-media"><img src="images/game4.jpg" alt="Juego de cartas"><button class="fav">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de cartas</a></h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        </article>
+      </div>
+
+      <div class="section-head" style="margin-top:18px"><h2>Repetido pedido</h2><a class="see-all" href="#">Mostrar todo</a></div>
+
+      <div class="cards cards-regular" id="cardsGrid2">
+        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa"><div class="card-media"><img src="images/game3.jpg" alt="Juego de mesa"><button class="fav">★</button></div><div class="card-body"><h3 class="card-title">Juego de mesa</h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div></article>
+
+        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas"><div class="card-media"><img src="images/game4.jpg" alt="Juego de cartas"><button class="fav">★</button></div><div class="card-body"><h3 class="card-title">Juego de cartas</h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div></article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Nota: se eliminó el nav.bottom-nav porque el submenú inyectado proveerá la navegación -->
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/browse.js" defer></script>
+
+  <!-- script que monta el submenú único -->
+  <script src="../js/submenu.js" defer></script>
+</body>
+</html>

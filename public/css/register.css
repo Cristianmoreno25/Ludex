@@ -1,0 +1,267 @@
+:root{
+  --bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #3366ff;
+  --accent-2:#4f7bff;
+  --card:#fbfdff;
+  --radius:12px;
+  --shadow: 0 12px 40px rgba(18,27,64,0.06);
+  --max-width:920px; /* wider card on desktop */
+  --form-width:720px;
+  --gap:14px;
+  --field-bg: #ffffff;
+}
+
+/* Basic resets */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0}
+html, body { overflow-x: hidden; } /* prevent horizontal scroll */
+body{
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,#fbfdff,#ffffff);
+  color:#0f172a;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Page layout */
+.page{
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:28px 18px;
+}
+
+/* Card */
+.card{
+  width:100%;
+  max-width:var(--max-width);
+  background:var(--card);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:18px;
+}
+
+/* Header */
+.card-header{
+  text-align:center;
+  padding-bottom:6px;
+}
+.logo{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:6px;
+}
+.logo .brand{font-weight:700;color:var(--accent)}
+.title{font-size:20px;margin:6px 0 0 0}
+.subtitle{font-size:13px;color:var(--muted);margin:6px 0 12px}
+
+/* Body */
+.card-body{padding:8px 4px 4px 4px}
+
+/* Social row */
+.social-row{ display:flex; gap:10px; flex-direction:column; }
+.btn.social{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  justify-content:center;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.06);
+  background:white;
+  box-shadow:0 6px 20px rgba(18,27,64,0.04);
+  font-weight:600;
+  color:#111827;
+  cursor:pointer;
+}
+.btn.social svg { display:inline-block; vertical-align:middle; }
+
+/* On wider screens show social buttons inline */
+@media(min-width:600px){
+  .social-row{ flex-direction:row; }
+}
+
+/* Divider */
+.divider{
+  text-align:center;
+  margin:14px 0;
+  position:relative;
+}
+.divider::before{
+  content:'';
+  display:block;
+  height:1px;
+  background:rgba(15,23,42,0.06);
+  width:100%;
+  position:absolute;
+  top:50%;
+  left:0;
+  z-index:0;
+}
+.divider span{
+  background:transparent;
+  display:inline-block;
+  padding:4px 12px;
+  position:relative;
+  z-index:1;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* Form fields */
+.form{display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field-label{font-size:12px;color:var(--muted);font-weight:600}
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="date"], select{
+  width:100%;
+  padding:12px 12px;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.08);
+  background:var(--field-bg);
+  font-size:14px;
+  color:#0f172a;
+  outline:none;
+}
+input:focus, select:focus{box-shadow:0 6px 20px rgba(51,102,255,0.06); border-color:rgba(51,102,255,0.18)}
+
+/* Grid helpers */
+.grid{display:grid; gap:10px}
+.two-col{ grid-template-columns: 1fr; }
+@media(min-width:900px){
+  .two-col{ grid-template-columns: 1fr 1fr; }
+  .name-username.two-col{ grid-template-columns: 1fr 1fr; }
+}
+
+/* password wrapper with toggle button */
+.pw-wrapper{position:relative;display:flex;align-items:center}
+.pw-wrapper input{padding-right:42px}
+.pw-toggle{
+  position:absolute;
+  right:8px;
+  background:transparent;
+  border:0;
+  padding:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+/* Interests pills (accessible) */
+.interests{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+}
+.pill input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.pill span{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  background:transparent;
+  border:1px solid rgba(15,23,42,0.06);
+  font-size:13px;
+  color: #0f172a;
+}
+/* when checkbox is checked, style the span */
+.pill input:checked + span{
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:white;
+  border-color:transparent;
+  box-shadow:0 8px 20px rgba(51,102,255,0.12);
+}
+
+/* Checkbox field */
+.checkbox-field{display:flex;gap:10px;align-items:flex-start}
+.checkbox-field input{width:18px;height:18px;margin-top:4px}
+
+/* Actions */
+.actions{margin-top:6px}
+.btn.primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:12px 18px;
+  border-radius:10px;
+  border:0;
+  cursor:pointer;
+  font-weight:700;
+  font-size:15px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:white;
+  width:100%;
+  box-shadow:0 12px 36px rgba(51,102,255,0.14);
+}
+
+/* Small text */
+.small{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
+.link{color:var(--accent);text-decoration:none;font-weight:600}
+
+/* Desktop: center card and constrain width, show form in two columns */
+@media (min-width:900px){
+  .page{ padding:48px; align-items:center; }
+  .card{ padding:28px; max-width:var(--form-width); }
+  .grid.two-col{ grid-template-columns: 1fr 1fr; }
+  .social-row{ gap:12px; }
+}
+
+/* focus */
+button:focus, a:focus, input:focus{outline:3px solid rgba(51,102,255,0.12);outline-offset:2px}
+
+/* ---------------------------
+   ADICIONES MÍNIMAS (no cambian la estética)
+   - soporte para mensajes (success/error)
+   - hint de contraseña
+   - estilo botón deshabilitado
+   --------------------------- */
+
+/* Contenedor de mensajes en el formulario */
+#formMessage { margin: 8px 0 12px; }
+
+/* Mensaje de error (sutil, acorde a paleta) */
+.msg-error {
+  background: rgba(255,245,245,0.9); /* very light red tint */
+  color: #8b1e1e;
+  border: 1px solid rgba(235,87,87,0.15);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+/* Mensaje de éxito (sutil, acorde a paleta) */
+.msg-success {
+  background: rgba(240,255,244,0.95); /* very light green tint */
+  color: #0f5132;
+  border: 1px solid rgba(34,197,94,0.12);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+/* Hint textual para contraseña (inline) */
+.password-hint {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Estilo para botón deshabilitado / loading (mantiene estética) */
+.btn[disabled],
+.btn.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

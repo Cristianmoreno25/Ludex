@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mis Compras</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Iconos (solo 1 vez por página) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="../css/mis-compras.css">
+  <!-- Estilos del submenú -->
+  <link rel="stylesheet" href="../css/submenu.css">
+</head>
+<body>
+  <!-- Encabezado -->
+  <header class="topbar">
+    <h1>Mis Compras</h1>
+  </header>
+
+  <!-- Placeholder donde se inyectará el submenu (submenú aportará botón, overlay, nav lateral y bottom-nav) -->
+  <div id="submenu-container"></div>
+
+  <!-- Contenido principal -->
+  <main class="container">
+    <div class="compras-list">
+      <!-- Item -->
+      <article class="compra-card">
+        <img src="../img/juego1.jpg" alt="Portada de Aventura Ártica">
+        <div class="info">
+          <h2>Aventura Ártica</h2>
+          <p>Fecha: 01/06/2023</p>
+          <a href="./product.html" class="btn-primary">Ver</a>
+        </div>
+        <button class="more-btn" aria-label="Más opciones">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </article>
+
+      <!-- Item -->
+      <article class="compra-card">
+        <img src="../img/juego2.jpg" alt="Portada de Batalla Real 2.0">
+        <div class="info">
+          <h2>Batalla Real 2.0</h2>
+          <p>Fecha: 15/09/2023</p>
+          <a href="./product.html" class="btn-primary">Ver</a>
+        </div>
+        <button class="more-btn" aria-label="Más opciones">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </article>
+
+      <!-- Item -->
+      <article class="compra-card">
+        <img src="../img/juego3.jpg" alt="Portada de Desafío de Rompecabezas">
+        <div class="info">
+          <h2>Desafío de Rompecabezas</h2>
+          <p>Fecha: 20/08/2023</p>
+          <a href="./product.html" class="btn-primary">Ver</a>
+        </div>
+        <button class="more-btn" aria-label="Más opciones">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </article>
+    </div>
+  </main>
+
+  <!-- Script para cargar dinámicamente el submenú -->
+  <script src="../js/submenu.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html class="pt-preload" lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -171,7 +171,7 @@
     .msg-error { border-color: #4f1f28; color: #fecaca; background: linear-gradient(180deg, #180d12, #140c12); }
     .msg-success { border-color: #1f3f2a; color: #bbf7d0; background: linear-gradient(180deg, #0f1a14, #0e1914); }
   </style>
-</head>
+  <style>html.pt-preload body{opacity:0} body{transition:opacity .25s ease} html.fade-out body{opacity:0} ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}</style>  <style> :root.vt-slide-left::view-transition-old(root){animation:vt-out-left .25s ease both} :root.vt-slide-left::view-transition-new(root){animation:vt-in-left .25s ease both} :root.vt-slide-right::view-transition-old(root){animation:vt-out-right .25s ease both} :root.vt-slide-right::view-transition-new(root){animation:vt-in-right .25s ease both} @keyframes vt-in-left{from{transform:translateX(24px);opacity:.01}to{transform:none;opacity:1}} @keyframes vt-out-left{from{transform:none;opacity:1}to{transform:translateX(-24px);opacity:.01}} @keyframes vt-in-right{from{transform:translateX(-24px);opacity:.01}to{transform:none;opacity:1}} @keyframes vt-out-right{from{transform:none;opacity:1}to{transform:translateX(24px);opacity:.01}}</style></head>
 <body>
   <main class="page">
     <div class="card" role="region" aria-labelledby="card-title">
@@ -300,7 +300,7 @@
             <button type="submit" class="btn primary" id="createBtn">Create Account</button>
           </div>
 
-          <p class="small muted">Already have an account? <a href="../html/login.html" class="link">Sign in</a></p>
+          <p class="small muted">Already have an account? <a href="../html/login.html" data-anim="slide-left" class="link">Sign in</a></p>
         </form>
       </div>
     </div>
@@ -323,9 +323,25 @@
       });
     });
 
-    // Placeholder social sign-in
-    document.getElementById('googleBtn').addEventListener('click', function(){ alert('Google sign-in (placeholder)'); });
-    document.getElementById('facebookBtn').addEventListener('click', function(){ alert('Facebook sign-in (placeholder)'); });
+    // Social sign-in (Google)
+    document.getElementById('googleBtn').addEventListener('click', async function(){
+      try {
+        const envRes = await fetch('/api/public-env');
+        const { url, key } = await envRes.json();
+        if (!url || !key) { alert('Configuración de Supabase no disponible'); return; }
+        const client = window.supabase.createClient(url, key);
+        const { error } = await client.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/html/verification.html` }
+        });
+        if (error) throw error;
+      } catch (e) {
+        console.error(e);
+        alert('No se pudo iniciar con Google.');
+      }
+    });
+    // Social sign-in (Facebook - pendiente de configurar)
+    document.getElementById('facebookBtn').addEventListener('click', function(){ alert('Facebook no está configurado.'); });
 
     // NUEVO handler: validaciones cliente + fetch al backend
     (function(){
@@ -454,6 +470,6 @@
       form.addEventListener('submit', handleSubmit);
     })();
   </script>
-</body>
+  <script src="../js/page-transitions.js"></script>`r`n</body>
 </html>
 

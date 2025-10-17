@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -6,6 +6,18 @@
   <title>Recuperar contraseña — Ludex</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/recovery.css">
+  <style>
+    body{ background: linear-gradient(180deg,#f8fbff,#ffffff); }
+    .card{ position:relative; overflow:hidden }
+    .card::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none;
+      background: linear-gradient(135deg, rgba(99,102,241,.25), rgba(99,102,241,0) 40%, rgba(56,189,248,.18));
+      mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      padding:1px; mask-composite: exclude; -webkit-mask-composite: xor; }
+    .step-row{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+    .badge{padding:4px 10px; border-radius:999px; font-size:12px; color:#334155; background:#eef2ff; border:1px solid #e5e7eb; font-weight:600}
+    .hint{ font-size:12px; }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -19,54 +31,49 @@
   </header>
 
   <main class="page">
+    <!-- Paso 1: enviar enlace al correo -->
     <section class="card" id="step1" aria-labelledby="title-step1">
-      <h1 id="title-step1" class="card-title">Cambiar Contraseña</h1>
-      <p class="card-sub">Introduce tu correo electrónico y te enviaremos un código o enlace para restablecer la contraseña.</p>
+      <div class="step-row"><span class="badge">Paso 1 de 2</span></div>
+      <h1 id="title-step1" class="card-title">Cambiar contraseña</h1>
+      <p class="card-sub">Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
 
+      <div id="recoveryMessage" class="muted" style="margin-top:8px"></div>
       <form id="form-send" class="form">
         <label class="field">
           <span class="field-label">Email</span>
           <input id="email" type="email" name="email" placeholder="tu@correo.com" required autocomplete="email">
         </label>
-
         <div class="actions">
-          <button type="submit" class="btn primary" id="sendBtn">Enviar correo de verificación</button>
+          <button type="submit" class="btn primary" id="sendBtn">Enviar enlace de recuperación</button>
         </div>
       </form>
-
-      <p class="hint muted">¿Recibiste el código? <button class="btn-link" id="gotoStep2">Ir a cambiar contraseña</button></p>
     </section>
 
-    <!-- STEP 2 (initially hidden) -->
+    <!-- Paso 2: establecer nueva contraseña (solo desde enlace) -->
     <section class="card hidden" id="step2" aria-labelledby="title-step2">
-      <h1 id="title-step2" class="card-title">Cambiar Contraseña</h1>
-      <p class="card-sub">Introduce el código que recibiste y la nueva contraseña.</p>
+      <div class="step-row"><span class="badge">Paso 2 de 2</span></div>
+      <h1 id="title-step2" class="card-title">Cambiar contraseña</h1>
+      <p class="card-sub">Establece tu nueva contraseña.</p>
 
+      <div id="recoveryMessage2" class="muted" style="margin-top:8px"></div>
       <form id="form-reset" class="form">
         <label class="field">
-          <span class="field-label">Código de verificación</span>
-          <input id="code" type="text" name="code" placeholder="Código (6 dígitos)" inputmode="numeric" maxlength="6" required>
-        </label>
-
-        <label class="field">
           <span class="field-label">Nueva contraseña</span>
-          <input id="newPassword" type="password" name="newPassword" placeholder="Nueva contraseña" minlength="6" required autocomplete="new-password">
+          <input id="newPassword" type="password" name="newPassword" placeholder="Nueva contraseña" minlength="8" required autocomplete="new-password">
         </label>
-
         <label class="field">
           <span class="field-label">Confirma contraseña</span>
-          <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirmar contraseña" minlength="6" required autocomplete="new-password">
+          <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirmar contraseña" minlength="8" required autocomplete="new-password">
         </label>
-
         <div class="actions">
-          <button type="submit" class="btn primary" id="resetBtn"><a href="./login.html">Cambiar Contraseña</a></button>
+          <button type="submit" class="btn primary" id="resetBtn">Cambiar contraseña</button>
         </div>
       </form>
-
-      <p class="hint muted">Volver a <button class="btn-link" id="backToStep1">enviar correo</button></p>
+      <p class="hint muted">¿No te llegó el enlace? Vuelve a solicitarlo en el paso 1.</p>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/recovery.js"></script>
 </body>
 </html>

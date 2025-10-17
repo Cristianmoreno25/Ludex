@@ -1,0 +1,164 @@
+<!doctype html>
+<html class="pt-preload" lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Completar perfil — Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/verification.css">
+  <style>
+    /* Minimal, calm UI on top of verification.css */
+    body { background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%); }
+    .container { max-width: 760px; margin: 0 auto; padding: 24px; }
+    .card {
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.06);
+      padding: 20px;
+    }
+    .title { letter-spacing: .2px; font-size: 22px; }
+    .subtitle { margin-top: 4px; }
+
+    .step-row { display:flex; align-items:center; gap:10px; justify-content:flex-start; margin-bottom:12px; }
+    .badge { padding:4px 10px; border-radius:999px; font-size:12px; color:#334155; background:#eef2ff; border:1px solid #e5e7eb; font-weight:600 }
+
+    .form .row { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media(min-width:720px){ .form .row { grid-template-columns: 1fr 1fr; } }
+
+    .form input, .form select {
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+    .form input:focus, .form select:focus {
+      border-color:#c7d2fe; box-shadow:0 0 0 6px rgba(99,102,241,.10); background:#fff;
+    }
+    .hint { font-size: 12px; color:#64748b; margin-top: -6px; margin-bottom: 8px; }
+
+    .btn.primary { box-shadow: 0 10px 18px rgba(99,102,241,.18); }
+    .btn.primary:hover { filter: brightness(1.03); transform: translateY(-1px); }
+  </style>
+  <style>html.pt-preload body{opacity:0} body{transition:opacity .25s ease} html.fade-out body{opacity:0} ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}</style></head>
+<body>
+  <main class="page">
+    <section class="container" role="region" aria-labelledby="title">
+      <div class="card">
+      <div class="step-row">
+        <span class="badge">Paso 2 de 2</span>
+        <div class="progress" aria-hidden="true"><span></span></div>
+      </div>
+      <h1 id="title" class="title">Completa tu perfil</h1>
+      <p class="subtitle">Solo un momento, así personalizamos tu experiencia.</p>
+      <div id="status" class="muted" aria-live="polite" style="margin-bottom:12px"></div>
+
+      <form id="profileForm" class="form" novalidate>
+        <div class="row">
+          <div>
+            <label class="sr-only" for="username">Username</label>
+            <input id="username" placeholder="Nombre de usuario (obligatorio)" required />
+            <div class="hint">Debe ser único. Puedes usar letras, números y guiones.</div>
+          </div>
+          <div>
+            <label class="sr-only" for="fullname">Nombre completo</label>
+            <input id="fullname" placeholder="Nombre completo" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="sr-only" for="phone">Teléfono</label>
+            <input id="phone" placeholder="Teléfono" />
+          </div>
+          <div>
+            <select id="country">
+              <option value="">Selecciona tu país (opcional)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn primary" type="submit" id="saveBtn">Guardar</button>
+      </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  (function(){
+    const statusBox = document.getElementById('status');
+    const form = document.getElementById('profileForm');
+    const username = document.getElementById('username');
+    const fullname = document.getElementById('fullname');
+    const phone = document.getElementById('phone');
+    const country = document.getElementById('country');
+    const saveBtn = document.getElementById('saveBtn');
+
+    function setStatus(t, kind='info'){ statusBox.textContent = t; statusBox.style.color = kind==='error'?'#ef4444':'#6b7280'; }
+
+    async function getPublicEnv(){ const r = await fetch('/api/public-env'); return r.json(); }
+
+    async function loadCountries(){
+      try {
+        const resp = await fetch('/api/paises');
+        const { paises } = await resp.json();
+        const list = (paises && paises.length ? paises : [
+          { id: 1, nombre: 'Colombia' },
+          { id: 2, nombre: 'Chile' },
+          { id: 3, nombre: 'Argentina' },
+          { id: 4, nombre: 'United States' },
+          { id: 5, nombre: 'Spain' },
+        ]);
+        list.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id; opt.textContent = p.nombre; country.appendChild(opt);
+        });
+      } catch {}
+    }
+
+    async function prefill(){
+      const { url, key } = await getPublicEnv();
+      const client = window.supabase.createClient(url, key);
+      const { data } = await client.auth.getUser();
+      const u = data?.user;
+      if (u) {
+        const md = u.user_metadata || {};
+        username.value = (md.usuario || (u.email||'').split('@')[0] || '').toLowerCase();
+        fullname.value = md.nombre_completo || '';
+        phone.value = md.telefono || '';
+        // Si tenemos pais_id, intenta seleccionarlo
+        if (md.pais_id) {
+          const pid = Number(md.pais_id);
+          if (!Number.isNaN(pid)) country.value = String(pid);
+        }
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(!username.value.trim()){ setStatus('El username es obligatorio','error'); return; }
+      try {
+        saveBtn.disabled = true; setStatus('Guardando...');
+        const { url, key } = await getPublicEnv();
+        const client = window.supabase.createClient(url, key);
+        const { data: sess } = await client.auth.getSession();
+        if(!sess?.session?.access_token){ setStatus('No hay sesión. Inicia de nuevo.','error'); saveBtn.disabled=false; return; }
+
+        const resp = await fetch('/api/auth/complete-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sess.session.access_token}` },
+          body: JSON.stringify({ username: username.value.trim(), nombre_completo: fullname.value.trim()||null, telefono: phone.value.trim()||null, pais_id: country.value||null })
+        });
+        const j = await resp.json();
+        if(!resp.ok){ throw new Error(j.error||'No se pudo guardar'); }
+        setStatus('Perfil actualizado. Redirigiendo...');
+        setTimeout(()=>{ window.location.href = '/html/browse.html'; }, 1000);
+      } catch (e){ setStatus(e.message||'Error', 'error'); saveBtn.disabled=false; }
+    });
+
+    loadCountries();
+    prefill();
+  })();
+  </script>
+  <script src="../js/page-transitions.js"></script>`r`n</body>
+</html>

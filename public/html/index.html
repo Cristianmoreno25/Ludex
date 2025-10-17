@@ -1,64 +1,199 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="pt-preload">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ludex — Presentación / Inicio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/bienvenida.css">
+
+  <!-- Base page fade + ViewTransitions duration -->
+  <style>
+    html.pt-preload body{opacity:0}
+    body{transition:opacity .25s ease}
+    html.fade-out body{opacity:0}
+    ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}
+  </style>
+
+  <!-- Page-specific enhancements + fixes -->
+  <style>
+    :root{
+      --bg1:#f8fbff; --bg2:#ffffff;
+      --card:#ffffff; --muted:#6b7280; --brand:#3366ff; --brand2:#4f7bff;
+      --border:#e5e7eb; --shadow:0 16px 40px rgba(15,23,42,.08);
+    }
+
+    /* Allow scroll on desktop and disable snap only on this page */
+    .wrap{ scroll-snap-type: none; }
+    @media (min-width: 900px){
+      html, body { overflow:auto; }
+      .wrap { height:auto; overflow:visible; }
+      .container-desktop { height:auto; overflow:visible; padding-bottom:24px; }
+      section { min-height:auto; }
+    }
+
+    /* Animated background */
+    body{margin:0; background: linear-gradient(180deg, var(--bg1), var(--bg2)); position: relative;}
+    body::before{content:""; position: fixed; inset:-10% -10% -10% -10%; pointer-events:none; z-index:0;
+      background: radial-gradient(720px 360px at 12% 8%, rgba(79,123,255,.18), transparent 60%),
+                  radial-gradient(720px 360px at 88% -6%, rgba(51,102,255,.12), transparent 60%);
+      animation: bgFloat 18s ease-in-out infinite alternate;
+    }
+    @keyframes bgFloat{ from{ transform: translateY(0px); } to{ transform: translateY(22px); } }
+
+    .container-desktop{padding: 28px 18px; max-width: 1100px; margin: 0 auto; position: relative; z-index:1}
+
+    /* Hero */
+    .hero{display:grid; grid-template-columns: 1.1fr .9fr; align-items:center; gap:24px; padding:10px 0 24px;}
+    @media(max-width:900px){ .hero{grid-template-columns:1fr; text-align:center;} .hero-illustration{max-width: 360px; margin: 0 auto;} }
+    .hero-copy .brand{font-size:44px; margin:0; letter-spacing:.4px;}
+    .hero-copy .lead{margin:6px 0 0; color:var(--muted)}
+    .hero-illustration{width:100%; height:auto; filter: drop-shadow(0 12px 24px rgba(15,23,42,.08)); will-change: transform; transition: transform .2s ease-out;}
+
+    /* Welcome / CTA */
+    .welcome-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadow); text-align:center;}
+    .welcome-card h2{margin:0 0 6px;}
+    .brand-inline{color:var(--brand)}
+    .lead-desc{color:var(--muted); margin:0 auto 12px; max-width:640px}
+    .illustr-small{width:86px; height:auto; opacity:.95; margin:8px auto 14px; display:block;}
+
+    /* Sections */
+    .section{padding: 40px 0}
+    .section .headline{font-size:28px; margin:0 0 6px; text-align:center}
+    .section .sub{color:var(--muted); text-align:center; margin:0 0 18px}
+    .cards{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px}
+    @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+    .mini-card{background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow: var(--shadow);
+      transform: translateZ(0); transition: transform .25s ease, box-shadow .25s ease;}
+    .mini-card:hover{ transform: translateY(-6px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 22px 40px rgba(15,23,42,.12); }
+    .mini-card h3{margin:0 0 6px; font-size:18px}
+    .mini-card p{margin:0; color:var(--muted)}
+
+    .footer{padding:24px 0 40px; text-align:center; color:var(--muted)}
+
+    /* Buttons */
+    .auth-row{display:flex; gap:10px; justify-content:center; margin-top:6px}
+    .btn.small{padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; box-shadow:0 8px 16px rgba(15,23,42,.06);} 
+    .btn.small a{text-decoration:none; color:#0f172a}
+    .btn.small:hover{filter:brightness(1.03)}
+    .panel-cta{margin-top:10px}
+    .btn.primary.access{width:100%; background:linear-gradient(90deg,var(--brand),var(--brand2)); border:0; color:#fff; font-weight:700; border-radius:12px; padding:12px 14px; box-shadow:0 14px 24px rgba(79,123,255,.25)} 
+    .btn.primary.access a{color:#fff; text-decoration:none} 
+    .btn.primary.access:hover{filter:brightness(1.04); transform:translateY(-1px)}
+    .bottom-cta .btn.full{background:#fff; border:1px solid var(--border);} 
+    .muted-small{color:var(--muted)}
+
+    /* Reveal on scroll */
+    .reveal{ opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in-view{ opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce){ .reveal{ transition:none } .mini-card{ transition:none } body::before{ animation:none } }
+
+    /* FAQ */
+    .faq{ max-width: 900px; margin: 0 auto; }
+    .faq-item{ border:1px solid var(--border); border-radius:12px; background:#fff; box-shadow: var(--shadow); overflow:hidden }
+    .faq-q{ width:100%; text-align:left; padding:14px 16px; background:#fff; border:0; font-weight:600; display:flex; align-items:center; justify-content:space-between; cursor:pointer }
+    .faq-q span{ color:#64748b; transition: transform .2s ease }
+    .faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; padding:0 16px; color:var(--muted) }
+    .faq-item.open .faq-a{ max-height:200px; padding:12px 16px 16px }
+    .faq-item.open .faq-q span{ transform: rotate(45deg) }
+  </style>
 </head>
 <body>
   <div class="wrap" id="wrap">
     <div class="container-desktop">
-      <!-- SECTION 1: Splash / Intro -->
-      <section class="hero" aria-label="Presentación Ludex">
+      <!-- Hero -->
+      <section class="hero reveal" aria-label="Presentación Ludex">
         <div class="hero-copy">
           <h1 class="brand">Ludex</h1>
           <p class="lead">Descubre y compra tus juegos</p>
         </div>
-        <img src="../images/undraw_video-game-night_fxcu.svg" alt="Ilustración Ludex" class="hero-illustration">
+        <img id="heroArt" src="../images/undraw_video-game-night_fxcu.svg" alt="Ilustración Ludex" class="hero-illustration">
       </section>
 
-      <!-- SECTION 2 -->
-      <section class="welcome" aria-label="Inicio / Registro">
+      <!-- Bienvenida / CTA -->
+      <section class="welcome reveal" aria-label="Inicio / Registro">
         <div class="welcome-card">
           <h2>Bienvenido a <span class="brand-inline">Ludex</span></h2>
           <p class="lead-desc">En esta plataforma podrás subir, descargar y disfrutar de tus videojuegos favoritos de manera rápida y segura.</p>
-
           <img src="../images/carro.svg" alt="Ilustración control" class="illustr-small">
-
-          <div class="social-row" aria-hidden>
-            <button class="social-btn" title="Continuar con Google" aria-label="Continuar con Google">
-              <!-- Google mark -->
-              <svg viewBox="0 0 48 48" aria-hidden focusable="false"><path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.7 8.1 3.1l6-5.8C35 4 30.9 2 24 2 14.9 2 7.6 7 4 14.2l7.4 5.7C13 15.1 18 9.5 24 9.5z"/><path fill="#34A853" d="M46.5 24.5c0-1.6-.2-2.8-.6-4H24v8h12.7c-.5 3-2.3 5.6-5 7.1l7.7 6c4.5-4.2 7.1-10.3 7.1-17.1z"/><path fill="#4A90E2" d="M11.4 28.9c-.6-1.7-1-3.5-1-5.4 0-1.9.4-3.7 1-5.4L4 12.4C1.4 16.2 0 20.9 0 26c0 5.1 1.4 9.8 4 13.6l7.4-5.7z"/><path fill="#FBBC05" d="M24 44c6.9 0 12.9-2.4 17.3-6.5l-8.8-6.8C29.9 32.3 27.1 33 24 33c-6 0-11-5.6-12.6-13.3L3.9 27.6C7.6 35 14.7 44 24 44z"/></svg>
-            </button>
-
-            <button class="social-btn" title="Continuar con Facebook" aria-label="Continuar con Facebook">
-              <svg viewBox="0 0 24 24" aria-hidden focusable="false"><path fill="#1877F2" d="M22 12.1C22 6.5 17.5 2 11.9 2S2 6.5 2 12.1c0 5 3.7 9.1 8.6 9.9v-7h-2.6v-2.9H10.6V9.7c0-2.6 1.6-4 4-4 1.2 0 2.4.2 2.4.2v2.7h-1.4c-1.4 0-1.8.9-1.8 1.8v2.1h3l-.5 2.9h-2.4v7C18.3 21.2 22 17.1 22 12.1z"/></svg>
-            </button>
-          </div>
-
-          <!-- AUTH ROW (registrarse / iniciar sesión) -->
           <div class="auth-row" role="group" aria-label="Opciones de autenticación">
-            <button class="btn small" id="registerBtn"> <a href="./register.html">Registrarse</a></button>
+            <button class="btn small" id="registerBtn"><a href="./register.html">Registrarse</a></button>
             <button class="btn small" id="loginBtn"><a href="./login.html">Iniciar sesión</a></button>
           </div>
-
           <p class="muted-small">Explora la plataforma sin crear cuenta.</p>
-
-          <!-- ÚNICO BOTÓN: accessBtn (desktop card) -->
           <div class="panel-cta">
             <button class="btn primary access" id="accessBtn"><a href="browse.html">Continuar sin cuenta</a></button>
           </div>
         </div>
-
         <div class="bottom-cta" aria-hidden>
           <button class="btn full access" id="accessBtn-mobile"><a href="browse.html">Continuar sin cuenta</a></button>
         </div>
       </section>
-    </div> 
+
+      <!-- Esencia -->
+      <section class="section reveal" aria-label="Acerca de Ludex">
+        <h2 class="headline">Nuestra esencia</h2>
+        <p class="sub">Una experiencia simple para descubrir, publicar y disfrutar videojuegos.</p>
+        <div class="cards">
+          <div class="mini-card reveal"><h3>Misión</h3><p>Acercar a jugadores y creadores con una plataforma clara y segura donde lanzar, comprar y gestionar juegos sin fricción.</p></div>
+          <div class="mini-card reveal"><h3>Visión</h3><p>Convertirnos en el hub preferido de gaming en LATAM por su usabilidad, confianza y soporte a desarrolladores.</p></div>
+          <div class="mini-card reveal"><h3>Valores</h3><p>Transparencia, comunidad y accesibilidad. Diseñamos con empatía y priorizamos la privacidad del usuario.</p></div>
+        </div>
+      </section>
+
+      <!-- Cómo funciona -->
+      <section class="section reveal" aria-label="Cómo funciona">
+        <h2 class="headline">¿Cómo funciona?</h2>
+        <p class="sub">Tres pasos para empezar a jugar.</p>
+        <div class="cards">
+          <div class="mini-card reveal"><h3>1. Crea tu cuenta</h3><p>Regístrate o continúa como invitado. Con cuenta, tendrás biblioteca y compras sincronizadas.</p></div>
+          <div class="mini-card reveal"><h3>2. Explora y descubre</h3><p>Navega por categorías, listas destacadas y búsquedas precisas con filtros útiles.</p></div>
+          <div class="mini-card reveal"><h3>3. Juega y comparte</h3><p>Descarga, califica y comparte tus juegos favoritos. Apoya a creadores con tus reseñas.</p></div>
+        </div>
+      </section>
+
+      <!-- CTA final -->
+      <section class="section reveal" aria-label="Empieza ahora">
+        <div class="welcome-card">
+          <h2>Comienza en segundos</h2>
+          <p class="lead-desc">Crea tu cuenta o salta directamente a explorar el catálogo.</p>
+          <div class="auth-row" role="group" aria-label="Opciones de autenticación">
+            <button class="btn small" id="registerBtn2"><a href="./register.html">Registrarse</a></button>
+            <button class="btn small" id="loginBtn2"><a href="./login.html">Iniciar sesión</a></button>
+          </div>
+          <div class="panel-cta">
+            <button class="btn primary access" id="accessBtn2"><a href="browse.html">Continuar sin cuenta</a></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section reveal" aria-label="Preguntas frecuentes">
+        <h2 class="headline">FAQ</h2>
+        <p class="sub">Resolvemos dudas comunes en pocos segundos.</p>
+        <div class="faq">
+          <div class="faq-item">
+            <button class="faq-q">¿Qué es Ludex? <span>+</span></button>
+            <div class="faq-a">Una plataforma para descubrir, publicar y comprar juegos de forma clara y segura.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">¿Puedo usarla sin registrarme? <span>+</span></button>
+            <div class="faq-a">Sí. Puedes explorar y probar como invitado; con cuenta tendrás biblioteca y compras.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">¿Cómo protegen mis datos? <span>+</span></button>
+            <div class="faq-a">Usamos autenticación de Supabase y buenas prácticas de seguridad y privacidad.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">© Ludex — Hecho con pasión por el gaming</div>
+    </div>
   </div>
 
   <script src="../js/bienvenida.js"></script>
+  <script src="../js/landing-effects.js"></script>
+  <script src="../js/page-transitions.js"></script>
 </body>
 </html>
+

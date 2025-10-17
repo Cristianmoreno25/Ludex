@@ -1,16 +1,32 @@
-<!doctype html>
-<html lang="es">
+﻿<!doctype html>
+<html class="pt-preload" lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Iniciar sesión — Ludex</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/login.css">
+  <style>
+    html.pt-preload body{opacity:0}
+    body{transition:opacity .25s ease}
+    html.fade-out body{opacity:0}
+    ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}
+    :root.vt-slide-left::view-transition-old(root){animation:vt-out-left .25s ease both}
+    :root.vt-slide-left::view-transition-new(root){animation:vt-in-left .25s ease both}
+    :root.vt-slide-right::view-transition-old(root){animation:vt-out-right .25s ease both}
+    :root.vt-slide-right::view-transition-new(root){animation:vt-in-right .25s ease both}
+    @keyframes vt-in-left{from{transform:translateX(24px);opacity:.01}to{transform:none;opacity:1}}
+    @keyframes vt-out-left{from{transform:none;opacity:1}to{transform:translateX(-24px);opacity:.01}}
+    @keyframes vt-in-right{from{transform:translateX(-24px);opacity:.01}to{transform:none;opacity:1}}
+    @keyframes vt-out-right{from{transform:none;opacity:1}to{transform:translateX(24px);opacity:.01}}
+    #loginMessage{margin:8px 0 6px}
+    .msg{padding:10px 12px;border-radius:12px;border:1px solid}
+    .msg.error{border-color:#ef4444;color:#991b1b;background:#fef2f2}
+    .msg.info{border-color:#93c5fd;color:#1e3a8a;background:#eff6ff}
+  </style>
 </head>
 <body>
   <main class="container" role="main">
-
-    <!-- PANEL: formulario (ancho controlado por CSS, centrado) -->
     <aside class="panel" aria-labelledby="login-title">
       <div class="brand" aria-hidden="false">
         <div class="logo">
@@ -18,7 +34,6 @@
             <circle cx="12" cy="12" r="10" fill="#3366ff"/>
             <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0z" fill="#fff" opacity="0.12"/>
           </svg>
-
           <div>
             <h1 id="login-title" class="title">Ludex</h1>
             <div class="subtitle">Accede a tu cuenta</div>
@@ -26,14 +41,14 @@
         </div>
       </div>
 
-      <!-- Wrapper que centra el formulario dentro del panel -->
       <div class="form-wrap">
         <form id="loginForm" autocomplete="on" novalidate aria-describedby="formHelp" aria-live="polite">
+          <div id="loginMessage"></div>
           <div id="formHelp" class="helper">Usa tu correo o nombre de usuario.</div>
 
           <label class="field">
-            <span>Email</span>
-            <input type="email" id="identity" name="identity" placeholder="ejemplo@correo.com" required autocomplete="username">
+            <span>Usuario o correo</span>
+            <input type="text" id="identity" name="identity" placeholder="usuario o ejemplo@correo.com" required autocomplete="username">
           </label>
 
           <label class="field">
@@ -56,42 +71,21 @@
             <button type="button" class="btn social" id="socialGoogle" aria-label="Iniciar con Google">Google</button>
             <button type="button" class="btn social" id="socialFacebook" aria-label="Iniciar con Facebook">Facebook</button>
           </div>
-          <div class="caption">¿No tienes cuenta? <a href="../html/register.html" class="link-small">Crea una</a></div>
+          <div class="caption">¿No tienes cuenta? <a href="../html/register.html" data-anim="slide-right" class="link-small">Crea una</a></div>
         </form>
-        
       </div>
 
-      <!-- Legal / footer del panel -->
       <div class="legal">
         <div>Copyright © 2024 Ludex</div>
-        <div style="margin-top:8px"><a href="#">Términos de servicio</a> • <a href="#">Política de privacidad</a></div>
+        <div style="margin-top:8px"><a href="#">Términos de servicio</a> · <a href="#">Política de privacidad</a></div>
       </div>
     </aside>
 
-    <!-- ILUSTRACIÓN: ocupa el resto. Se usa background para que la imagen se adapte (cover) -->
     <section class="illus-wrap" aria-hidden="true" role="img" aria-label="Ilustración de Ludex"><img src="../images/login.svg" alt="juego de guerra de naves"></section>
   </main>
 
-  <script>
-    // Demo – validación simple
-    document.getElementById('loginForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const id = document.getElementById('identity');
-      const pw = document.getElementById('password');
-      if(!id.value || !pw.value){
-        alert('Completa email y contraseña');
-        return;
-      }
-      // En producción: reemplaza por fetch() a tu API
-      window.location.href = './verification.html';
-    });
-
-    ['socialGoogle','socialFacebook'].forEach(function(id){
-      const el = document.getElementById(id);
-      if(el) el.addEventListener('click', function(){
-        alert('Aquí se integraría OAuth para ' + (id.includes('Google') ? 'Google' : 'Facebook'));
-      });
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/login-auth.js"></script>
+  <script src="../js/page-transitions.js"></script>
 </body>
 </html>

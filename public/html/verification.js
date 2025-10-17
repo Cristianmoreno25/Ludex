@@ -63,8 +63,19 @@
         throw new Error(j.error || 'No se pudo sincronizar el perfil');
       }
 
+      // decidir destino: si el proveedor es Google, ir a completar perfil; si no, al login
+      try {
+        const { data: { user } } = await client.auth.getUser();
+        const provider = user?.app_metadata?.provider;
+        if (provider === 'google') {
+          setStatus('Verificado. Vamos a completar tu perfil...');
+          setTimeout(() => { window.location.href = '/html/complete-profile.html'; }, 800);
+          return;
+        }
+      } catch (_) {}
+
       setStatus('Cuenta verificada y perfil creado. Redirigiendo...');
-      setTimeout(() => { window.location.href = '/html/verification.html'; }, 1200);
+      setTimeout(() => { window.location.href = '/html/login.html'; }, 1200);
     } catch (e) {
       console.error(e);
       setStatus(e.message || 'Error durante la verificacion', 'error');

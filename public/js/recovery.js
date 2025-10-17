@@ -1,83 +1,91 @@
-// Simple client-side flow for password recovery (front-end only placeholders)
-document.addEventListener('DOMContentLoaded', function () {
-  const step1 = document.getElementById('step1');
-  const step2 = document.getElementById('step2');
+﻿// Password recovery using Supabase magic link only (no 6-digit code)
+(function(){
+  const qs = (id) => document.getElementById(id);
+  const step1 = qs('step1');
+  const step2 = qs('step2');
+  const formSend = qs('form-send');
+  const formReset = qs('form-reset');
+  const gotoStep2Btn = qs('gotoStep2');
+  const backToStep1Btn = qs('backToStep1');
+  const backBtn = qs('backBtn');
+  const msg1 = qs('recoveryMessage');
+  const msg2 = qs('recoveryMessage2');
 
-  const formSend = document.getElementById('form-send');
-  const formReset = document.getElementById('form-reset');
+  function showStep(n){
+    if(n===1){ step1.classList.remove('hidden'); step2.classList.add('hidden'); }
+    else { step1.classList.add('hidden'); step2.classList.remove('hidden'); }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function showMessage(box, text, type='info'){
+    const el = box || msg1 || msg2;
+    if(!el) { alert(text); return; }
+    const color = type==='error' ? 'color:#991b1b; background:#fef2f2; border:1px solid #ef4444;'
+               : type==='success' ? 'color:#065f46; background:#ecfdf5; border:1px solid #10b981;'
+               : 'color:#1e3a8a; background:#eff6ff; border:1px solid #93c5fd;';
+    el.innerHTML = `<div style="padding:10px 12px;border-radius:12px;${color}">${text}</div>`;
+  }
+  async function getEnv(){ const r = await fetch('/api/public-env'); return r.json(); }
 
-  const gotoStep2Btn = document.getElementById('gotoStep2');
-  const backToStep1Btn = document.getElementById('backToStep1');
-  const backBtn = document.getElementById('backBtn');
-
-  // show/hide helpers
-  function showStep(n) {
-    if (n === 1) {
-      step1.classList.remove('hidden');
-      step2.classList.add('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      step1.classList.add('hidden');
-      step2.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  // Parse hash tokens from magic link
+  function parseHash(){
+    const hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
+    const q = new URLSearchParams(hash);
+    return { access_token: q.get('access_token'), refresh_token: q.get('refresh_token'), type: q.get('type') };
   }
 
-  // Step1: submit email to "send" code
-  formSend.addEventListener('submit', function (e) {
+  // Step 1: send reset email
+  formSend && formSend.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const email = (document.getElementById('email').value || '').trim();
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      alert('Introduce un correo válido.');
-      return;
-    }
-
-    // Placeholder: aquí podrías llamar a tu API que envía el correo:
-    // fetch('/api/auth/send-reset', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email }) })
-
-    alert('Correo de verificación enviado (placeholder) a: ' + email);
-    showStep(2);
+    const email = (qs('email').value||'').trim();
+    if(!email || !/^\S+@\S+\.\S+$/.test(email)){ showMessage(msg1,'Introduce un correo válido.','error'); return; }
+    try{
+      showMessage(msg1,'Enviando correo...','info');
+      const { url, key } = await getEnv();
+      const client = window.supabase.createClient(url, key);
+      await client.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/html/recovery.html` });
+      sessionStorage.setItem('recovery_email', email);
+      showMessage(msg1,'Te enviamos un enlace para restablecer tu contraseña. Revisa tu correo.','success');
+    }catch(err){ console.error(err); showMessage(msg1,'No pudimos enviar el correo. Intenta de nuevo.','error'); }
   });
 
-  // Step2: submit code + new password
-  formReset.addEventListener('submit', function (e) {
+  // Step 2: set new password (requires session from magic link)
+  formReset && formReset.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const code = (document.getElementById('code').value || '').trim();
-    const pw = (document.getElementById('newPassword').value || '');
-    const cpw = (document.getElementById('confirmPassword').value || '');
-
-    if (!/^\d{4,6}$/.test(code)) {
-      alert('Introduce un código válido (4-6 dígitos).');
-      return;
-    }
-    if (pw.length < 6) {
-      alert('La contraseña debe contener al menos 6 caracteres.');
-      return;
-    }
-    if (pw !== cpw) {
-      alert('Las contraseñas no coinciden.');
-      return;
-    }
-
-    // Placeholder: enviar al backend para verificar el código y reemplazar contraseña
-    // fetch('/api/auth/reset', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, password: pw }) })
-
-    alert('Contraseña cambiada (placeholder). Ahora puedes iniciar sesión con tu nueva contraseña.');
-    // opcional: redirigir a login
-    // window.location.href = '/login.html';
-    showStep(1); // volver a primer paso o redirigir
+    const pw = qs('newPassword').value||'';
+    const cpw = qs('confirmPassword').value||'';
+    if(pw.length < 8){ showMessage(msg2,'La contraseña debe tener al menos 8 caracteres.','error'); return; }
+    if(pw !== cpw){ showMessage(msg2,'Las contraseñas no coinciden.','error'); return; }
+    try{
+      showMessage(msg2,'Actualizando contraseña...','info');
+      const { url, key } = await getEnv();
+      const client = window.supabase.createClient(url, key);
+      // Asegura la sesión a partir del hash si aún no existe
+      const { data: sess } = await client.auth.getSession();
+      if(!sess?.session){
+        const tok = parseHash();
+        if (tok.access_token && tok.refresh_token){
+          await client.auth.setSession({ access_token: tok.access_token, refresh_token: tok.refresh_token });
+        }
+      }
+      const { error } = await client.auth.updateUser({ password: pw });
+      if(error) throw error;
+      showMessage(msg2,'Contraseña cambiada. Te llevamos al inicio de sesión...','success');
+      setTimeout(()=>{ window.location.href = '/html/login.html'; }, 1200);
+    }catch(err){ console.error(err); showMessage(msg2,'No pudimos cambiar la contraseña. Vuelve a abrir el enlace del correo.','error'); }
   });
 
-  // quick navigation
-  gotoStep2Btn.addEventListener('click', function () { showStep(2); });
-  backToStep1Btn.addEventListener('click', function () { showStep(1); });
+  // If user arrives from magic link, go to step 2
+  (function initFromLink(){
+    const tok = parseHash();
+    if(tok.access_token && tok.refresh_token){
+      showStep(2);
+      showMessage(msg2,'Enlace verificado. Establece tu nueva contraseña.','info');
+    }
+  })();
 
-  // back button (topbar) simple behavior: history back if available
-  backBtn && backBtn.addEventListener('click', function () {
-    if (window.history.length > 1) window.history.back();
-    else showStep(1);
-  });
+  // helpers
+  gotoStep2Btn && gotoStep2Btn.addEventListener('click', ()=> showStep(2));
+  backToStep1Btn && backToStep1Btn.addEventListener('click', ()=> showStep(1));
+  backBtn && backBtn.addEventListener('click', ()=>{ if(history.length>1) history.back(); else showStep(1); });
 
-  // init: ensure step1 visible
-  showStep(1);
-});
+})();

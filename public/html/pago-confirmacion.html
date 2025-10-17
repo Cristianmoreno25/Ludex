@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sección de Pagos</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/pago-confirmacion.css">
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <a href="./pago.html" class="back-btn" aria-label="Volver al pago">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1>Sección de Pagos</h1>
+  </header>
+
+  <main class="container centered">
+    <!-- Progreso -->
+    <div class="progress">
+      <span class="step active"><i class="fa-solid fa-check"></i><span>Pago</span></span>
+      <span class="divider">—</span>
+      <span class="step active"><i class="fa-solid fa-check"></i><span>Revisa</span></span>
+      <span class="divider">—</span>
+      <span class="step"><span>3</span><span>Terminar</span></span>
+    </div>
+
+    <p class="lead">Confirma y envía tu pedido. Al enviar aceptas nuestros Términos y Políticas.</p>
+
+    <section class="card">
+      <div class="row space-between">
+        <span class="label">Opciones de Pago</span>
+        <a href="#" class="edit">Modificar</a>
+      </div>
+      <div class="payment-option">
+        <i class="fa-solid fa-credit-card"></i> •••• •••• •••• 4242 <span class="exp">01/24</span>
+      </div>
+
+      <div class="row space-between">
+        <span class="label">Dirección de Envío</span>
+        <a href="#" class="edit">Modificar</a>
+      </div>
+      <p class="address">Juan Pérez<br>Calle de la Seguridad #123<br>Ciudad, País</p>
+    </section>
+
+    <section class="card summary">
+      <h2>Resumen del Pedido</h2>
+      <div class="row space-between"><span>Subtotal</span><span>$1,200.00</span></div>
+      <div class="row space-between"><span>Envío</span><span>$4.99</span></div>
+      <div class="row space-between total"><span>Total</span><span>$1,204.99</span></div>
+      <a href="./pago-exitoso.html" class="btn-primary">Realizar el Pago</a>
+    </section>
+  </main>
+
+  <!-- Menú inferior -->
+  <nav class="bottom-nav">
+    <a href="./browse.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-bell"></i><span>Alertas</span></a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-star"></i><span>Favoritos</span></a>
+    <a href="./library.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span>Biblioteca</span></a>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verificacion de cuenta - Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/verification.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+        </svg>
+        <span class="brand-name">Ludex</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="verify-card" role="region" aria-labelledby="verify-title">
+      <h1 id="verify-title" class="title">Verificacion de correo</h1>
+      <p class="subtitle">Haz clic en "Verificar" para completar tu registro.</p>
+
+      <div id="status" class="muted" aria-live="polite" style="margin-bottom:12px"></div>
+
+      <div class="shield" aria-hidden="true">
+        <svg width="60" height="60" viewBox="0 0 24 24"><path fill="#3366ff" d="M12 2l7 3v5c0 5-3.7 9.7-7 12-3.3-2.3-7-7-7-12V5l7-3z"/></svg>
+      </div>
+
+      <div class="form" id="verifyBox">
+        <button class="btn primary" id="verifyBtn" type="button">Verificar</button>
+        <button type="button" class="btn-link" id="resendBtn">Reenviar enlace</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/html/verification.js"></script>
+</body>
+</html>

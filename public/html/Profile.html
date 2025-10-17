@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ludex — Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+  <!-- HEADER igual a Browse -->
+  <header class="topbar">
+    
+    <div class="topbar-left">
+      <a href="./browse.html" class="back-btn" aria-label="Volver al pago">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <!-- Logo -->
+      <div class="brand">
+        <svg class="brand-mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+        </svg>
+        <span class="brand-name"><a href="./browse.html">Ludex</a></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main profile-page">
+    <!-- Título -->
+    <h1 class="profile-title">Perfil</h1>
+
+    <!-- Avatar + username -->
+    <div class="profile-info">
+      <!-- Foto de perfil real en forma circular -->
+      <img src="https://i.pravatar.cc/150?img=3" alt="Foto de perfil de usuario" class="profile-avatar">
+      <div class="profile-username">@usuario_actual</div>
+      <button class="edit-btn" aria-label="Editar perfil">✎</button>
+    </div>
+
+    <!-- Opciones -->
+    <nav class="profile-nav">
+      <ul>
+        <li><a href="./mis-compras.html" class="profile-item">Mis Compras <span class="arrow">›</span></a></li>
+        <li><a href="#" class="profile-item">Información de Pago <span class="arrow">›</span></a></li>
+        <li><a href="./configuration.html" class="profile-item">Configuraciones <span class="arrow">›</span></a></li>
+        <li><a href="./developer.html" class="profile-item">Actualizar a desarrollador <span class="arrow">›</span></a></li>
+      </ul>
+    </nav>
+
+    <hr class="divider">
+
+    <nav class="profile-nav">
+      <ul>
+        <li><a href="./index.html" class="profile-item logout">Cerrar sesión <span class="arrow">›</span></a></li>
+      </ul>
+    </nav>
+  </main>
+
+</body>
+</html>

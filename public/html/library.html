@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Librería — Ludex</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome (iconos) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS del submenú (menú único) -->
+  <link rel="stylesheet" href="../css/submenu.css">
+
+  <!-- CSS de la vista -->
+  <link rel="stylesheet" href="../css/views.css">
+</head>
+<body>
+  <header class="page-header">
+    <div class="page-left">
+      <!-- pequeño círculo/brand como en la imagen -->
+      <svg class="brand-mark" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+      </svg>
+
+      <!-- título de la sección -->
+      <span class="page-title">Libreria</span>
+    </div>
+
+    <!-- icons a la derecha (carrito + perfil) -->
+    <div class="topbar-right">
+      <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+      </button>
+      <button class="icon-btn" aria-label="Perfil" title="Perfil">
+        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+      </button>
+    </div>
+  </header>
+
+  <!-- Placeholder donde se inyectará el submenú (botón, overlay, nav lateral, bottom-nav) -->
+  <div id="submenu-container"></div>
+
+  <!-- Main content-->
+  <main class="container" id="mainContent">
+    <section class="library-list">
+      <article class="lib-card">
+        <img class="lib-thumb" src="images/illus1.jpg" alt="Cyber City">
+        <div class="lib-body">
+          <h3>Cyber City</h3>
+          <p class="muted">Explora las calles de una ciudad futurista llena de secretos y aventuras.</p>
+          <div class="lib-footer">
+            <span class="small muted">15 min 30 sec left</span>
+            <div>
+              <span class="status-pill in-progress">en proceso</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="lib-card">
+        <img class="lib-thumb" src="images/illus2.jpg" alt="Bosque Magico">
+        <div class="lib-body">
+          <h3>Bosque Mágico</h3>
+          <p class="muted">Sumérgete en un bosque encantado lleno de criaturas mágicas y sorpresas.</p>
+          <div class="lib-footer">
+            <span></span>
+            <div>
+              <button class="btn primary small">Jugar Ahora</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="lib-card">
+        <img class="lib-thumb" src="images/illus3.jpg" alt="Castillo Antiguo">
+        <div class="lib-body">
+          <h3>Castillo Antiguo</h3>
+          <p class="muted">Descubre los secretos de un castillo ancestral y sus legendarias historias.</p>
+          <div class="lib-footer">
+            <span></span>
+            <div>
+              <button class="btn primary small">Jugar Ahora</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- NOTA: se eliminó el <nav class="bottom-nav"> porque el submenu inyectado lo proveerá -->
+
+  <!-- Scripts -->
+  <!-- script de la vista (se deja como estaba) -->
+  <script src="../js/browse.js" defer></script>
+
+  <!-- script que monta el submenú único -->
+  <script src="../js/submenu.js" defer></script>
+</body>
+</html>
+

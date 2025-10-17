@@ -1,0 +1,171 @@
+
+/* === Reset & Base === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #111;
+  line-height: 1.5;
+}
+
+/* === Topbar (igual a Browse) === */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.brand-mark {
+  border-radius: 50%;
+}
+
+/* === Main === */
+.main {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.profile-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-username {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* === Opciones === */
+.profile-nav ul {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f1f2f4;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.profile-item:hover {
+  background: #e5e6ea;
+}
+
+.profile-item.logout {
+  color: #d33;
+}
+
+.arrow {
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+/* === Bottom Navigation (mobile only) === */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 10;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  color: #3366ff;
+  font-weight: 700;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex; 
+  }
+}
+
+@media (min-width: 769px) {
+  .main {
+    padding: 24px;
+  }
+}

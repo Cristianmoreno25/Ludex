@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ludex — Panel de Desarrollador</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.4/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/developer.css">
+
+ 
+<body>
+  <!-- HEADER oscuro con marca -->
+  <header class="topbar dev">
+    <div class="brand">
+      <!-- gamepad -->
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+        <path d="M7 10h10l2 2a3 3 0 1 0 3-3v0a3 3 0 0 0-3 3l-2-2H7l-2 2a3 3 0 1 0-3-3v0a3 3 0 0 0 3 3l2-2z" fill="#4f7bff"/>
+      </svg>
+      <span class="brand-name">Ludex</span>
+    </div>
+
+    <!-- Botón Salir de modo desarrollador -->
+    <button 
+      class="btn-exit-dev" 
+      onclick="window.location.href='browse.html'" 
+      aria-label="Salir al inicio">
+      <i class="fa-solid fa-house"></i>
+    </button>
+  </header>
+
+  <main class="main dev-page" id="mainContent">
+    <!-- JUEGOS SUBIDOS -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Juegos Subidos</h2>
+        <a href="./add-game.html" class="btn primary">Agregar un nuevo juego</a>
+      </div>
+
+      <article class="game-card uploaded">
+        <header class="game-head">
+          <h3><em>Aventura Galáctica</em></h3>
+          <button class="btn danger small">Eliminar</button>
+        </header>
+        <p class="meta">Fecha de carga: 15 de septiembre de 2023</p>
+        <p class="desc">Una emocionante aventura espacial.</p>
+        <div class="actions">
+          <button class="btn secondary small" onclick="window.location.href='edit-game.html'">Editar</button>
+        </div>
+      </article>
+
+      <article class="game-card uploaded">
+        <header class="game-head">
+          <h3><em>Carreras Extremas</em></h3>
+          <button class="btn danger small">Eliminar</button>
+        </header>
+        <p class="meta">Fecha de carga: 8 de agosto de 2023</p>
+        <p class="desc">Compite en rápidas carreras épicas.</p>
+        <div class="actions">
+          <button class="btn secondary small" onclick="window.location.href='edit-game.html'">Editar</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- JUEGOS VENDIDOS -->
+    <section class="section">
+      <div class="section-header with-link">
+        <h2>Juegos Vendidos</h2>
+        <a href="#" class="see-more" aria-label="Ver todos">›</a>
+      </div>
+
+      <article class="game-card sold">
+        <h3><em>Misterios del Bosque</em></h3>
+        <p class="meta">Total vendidos: 150</p>
+        <p class="desc">Explora los secretos del bosque.</p>
+      </article>
+
+      <article class="game-card sold">
+        <h3><em>Batalla de Robots</em></h3>
+        <p class="meta">Total vendidos: 200</p>
+        <p class="desc">Domina el campo de batalla robótico.</p>
+      </article>
+    </section>
+
+    <!-- ESTADÍSTICAS -->
+    <section class="section">
+      <div class="section-header-stats d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0">Estadísticas de Venta</h2>
+      </div>
+      <div class="container stats-container" style="max-width:1100px;">
+        <div class="row g-3 align-items-stretch">
+          <div class="col-lg-8">
+            <div class="card h-100">
+              <div class="card-body">
+                <h3 class="h6">Resumen por juego</h3>
+
+                <div class="table-wrapper mt-2">
+                  <table class="table table-hover align-middle" id="gamesTable">
+                    <thead class="table-light">
+                      <tr>
+                        <th scope="col">Juego</th>
+                        <th scope="col">Ventas</th>
+                        <th scope="col">Cant. descargas</th>
+                        <th scope="col">Valor ganado (USD)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-ventas="120" data-descargas="1500" data-valor="2400">
+                        <td class="fw-semibold">Starbound Arena</td>
+                        <td>120</td>
+                        <td>1,500</td>
+                        <td>$2,400.00</td>
+                      </tr>
+                      <tr data-ventas="80" data-descargas="900" data-valor="1200">
+                        <td class="fw-semibold">Moon Raider</td>
+                        <td>80</td>
+                        <td>900</td>
+                        <td>$1,200.00</td>
+                      </tr>
+                      <tr data-ventas="45" data-descargas="450" data-valor="540">
+                        <td class="fw-semibold">Potion Pack</td>
+                        <td>45</td>
+                        <td>450</td>
+                        <td>$540.00</td>
+                      </tr>
+                      <tr data-ventas="210" data-descargas="3200" data-valor="6300">
+                        <td class="fw-semibold">Rogue Legacy X</td>
+                        <td>210</td>
+                        <td>3,200</td>
+                        <td>$6,300.00</td>
+                      </tr>
+                      <tr data-ventas="10" data-descargas="120" data-valor="80">
+                        <td class="fw-semibold">Mini Golf VR</td>
+                        <td>10</td>
+                        <td>120</td>
+                        <td>$80.00</td>
+                      </tr>
+                      <tr data-ventas="65" data-descargas="850" data-valor="975">
+                        <td class="fw-semibold">Pixel Pirates</td>
+                        <td>65</td>
+                        <td>850</td>
+                        <td>$975.00</td>
+                      </tr>
+                      <tr data-ventas="32" data-descargas="300" data-valor="256">
+                        <td class="fw-semibold">Neon Drift</td>
+                        <td>32</td>
+                        <td>300</td>
+                        <td>$256.00</td>
+                      </tr>
+                      <tr data-ventas="5" data-descargas="60" data-valor="30">
+                        <td class="fw-semibold">PuzzleBox</td>
+                        <td>5</td>
+                        <td>60</td>
+                        <td>$30.00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Paginación numerica (tabla) -->
+                <nav aria-label="Paginación de tabla" class="mt-3">
+                  <ul class="pagination pagination-sm mb-0" id="tablePager">
+                    <!-- Items generados por JS -->
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card card-chart h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <h3 class="h6 mb-0">Gráfico</h3>
+                  <select class="form-select form-select-sm w-auto" id="chartTypeSelect" aria-label="Seleccionar tipo de gráfico">
+                    <option value="bar">Barras</option>
+                    <option value="line">Línea</option>
+                    <option value="pie">Pie</option>
+                    <option value="doughnut">Doughnut</option>
+                  </select>
+                </div>
+
+                <canvas id="statsChart" style="max-height:360px"></canvas>
+
+                <div class="mt-3 text-end">
+                  <button class="btn btn-sm btn-outline-secondary" id="exportCsv">Exportar CSV</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AYUDA -->
+    <section class="section">
+      <h2>Ayuda</h2>
+      <div class="help-card">
+        <p>Para ayuda con la navegación o funciones, por favor consulta nuestra guía de usuario o contacta soporte.</p>
+        <a href="update-Developer.html" class="btn primary align-end">Subir Actualización</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- NAV INFERIOR -->
+  <nav class="bottom-nav dev" aria-label="Navegación">
+    <a class="nav-btn" aria-label="Inicio" href="./developer.html">
+      <i class="fa-solid fa-house"></i>
+    </a>
+    <a class="nav-btn active" aria-label="Panel de desarrollador" href="./Profile.html">
+      <i class="fa-solid fa-user-gear"></i>
+    </a>
+  </nav>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ------------------ Configuración y utilidades ------------------
+    const rowsPerPage = 5;
+    let currentPage = 1;
+    const table = document.getElementById('gamesTable');
+    const tbody = table.querySelector('tbody');
+    const pager = document.getElementById('tablePager');
+    const chartCtx = document.getElementById('statsChart');
+    let chartInstance = null;
+
+    // Leer todas las filas como un array
+    const allRows = Array.from(tbody.querySelectorAll('tr'));
+
+    // ---------- Paginador simple (cliente) ----------
+    function renderPager(){
+      const totalPages = Math.ceil(allRows.length / rowsPerPage);
+      pager.innerHTML = '';
+      for(let p=1; p<=totalPages; p++){
+        const li = document.createElement('li');
+        li.className = 'page-item' + (p === currentPage ? ' active' : '');
+        const a = document.createElement('button');
+        a.className = 'page-link btn btn-sm';
+        a.textContent = p;
+        a.addEventListener('click', () => { currentPage = p; showPage(p); });
+        li.appendChild(a);
+        pager.appendChild(li);
+      }
+    }
+
+    function showPage(page){
+      const start = (page-1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      allRows.forEach((r, idx) => {
+        r.style.display = (idx >= start && idx < end) ? '' : 'none';
+      });
+      // actualizar gráfico con las filas visibles
+      renderChart(currentChartType);
+      // actualizar pager activo
+      Array.from(pager.children).forEach((li, i) => {
+        li.classList.toggle('active', i === page-1);
+      });
+    }
+
+    // ---------- Datos para gráficos (se usan las filas actualmente visibles) ----------
+    function getVisibleRowsData(){
+      const visible = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+      const labels = visible.map(r => r.children[0].textContent.trim());
+      const ventas = visible.map(r => Number(r.dataset.ventas || r.getAttribute('data-ventas') || r.children[1].textContent.replace(/[^0-9.-]/g,'')));
+      const descargas = visible.map(r => Number(r.dataset.descargas || r.getAttribute('data-descargas') || r.children[2].textContent.replace(/[^0-9.-]/g,'')));
+      const valor = visible.map(r => Number(r.dataset.valor || r.getAttribute('data-valor') || r.children[3].textContent.replace(/[^0-9.-]/g,'')));
+      return { labels, ventas, descargas, valor };
+    }
+
+    // ---------- Chart rendering (Chart.js) ----------
+    let currentChartType = 'bar';
+    function renderChart(type){
+      const data = getVisibleRowsData();
+      const cfg = {
+        type: type,
+        data: {},
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
+          scales: {}
+        }
+      };
+
+      if(type === 'pie' || type === 'doughnut'){
+        cfg.data = {
+          labels: data.labels,
+          datasets: [{
+            label: 'Valor ganado (USD)',
+            data: data.valor,
+            // default Chart.js colors will be used
+          }]
+        };
+      } else {
+        cfg.data = {
+          labels: data.labels,
+          datasets: [
+            { label: 'Ventas', data: data.ventas, tension: 0.2, borderWidth: 1, fill: false },
+            { label: 'Descargas', data: data.descargas, tension: 0.2, borderWidth: 1, fill: false }
+          ]
+        };
+        cfg.options.scales = { y: { beginAtZero: true } };
+      }
+
+      if(chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(chartCtx, cfg);
+      currentChartType = type;
+    }
+
+    // ---------- Nav para seleccionar tipo de gráfico ----------
+    const chartTypeSelect = document.getElementById('chartTypeSelect');
+    chartTypeSelect.addEventListener('change', (e) => {
+      renderChart(e.target.value);
+    });
+
+    // ---------- Funciones auxiliares ----------
+    function viewGame(btn){
+      const tr = btn.closest('tr');
+      alert('Abrir detalle: ' + tr.children[0].textContent.trim());
+    }
+
+    function openNotif(id){ alert('Abrir: ' + id); }
+    function markRead(id){ alert('Marcar leído: ' + id); }
+    function dismiss(id){ alert('Descartar: ' + id); }
+
+    // Exportar CSV
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      const rows = Array.from(tbody.querySelectorAll('tr')).map(r => {
+        const cells = Array.from(r.children).slice(0,4).map(td => td.textContent.trim().replace(/\$/g,''));
+        return cells.join(',');
+      });
+      const csv = ['Juego,Ventas,Descargas,Valor'].concat(rows).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'estadisticas_juegos.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Inicialización
+    (function init(){
+      renderPager();
+      showPage(1);
+      renderChart(currentChartType);
+      document.getElementById('updatedAt').textContent = new Date().toLocaleString();
+    })();
+
+    function salirModoDesarrollador() {
+      window.location.href = "index.html"; 
+    }
+  </script>
+</body>
+</html>

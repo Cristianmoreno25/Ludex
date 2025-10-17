@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pago Seguro</title>
+
+  <!-- Fuente para mantener estética -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Estilos de esta vista -->
+  <link rel="stylesheet" href="../css/pago.css">
+</head>
+<body>
+  <!-- Topbar (flecha vuelve al carrito) -->
+  <header class="topbar">
+    <a href="./carrito.html" class="back-btn" aria-label="Volver al carrito">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1>Pago Seguro</h1>
+  </header>
+
+  <main class="container centered">
+    <!-- Progreso -->
+    <div class="progress" aria-label="Progreso de compra">
+      <span class="step active">
+        <i class="fa-solid fa-check"></i><span>Pago</span>
+      </span>
+      <span class="divider">—</span>
+      <span class="step"><span>2</span><span>Revisa</span></span>
+      <span class="divider">—</span>
+      <span class="step"><span>3</span><span>Terminar</span></span>
+    </div>
+
+    <p class="lead">Selecciona un método de pago. No se te cobrará hasta revisar tu pedido.</p>
+
+    <!-- Formulario -->
+    <form class="payment-form" action="./pago-confirmacion.html" method="get" novalidate>
+      <label class="choice">
+        <input type="radio" name="metodo" value="tarjeta" checked>
+        <span class="dot"></span>
+        <span>Tarjeta de Crédito</span>
+      </label>
+
+      <div class="group">
+        <label class="sr-only" for="num">Número de tarjeta</label>
+        <input id="num" type="text" inputmode="numeric" maxlength="19"
+               placeholder="**** **** **** ****" required>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label class="sr-only" for="exp">Fecha de expiración</label>
+          <input id="exp" type="text" inputmode="numeric" maxlength="5" placeholder="MM/AA" required>
+        </div>
+        <div class="col">
+          <label class="sr-only" for="cvc">Código de seguridad</label>
+          <input id="cvc" type="text" inputmode="numeric" maxlength="4" placeholder="CVC" required>
+        </div>
+      </div>
+
+      <div class="group">
+        <label class="sr-only" for="name">Nombre en la tarjeta</label>
+        <input id="name" type="text" placeholder="Nombre Apellido" required>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" checked>
+        <span class="box"></span>
+        <span>La dirección de facturación es igual a la de envío</span>
+      </label>
+
+      <label class="choice alt">
+        <input type="radio" name="metodo" value="apple">
+        <span class="dot"></span>
+        <span>Apple Pay</span>
+      </label>
+
+      <label class="choice alt">
+        <input type="radio" name="metodo" value="paypal">
+        <span class="dot"></span>
+        <span>PayPal</span>
+      </label>
+
+      <button type="submit" class="btn-primary">Confirmar</button>
+    </form>
+  </main>
+
+  <!-- Menú inferior -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <a href="./browse.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-bell"></i><span>Alertas</span></a>
+    <a href="#" class="nav-item"><i class="fa-solid fa-star"></i><span>Favoritos</span></a>
+    <a href="./library.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i><span>Biblioteca</span></a>
+  </nav>
+</body>
+</html>

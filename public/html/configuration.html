@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Configuración</title>
+  <link rel="stylesheet" href="../css/configuration.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-k6RqeWeci5ZR/Lv4MR0sA0FfDOMb1p9Q6E6K5f5Y5q6gq2Q6s6b6Q6Z6Q6Z6Q6Z"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <a href="./Profile.html" class="back-btn" aria-label="Atrás">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="icon-arrow-left" aria-hidden="true" role="img">
+            <path d="M15 18l-6-6 6-6"/>
+        </svg>
+    </a>
+    <h1><i class="fa-solid fa-cog"></i> Configuración</h1>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <aside class="profile-card" aria-label="Resumen del usuario">
+        <div class="avatar-wrap">
+          <img src="/mnt/data/d911143d-0758-489e-9103-164835537262.png" alt="Avatar" class="avatar">
+          <button class="upload-link">Subir Foto</button>
+        </div>
+        <div>
+          <div class="user-name">Usuario Actual</div>
+          <div class="user-handle">@usuario_actual</div>
+        </div>
+      </aside>
+
+      <section class="panel" aria-label="Opciones de perfil">
+        <h2 class="section-title">Opciones</h2>
+
+        <form class="profile-form" autocomplete="off">
+          <div class="card">
+            <label>
+              <span class="label-text">Nombre</span>
+              <input type="text" name="name" placeholder="Usuario Actual" />
+            </label>
+
+            <label>
+              <span class="label-text">User name</span>
+              <input type="text" name="username" placeholder="Usuario Actual" />
+            </label>
+
+            <label>
+              <span class="label-text">Email</span>
+              <input type="email" name="email" placeholder="@usuario_actual" />
+            </label>
+
+            <label>
+              <span class="label-text">Teléfono</span>
+              <input type="tel" name="phone" placeholder="+57" />
+            </label>
+          </div>
+
+          <a href="#" class="change-pw"><a href="./recovery.html">Cambiar contraseña</a></a>
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Guardar Cambios</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

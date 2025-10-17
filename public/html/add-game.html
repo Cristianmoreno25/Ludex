@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir Juego - Ludex</title>
+  <link rel="stylesheet" href="../css/add-game.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <header class="header">
+    <h1>Subir juego.</h1>
+    <button class="close-btn">&times;</button>
+
+      <script>
+     document.querySelector(".close-btn").addEventListener("click", () => {
+        window.location.href = "developer.html";
+    });
+    </script>
+  </header>
+
+  <!-- Progreso de pasos -->
+  <nav class="steps">
+    <span class="active">Detalles</span>
+    <span>&gt; Archivo</span>
+    <span>&gt; Terminar</span>
+  </nav>
+
+  <!-- Formulario -->
+  <main class="form-container">
+    <section>
+      <h2>Información del Juego</h2>
+      <label for="email">E-mail</label>
+      <input type="email" id="email" value="desarrollador@ejemplo.com" disabled>
+    </section>
+
+    <section>
+      <h2>Detalles del juego</h2>
+      
+      <div class="form-group">
+        <label for="nombre">Nombre del Juego</label>
+        <input type="text" id="nombre" placeholder="Ej: Aventura Épica">
+      </div>
+
+      <div class="form-group">
+        <label for="categoria">Categoría</label>
+        <input type="text" id="categoria" placeholder="Ej: Acción">
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Un emocionante juego de aventuras."></textarea>
+      </div>
+
+      <div class="form-inline">
+        <div>
+          <label for="codigo">Código Postal</label>
+          <input type="text" id="codigo" placeholder="12345">
+        </div>
+        <div>
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" placeholder="Ciudad de los Juegos">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="pais">País</label>
+        <input type="text" id="pais" value="Colombia" disabled>
+      </div>
+
+      <div class="form-group">
+        <label for="genero">Género</label>
+        <select id="genero">
+          <option>Acción</option>
+          <option>Aventura</option>
+          <option>Estrategia</option>
+          <option>RPG</option>
+          <option>Deportes</option>
+        </select>
+      </div>
+    </section>
+
+    <button class="btn-primary" onclick="window.location.href='add-game-archivo.html';">Siguiente</button>
+  </main>
+     <!-- NAV INFERIOR  -->
+  <nav class="bottom-nav dev" aria-label="Navegación">
+    <a class="nav-btn" aria-label="Inicio" href="./developer.html">
+      <i class="fa-solid fa-house"></i>
+     </a>
+      <a class="nav-btn active" aria-label="Panel de desarrollador" href="./Profile.html">
+    <i class="fa-solid fa-user-gear"></i>
+   </a>
+
+
+</body>
+</html>

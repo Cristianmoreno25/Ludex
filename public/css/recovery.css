@@ -1,0 +1,75 @@
+:root{
+  --bg: #ffffff;
+  --surface:#fbfdff;
+  --muted:#6b7280;
+  --accent:#3366ff;
+  --accent-2:#4f7bff;
+  --card:#ffffff;
+  --radius:14px;
+  --shadow:0 18px 48px rgba(18,27,64,0.06);
+  --max-width-mobile:420px;
+}
+
+/* basic reset */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:linear-gradient(180deg,var(--surface),var(--bg));color:#0f172a}
+a{color:inherit}
+
+/* topbar */
+.topbar{height:64px;display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(15,23,42,0.03);background:transparent;position:sticky;top:0;z-index:30}
+.topbar-inner{display:flex;align-items:center;gap:12px}
+.back-btn{background:transparent;border:0;font-size:20px;padding:8px;cursor:pointer}
+.brand{display:flex;align-items:center;gap:8px}
+.brand-name{font-weight:700}
+
+/* page layout */
+.page{min-height:calc(100vh - 64px);display:flex;align-items:flex-start;justify-content:center;padding:22px;gap:18px}
+
+/* card (mobile-first) */
+.card{
+  width:100%;
+  max-width:420px;
+  border-radius:12px;
+  background:var(--card);
+  padding:18px;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(15,23,42,0.03);
+}
+.card-title{font-size:20px;margin:6px 0 6px;font-weight:700}
+.card-sub{font-size:13px;color:var(--muted);margin:0 0 12px;line-height:1.4}
+
+/* form elements */
+.form{display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field-label{font-size:12px;color:var(--muted);font-weight:700}
+input[type="email"], input[type="text"], input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.08);
+  background:#fbfdff;
+  font-size:14px;
+  outline:none;
+}
+input:focus{box-shadow:0 12px 30px rgba(51,102,255,0.06);border-color:rgba(51,102,255,0.12)}
+
+/* actions & buttons */
+.actions{display:flex;justify-content:flex-start;margin-top:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff}
+.btn-link{background:transparent;border:0;color:var(--accent);font-weight:700;cursor:pointer;padding:6px}
+
+/* small helper text */
+.hint{margin-top:10px}
+.muted{color:var(--muted);font-size:13px}
+
+/* visibility helper */
+.hidden{display:none}
+
+/* responsive: centered card for desktop, wider */
+@media(min-width:900px){
+  .page{padding:48px;align-items:center}
+  .card{max-width:520px;padding:26px;border-radius:16px}
+  .actions{justify-content:flex-start}
+  .form{gap:16px}
+}

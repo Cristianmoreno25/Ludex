@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notificaciones — Ludex</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome (iconos) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.4/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- CSS del submenú (menú único) -->
+  <link rel="stylesheet" href="../css/submenu.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/views.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="page-header">
+    <div class="page-left">
+      <!-- pequeño círculo/brand como en la imagen -->
+      <svg class="brand-mark" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+      </svg>
+
+      <!-- título de la sección (cámbialo por cada página) -->
+      <span class="page-title">Notificaciones</span>
+    </div>
+
+    <!-- icons a la derecha (carrito + perfil) -->
+    <div class="topbar-right">
+      <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+      </button>
+      <button class="icon-btn" aria-label="Perfil" title="Perfil">
+        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+      </button>
+    </div>
+  </header>
+
+  <!-- Placeholder donde se inyectará el submenú (botón, overlay, nav lateral y bottom-nav) -->
+  <div id="submenu-container"></div>
+
+  <!-- Main content (reemplazado por la versión con Bootstrap collapse) -->
+  <main class="container py-4" id="mainContent" style="max-width:900px;">
+
+    <section class="mb-4">
+      <h2 class="h6 mb-3 fw-semibold">Hoy</h2>
+
+      <ul class="list-group">
+        <!-- ITEM 1 -->
+        <li class="list-group-item d-flex gap-3 align-items-start" id="item-1">
+          <img src="https://picsum.photos/seed/game1/120/120" alt="Juego" width="64" height="64" class="flex-shrink-0 rounded">
+          <div class="flex-grow-1 min-width-0">
+            <div class="d-flex align-items-start justify-content-between">
+              <div class="me-3 min-width-0">
+                <div class="fw-bold text-truncate">Nuevos Juegos Lanzados</div>
+                <div class="text-muted small text-truncate">Ludex Actualizaciones — 2 juegos añadidos</div>
+                <div class="text-muted small mt-1">Hace 1h</div>
+              </div>
+
+              <!-- Chevrón controla collapse (Bootstrap data attributes) -->
+              <div class="ms-2">
+                <button class="btn btn-sm btn-outline-secondary"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#detail-1"
+                        aria-expanded="false"
+                        aria-controls="detail-1"
+                        title="Ver detalles">
+                  <i class="bi bi-chevron-down"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="collapse mt-3" id="detail-1">
+              <div class="border rounded bg-white p-3">
+                <p class="mb-2"><strong>Starbound Arena</strong> y <strong>Moon Raider</strong> ya disponibles: trailer, modo cooperativo y demo.</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" onclick="openNotif('item-1')">Abrir</button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="markRead('item-1')">Marcar leído</button>
+                  <button class="btn btn-sm btn-link text-danger" onclick="dismiss('item-1')">Descartar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- ITEM 2 -->
+        <li class="list-group-item d-flex gap-3 align-items-start" id="item-2">
+          <img src="https://picsum.photos/seed/game2/120/120" alt="Juego" width="64" height="64" class="flex-shrink-0 rounded">
+          <div class="flex-grow-1 min-width-0">
+            <div class="d-flex align-items-start justify-content-between">
+              <div class="me-3 min-width-0">
+                <div class="fw-bold text-truncate">Mis juegos favoritos</div>
+                <div class="text-muted small text-truncate">Jugador Entusiasta — Nueva reseña</div>
+                <div class="text-muted small mt-1">Hace 2h</div>
+              </div>
+
+              <div class="ms-2">
+                <button class="btn btn-sm btn-outline-secondary"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#detail-2"
+                        aria-expanded="false"
+                        aria-controls="detail-2"
+                        title="Ver detalles">
+                  <i class="bi bi-chevron-down"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="collapse mt-3" id="detail-2">
+              <div class="border rounded bg-white p-3">
+                <p class="mb-2">La reseña destaca mejoras en jugabilidad y balance. Puntuación: 8.7/10.</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" onclick="openNotif('item-2')">Leer reseña</button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="markRead('item-2')">Marcar leído</button>
+                  <button class="btn btn-sm btn-link text-danger" onclick="dismiss('item-2')">Descartar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="h6 mb-3 fw-semibold">Anterior</h2>
+
+      <ul class="list-group">
+        <li class="list-group-item d-flex gap-3 align-items-start opacity-75" id="item-3">
+          <img src="https://picsum.photos/seed/game3/120/120" alt="Juego" width="64" height="64" class="flex-shrink-0 rounded">
+          <div class="flex-grow-1 min-width-0">
+            <div class="d-flex align-items-start justify-content-between">
+              <div class="me-3 min-width-0">
+                <div class="fw-bold text-truncate">Cómo funcionan los modos</div>
+                <div class="text-muted small text-truncate">Experto Fiscal — guía rápida</div>
+                <div class="text-muted small mt-1">Hace 18 d</div>
+              </div>
+
+              <div class="ms-2">
+                <button class="btn btn-sm btn-outline-secondary"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#detail-3"
+                        aria-expanded="false"
+                        aria-controls="detail-3"
+                        title="Ver detalles">
+                  <i class="bi bi-chevron-down"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="collapse mt-3" id="detail-3">
+              <div class="border rounded bg-white p-3">
+                <p class="mb-2">Guía sobre modos de juego: diferencias entre competitivo, cooperativo y eventos temporales.</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" onclick="openNotif('item-3')">Abrir guía</button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="markRead('item-3')">Marcar leído</button>
+                  <button class="btn btn-sm btn-link text-danger" onclick="dismiss('item-3')">Descartar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Nota: se eliminó el bottom-nav porque el submenú inyectado proveerá la navegación -->
+  
+  <!-- Bootstrap JS bundle (incluye Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="../js/browse.js" defer></script>
+
+  <!-- script que monta el submenú único -->
+  <script src="../js/submenu.js" defer></script>
+</body>
+</html>
+

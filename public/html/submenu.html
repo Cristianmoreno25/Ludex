@@ -1,0 +1,28 @@
+<!-- partials/submenu.html -->
+<div class="submenu-root" id="site-submenu-root">
+  <!-- Botón de menú (autocontenido) -->
+  <button class="menu-icon-button" id="submenu-open-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-submenu">
+    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+  </button>
+
+  <!-- Overlay (se muestra al abrir) -->
+  <div class="overlay" id="submenu-overlay" data-action="close-menu" tabindex="-1" aria-hidden="true"></div>
+
+  <!-- Submenú lateral -->
+  <nav id="site-submenu" class="submenu" role="navigation" aria-label="Navegación principal">
+    <ul>
+      <li><a href="./browse.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Inicio</a></li>
+      <li><a href="./notifications.html"><i class="fa-solid fa-bell" aria-hidden="true"></i> Notificaciones</a></li>
+      <li><a href="./wishlist.html"><i class="fa-solid fa-star" aria-hidden="true"></i> Juegos deseados</a></li>
+      <li><a href="./library.html"><i class="fa-solid fa-book" aria-hidden="true"></i> Biblioteca</a></li>
+    </ul>
+  </nav>
+
+  <!-- Menú inferior (solo móvil) -->
+  <nav class="bottom-nav" aria-label="Navegación inferior">
+    <a href="./browse.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Inicio</span></a>
+    <a href="./notifications.html" class="nav-item"><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Alertas</span></a>
+    <a href="./wishlist.html" class="nav-item"><i class="fa-solid fa-star" aria-hidden="true"></i><span>Favoritos</span></a>
+    <a href="./library.html" class="nav-item"><i class="fa-solid fa-bars" aria-hidden="true"></i><span>Biblioteca</span></a>
+  </nav>
+</div>

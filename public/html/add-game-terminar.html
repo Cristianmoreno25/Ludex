@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir Juego - Terminar</title>
+  <link rel="stylesheet" href="../css/add-game-terminar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <header class="header">
+    <h1>Subir juego.</h1>
+    <button class="close-btn">&times;</button>
+
+      <script>
+     document.querySelector(".close-btn").addEventListener("click", () => {
+        window.location.href = "developer.html";
+    });
+    </script>
+  </header>
+
+  <!-- Progreso de pasos -->
+  <nav class="steps">
+    <span>Detalles</span>
+    <span>&gt; Archivo</span>
+    <span class="active">&gt; Terminar</span>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="form-container">
+    <!-- Logo -->
+    <div class="brand">
+      <svg class="brand-mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#4f7bff"/>
+      </svg>
+      <span class="brand-name">Ludex</span>
+    </div>
+
+    <!-- Botón para terminar -->
+    <button class="btn-primary" onclick="window.location.href='developer.html';">Subir Juego</button>
+  </main>
+
+ <!-- NAV INFERIOR  -->
+  <nav class="bottom-nav dev" aria-label="Navegación">
+    <a class="nav-btn" aria-label="Inicio" href="./developer.html">
+      <i class="fa-solid fa-house"></i>
+     </a>
+      <a class="nav-btn active" aria-label="Panel de desarrollador" href="./Profile.html">
+    <i class="fa-solid fa-user-gear"></i>
+   </a>
+</nav>
+
+</body>
+</html>

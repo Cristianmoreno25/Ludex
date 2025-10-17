@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ludex — Presentación / Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/bienvenida.css">
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <div class="container-desktop">
+      <!-- SECTION 1: Splash / Intro -->
+      <section class="hero" aria-label="Presentación Ludex">
+        <div class="hero-copy">
+          <h1 class="brand">Ludex</h1>
+          <p class="lead">Descubre y compra tus juegos</p>
+        </div>
+        <img src="../images/undraw_video-game-night_fxcu.svg" alt="Ilustración Ludex" class="hero-illustration">
+      </section>
+
+      <!-- SECTION 2 -->
+      <section class="welcome" aria-label="Inicio / Registro">
+        <div class="welcome-card">
+          <h2>Bienvenido a <span class="brand-inline">Ludex</span></h2>
+          <p class="lead-desc">En esta plataforma podrás subir, descargar y disfrutar de tus videojuegos favoritos de manera rápida y segura.</p>
+
+          <img src="../images/carro.svg" alt="Ilustración control" class="illustr-small">
+
+          <div class="social-row" aria-hidden>
+            <button class="social-btn" title="Continuar con Google" aria-label="Continuar con Google">
+              <!-- Google mark -->
+              <svg viewBox="0 0 48 48" aria-hidden focusable="false"><path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.7 8.1 3.1l6-5.8C35 4 30.9 2 24 2 14.9 2 7.6 7 4 14.2l7.4 5.7C13 15.1 18 9.5 24 9.5z"/><path fill="#34A853" d="M46.5 24.5c0-1.6-.2-2.8-.6-4H24v8h12.7c-.5 3-2.3 5.6-5 7.1l7.7 6c4.5-4.2 7.1-10.3 7.1-17.1z"/><path fill="#4A90E2" d="M11.4 28.9c-.6-1.7-1-3.5-1-5.4 0-1.9.4-3.7 1-5.4L4 12.4C1.4 16.2 0 20.9 0 26c0 5.1 1.4 9.8 4 13.6l7.4-5.7z"/><path fill="#FBBC05" d="M24 44c6.9 0 12.9-2.4 17.3-6.5l-8.8-6.8C29.9 32.3 27.1 33 24 33c-6 0-11-5.6-12.6-13.3L3.9 27.6C7.6 35 14.7 44 24 44z"/></svg>
+            </button>
+
+            <button class="social-btn" title="Continuar con Facebook" aria-label="Continuar con Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden focusable="false"><path fill="#1877F2" d="M22 12.1C22 6.5 17.5 2 11.9 2S2 6.5 2 12.1c0 5 3.7 9.1 8.6 9.9v-7h-2.6v-2.9H10.6V9.7c0-2.6 1.6-4 4-4 1.2 0 2.4.2 2.4.2v2.7h-1.4c-1.4 0-1.8.9-1.8 1.8v2.1h3l-.5 2.9h-2.4v7C18.3 21.2 22 17.1 22 12.1z"/></svg>
+            </button>
+          </div>
+
+          <!-- AUTH ROW (registrarse / iniciar sesión) -->
+          <div class="auth-row" role="group" aria-label="Opciones de autenticación">
+            <button class="btn small" id="registerBtn"> <a href="./register.html">Registrarse</a></button>
+            <button class="btn small" id="loginBtn"><a href="./login.html">Iniciar sesión</a></button>
+          </div>
+
+          <p class="muted-small">Explora la plataforma sin crear cuenta.</p>
+
+          <!-- ÚNICO BOTÓN: accessBtn (desktop card) -->
+          <div class="panel-cta">
+            <button class="btn primary access" id="accessBtn"><a href="browse.html">Continuar sin cuenta</a></button>
+          </div>
+        </div>
+
+        <div class="bottom-cta" aria-hidden>
+          <button class="btn full access" id="accessBtn-mobile"><a href="browse.html">Continuar sin cuenta</a></button>
+        </div>
+      </section>
+    </div> 
+  </div>
+
+  <script src="../js/bienvenida.js"></script>
+</body>
+</html>

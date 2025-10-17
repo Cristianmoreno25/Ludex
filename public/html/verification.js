@@ -64,7 +64,7 @@
       }
 
       setStatus('Cuenta verificada y perfil creado. Redirigiendo...');
-      setTimeout(() => { window.location.href = '/auth/login'; }, 1200);
+      setTimeout(() => { window.location.href = '/html/verification.html'; }, 1200);
     } catch (e) {
       console.error(e);
       setStatus(e.message || 'Error durante la verificacion', 'error');

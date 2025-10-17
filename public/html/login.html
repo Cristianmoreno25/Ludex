@@ -3,124 +3,95 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign In — Ludex</title>
+  <title>Iniciar sesión — Ludex</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
-  <main class="page" role="main">
-    <!-- LEFT: illustration (visible on desktop) -->
-    <aside class="illus" aria-hidden="true">
-      <!-- Replace src with your illustration path -->
-      <img src="../images/login.svg" alt="Ilustración Ludex" class="illus-img">
-    </aside>
+  <main class="container" role="main">
 
-    <!-- RIGHT: login card -->
-    <section class="card" role="region" aria-labelledby="login-title">
-      <header class="card-header">
-        <div class="logo" aria-hidden="true">
-          <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden focusable="false">
+    <!-- PANEL: formulario (ancho controlado por CSS, centrado) -->
+    <aside class="panel" aria-labelledby="login-title">
+      <div class="brand" aria-hidden="false">
+        <div class="logo">
+          <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="10" fill="#3366ff"/>
             <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0z" fill="#fff" opacity="0.12"/>
           </svg>
-        </div>
 
-        <h1 id="login-title" class="brand-title"><a href="../html/index.html">Ludex</a></h1>
-      </header>
-
-      <form id="loginForm" class="form" autocomplete="on" novalidate>
-        <!-- Social access (Google + Facebook) -->
-        <div class="social-row social-top" role="group" aria-label="Iniciar sesión con redes">
-          <button type="button" class="btn social google" id="socialGoogle" aria-label="Continuar con Google">
-            <!-- Google G -->
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden focusable="false">
-              <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.7 8.1 3.1l6-5.8C35 4 30.9 2 24 2 14.9 2 7.6 7 4 14.2l7.4 5.7C13 15.1 18 9.5 24 9.5z"/>
-              <path fill="#34A853" d="M46.5 24.5c0-1.6-.2-2.8-.6-4H24v8h12.7c-.5 3-2.3 5.6-5 7.1l7.7 6c4.5-4.2 7.1-10.3 7.1-17.1z"/>
-              <path fill="#4A90E2" d="M11.4 28.9c-.6-1.7-1-3.5-1-5.4 0-1.9.4-3.7 1-5.4L4 12.4C1.4 16.2 0 20.9 0 26c0 5.1 1.4 9.8 4 13.6l7.4-5.7z"/>
-              <path fill="#FBBC05" d="M24 44c6.9 0 12.9-2.4 17.3-6.5l-8.8-6.8C29.9 32.3 27.1 33 24 33c-6 0-11-5.6-12.6-13.3L3.9 27.6C7.6 35 14.7 44 24 44z"/>
-            </svg>
-            Continue with Google
-          </button>
-
-          <button type="button" class="btn social fb" id="socialFacebook" aria-label="Continuar con Facebook">
-            <!-- Facebook f -->
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden focusable="false">
-              <path fill="#1877F2" d="M22 12.1C22 6.5 17.5 2 11.9 2S2 6.5 2 12.1c0 5 3.7 9.1 8.6 9.9v-7h-2.6v-2.9H10.6V9.7c0-2.6 1.6-4 4-4 1.2 0 2.4.2 2.4.2v2.7h-1.4c-1.4 0-1.8.9-1.8 1.8v2.1h3l-.5 2.9h-2.4v7C18.3 21.2 22 17.1 22 12.1z"/>
-            </svg>
-            Continue with Facebook
-          </button>
-        </div>
-
-        <div class="divider"><span>or</span></div>
-
-        <!-- Identity fields -->
-        <label class="field">
-          <span class="field-label">Email or Username</span>
-          <input type="text" name="identity" id="identity" placeholder="Enter your email or username" autocomplete="username" required>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Password</span>
-          <div class="pw-wrapper">
-            <input id="password" type="password" name="password" placeholder="Create a password" autocomplete="current-password" required>
-            <button type="button" class="pw-toggle" aria-label="Mostrar contraseña" data-target="password">
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden focusable="false"><path d="M12 5c-7 0-11 6-11 7s4 7 11 7 11-6 11-7-4-7-11-7z" fill="none" stroke="#6b7280" stroke-width="1.2"/><circle cx="12" cy="12" r="3" fill="#6b7280"/></svg>
-            </button>
+          <div>
+            <h1 id="login-title" class="title">Ludex</h1>
+            <div class="subtitle">Accede a tu cuenta</div>
           </div>
-        </label>
+        </div>
+      </div>
 
-        <div class="aux-row">
-          <label class="checkbox-inline">
-            <input type="checkbox" name="remember" id="remember">
-            <span>Remember me</span>
+      <!-- Wrapper que centra el formulario dentro del panel -->
+      <div class="form-wrap">
+        <form id="loginForm" autocomplete="on" novalidate aria-describedby="formHelp" aria-live="polite">
+          <div id="formHelp" class="helper">Usa tu correo o nombre de usuario.</div>
+
+          <label class="field">
+            <span>Email</span>
+            <input type="email" id="identity" name="identity" placeholder="ejemplo@correo.com" required autocomplete="username">
           </label>
 
-          <a href="./recovery.html" class="link-lite" id="forgotLink">Forgot password?</a>
-        </div>
+          <label class="field">
+            <span>Contraseña</span>
+            <input type="password" id="password" name="password" placeholder="Introduce tu contraseña" required autocomplete="current-password">
+          </label>
 
-        <div class="actions">
-          <button type="submit" class="btn primary" id="signInBtn"><a href="./verification.html">Sign In</a></button>
-        </div>
+          <div class="row">
+            <label class="checkbox-inline"><input type="checkbox" id="remember" name="remember"> Recordarme</label>
+            <a href="./recovery.html" class="link-small">¿Olvidaste la contraseña?</a>
+          </div>
 
-        <!-- social row bottom (mobile fallback) -->
-        <div class="social-row social-bottom" aria-hidden="true">
-          <button type="button" class="btn social" id="socialGoogle2">Google</button>
-          <button type="button" class="btn social" id="socialFacebook2">Facebook</button>
-        </div>
+          <button type="submit" class="btn primary" id="signInBtn">Iniciar sesión</button>
 
-        <p class="small muted">Don’t have an account? <a href="../html/register.html" class="link" id="createLink">Create one</a></p>
-      </form>
-    </section>
+          <div class="row" style="margin-top:8px">
+            <div class="helper">También puedes iniciar sesión con:</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" class="btn social" id="socialGoogle" aria-label="Iniciar con Google">Google</button>
+            <button type="button" class="btn social" id="socialFacebook" aria-label="Iniciar con Facebook">Facebook</button>
+          </div>
+          <div class="caption">¿No tienes cuenta? <a href="../html/register.html" class="link-small">Crea una</a></div>
+        </form>
+        
+      </div>
+
+      <!-- Legal / footer del panel -->
+      <div class="legal">
+        <div>Copyright © 2024 Ludex</div>
+        <div style="margin-top:8px"><a href="#">Términos de servicio</a> • <a href="#">Política de privacidad</a></div>
+      </div>
+    </aside>
+
+    <!-- ILUSTRACIÓN: ocupa el resto. Se usa background para que la imagen se adapte (cover) -->
+    <section class="illus-wrap" aria-hidden="true" role="img" aria-label="Ilustración de Ludex"><img src="../images/login.svg" alt="juego de guerra de naves"></section>
   </main>
 
   <script>
-    // Toggle password visibility
-    document.querySelectorAll('.pw-toggle').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var target = document.getElementById(btn.dataset.target);
-        if(!target) return;
-        target.type = (target.type === 'password') ? 'text' : 'password';
-        btn.setAttribute('aria-pressed', target.type === 'text');
-      });
-    });
-
-    // Form submit placeholder
+    // Demo – validación simple
     document.getElementById('loginForm').addEventListener('submit', function(e){
       e.preventDefault();
-      alert('Sign in (placeholder)');
+      const id = document.getElementById('identity');
+      const pw = document.getElementById('password');
+      if(!id.value || !pw.value){
+        alert('Completa email y contraseña');
+        return;
+      }
+      // En producción: reemplaza por fetch() a tu API
+      window.location.href = './verification.html';
     });
 
-    // Social buttons placeholders
-    var socials = ['socialGoogle','socialFacebook','socialGoogle2','socialFacebook2'];
-    socials.forEach(function(id){
-      var el = document.getElementById(id);
-      if(el) el.addEventListener('click', function(){ alert(id + ' (placeholder)'); });
+    ['socialGoogle','socialFacebook'].forEach(function(id){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('click', function(){
+        alert('Aquí se integraría OAuth para ' + (id.includes('Google') ? 'Google' : 'Facebook'));
+      });
     });
-
-    // links placeholders
-    document.getElementById('registerBtn').addEventListener('click', function(){ alert('Ir a registro (placeholder)'); });
-    document.getElementById('createLink').addEventListener('click', function(e){ e.preventDefault(); alert('Crear cuenta (placeholder)'); });
-    document.getElementById('forgotLink').addEventListener('click', function(e){ e.preventDefault(); alert('Recuperar contraseña (placeholder)'); });
   </script>
 </body>
 </html>

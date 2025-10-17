@@ -1,140 +1,298 @@
+/* login-style.css - versión corregida: imagen arriba en móvil y solapamiento */
 :root{
-  --bg:#ffffff;
-  --surface:#fbfdff;
-  --muted:#6b7280;
-  --accent:#3366ff;
-  --accent-2:#4f7bff;
-  --card:#fbfdff;
-  --radius:12px;
-  --shadow:0 12px 40px rgba(18,27,64,0.06);
-  --max-width-mobile:420px;
-  --card-width:460px;
-  --illus-width:520px;
+  --bg: #f6f8fb;
+  --panel-bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #d9532f;
+  --accent-2: #e76b3a;
+  --shadow: 0 8px 30px rgba(18,27,64,0.06);
+
+  /* Ajusta esto para controlar cuánto ocupa la columna del formulario:
+     42% = formulario más estrecho, 50% = mitad exacta, 55% = formulario más ancho */
+  --left-width-percent: 42%;
+  --form-max-width: 420px; /* ancho máximo de la tarjeta de formulario */
+  --mobile-illus-height: 260px; /* altura de la ilustración en móvil */
+  --mobile-overlap: 48px; /* cuánto solapa la imagen sobre el panel en móvil */
 }
 
-/* Reset & base */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;padding:0}
-html, body { overflow-x: hidden; } 
-body{
-  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color:#0f172a;
-  background: linear-gradient(180deg,var(--surface),var(--bg));
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+/* Reset y base */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #0f172a;
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Page layout mobile-first: single column */
-.page{
-  min-height:100vh;
+/* Contenedor principal: dos columnas en desktop, apilado en mobile */
+.container{
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Panel izquierdo (formulario). Su ancho está controlado por --left-width-percent */
+.panel{
+  background: var(--panel-bg);
+  box-shadow: var(--shadow);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 2;
+  position: relative;
+
+  /* ancho relativo */
+  flex: 0 0 var(--left-width-percent);
+  max-width: var(--left-width-percent);
+  min-width: 300px;
+}
+
+/* Cabezera / branding */
+.brand .logo { display:flex; align-items:center; gap:12px; }
+.title { font-size:20px; font-weight:700; margin:0; }
+.subtitle { font-size:13px; color:var(--muted); }
+
+/* texto pequeño */
+.caption { font-size:13px; color:var(--muted); }
+
+/* Wrapper que centra el formulario dentro del panel */
+.form-wrap{
+  flex: 1 1 auto;                /* ocupa espacio entre header y footer */
+  display: flex;
+  align-items: center;           /* centrado vertical */
+  justify-content: center;       /* centrado horizontal */
+  padding: 12px 0;
+}
+
+/* Formulario: tarjeta centrada */
+form#loginForm{
+  width: 100%;
+  max-width: var(--form-max-width);
+  margin: 0;
   display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  padding:28px 18px;
-  gap:18px;
+  flex-direction:column;
+  gap:12px;
+  background: transparent;
 }
 
-/* Illustration (hidden on mobile) */
-.illus{ display:none; flex:0 0 var(--illus-width); align-items:center; justify-content:center; }
-.illus-img{ max-width:100%; height:auto; display:block; border-radius:12px; }
-
-/* Card (right) */
-.card{
-  width:100%;
-  max-width:var(--card-width);
-  background:var(--card);
-  border-radius:14px;
-  box-shadow:var(--shadow);
-  padding:20px;
-  box-sizing:border-box;
-}
-
-/* Header */
-.card-header{ text-align:center; margin-bottom:6px; }
-.logo{ display:flex; justify-content:center; align-items:center; margin-bottom:8px; }
-.brand-title{ margin:0; font-weight:700; font-size:20px; }
-
-/* Social top row (Google + Facebook) */
-.social-row{ display:flex; gap:12px; flex-direction:column; margin-bottom:10px; }
-.btn.social{
-  display:inline-flex; align-items:center; gap:10px; padding:12px; border-radius:10px;
-  border:1px solid rgba(15,23,42,0.06); background:white; box-shadow:0 6px 20px rgba(18,27,64,0.04);
-  font-weight:700; color:#111827; cursor:pointer; width:100%;
-}
-.btn.social svg{ vertical-align:middle; }
-
-/* On wider screens, social buttons inline */
-@media(min-width:600px){
-  .social-row{ flex-direction:row; }
-}
-
-/* Divider */
-.divider{ text-align:center; margin:12px 0; position:relative; }
-.divider::before{ content:''; display:block; height:1px; background:rgba(15,23,42,0.06); width:100%; position:absolute; top:50%; left:0; z-index:0; }
-.divider span{ background:transparent; display:inline-block; padding:4px 12px; position:relative; z-index:1; font-size:13px; color:var(--muted); }
-
-/* Form */
-.form{ display:flex; flex-direction:column; gap:12px; }
-.field{ display:flex; flex-direction:column; gap:6px; }
-.field-label{ font-size:13px; color:var(--muted); font-weight:600; }
-input[type="text"], input[type="password"]{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid rgba(15,23,42,0.08);
+/* Campos */
+label.field{ display:flex; flex-direction:column; gap:6px; font-size:13px; }
+input[type='text'], input[type='password'], input[type='email']{
+  padding:10px 12px;
+  border:1px solid rgba(15,23,42,0.06);
+  border-radius:6px;
   font-size:14px;
+  background:#fff;
   outline:none;
-  background:white;
 }
-input:focus{ box-shadow:0 8px 28px rgba(51,102,255,0.06); border-color:rgba(51,102,255,0.12); }
+input:focus{ box-shadow:0 6px 20px rgba(51,102,255,0.06); border-color:rgba(51,102,255,0.12); }
 
-/* password wrapper */
-.pw-wrapper{ position:relative; display:flex; align-items:center; }
-.pw-wrapper input{ padding-right:42px; }
-.pw-toggle{ position:absolute; right:8px; background:transparent; border:0; padding:6px; cursor:pointer; }
+/* Filas / layout dentro del form */
+.row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.checkbox-inline{ display:flex; align-items:center; gap:8px; color:var(--muted); }
 
-/* Aux row */
-.aux-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:6px; }
-.checkbox-inline{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
-.checkbox-inline input{ width:16px; height:16px; }
+/* Botones */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:12px 16px; border-radius:6px; border:0; cursor:pointer; font-weight:700; font-size:15px;
+}
+.btn.primary{
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color:#fff;
+  width:100%;
+}
+.btn.social{
+  background: transparent;
+  border: 1px solid rgba(15,23,42,0.06);
+  padding:10px 12px;
+  border-radius:6px;
+}
 
-/* Buttons */
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 18px; border-radius:12px; border:0; cursor:pointer; font-weight:600; }
-.btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; width:100%; font-size:16px; box-shadow:0 12px 36px rgba(51,102,255,0.14); border-radius:10px; }
-.link-btn{ background:transparent; color:var(--muted); border:0; font-weight:600; padding:10px; }
+/* texto y legal */
+.link-small{ font-size:13px; color:var(--accent); text-decoration:none; }
+.legal{ font-size:12px; color:var(--muted); margin-top:18px; }
+.legal a{ color:inherit; opacity:0.9; text-decoration:underline; }
 
-.social-bottom{ display:flex; gap:12px; margin-top:8px; justify-content:space-between; }
-.social-bottom .btn.social{ width:48%; }
+.helper{ font-size:12px; color:var(--muted); }
+.error{ font-size:13px; color:#de3b3b; }
 
-/* Secondary / small text */
-.secondary{ text-align:center; margin-top:6px; }
-.small{ font-size:13px; color:var(--muted); text-align:center; margin-top:10px; }
-.link{ color:var(--accent); text-decoration:none; font-weight:700; }
-.link-lite{ color:var(--muted); font-size:14px; text-decoration:none; }
+/* Panel de ilustración: ocupa el resto del espacio y la imagen se adapta */
+.illus-wrap{
+  display: none; /* por defecto oculto en mobile, se muestra en desktop */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 1 1 calc(100% - var(--left-width-percent));
+  position: relative;
+  z-index: 1;
+}
 
-/* Desktop layout: show illustration left, card right; no document scroll */
-@media (min-width:900px){
-  .page{
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:40px;
-    align-items:center;
-    justify-content:center;
-    padding:40px;
-    height:100vh;
-    overflow:hidden;
+/* Imagen: ocupa todo el panel de la derecha, se recorta si es necesario */
+.illus{
+  width: 100%;
+  height: 100vh;            /* ocupa la altura de la ventana para efecto hero en desktop */
+  object-fit: cover;        /* importantísimo para adaptar/recortar */
+  object-position: center;
+  display: block;
+  max-width: none;
+}
+
+/* Mostrar ambas columnas en desktop */
+@media(min-width: 900px){
+  .illus-wrap{ display: flex; }
+  .panel{ min-height: 100vh; }
+}
+
+/* --------- COMPORTAMIENTO MÓVIL CORREGIDO ---------- 
+   - Imagen aparece ARRIBA (order:-1).
+   - Imagen se adelanta y solapa el panel con margin-bottom negativo.
+   - Se añade padding-top extra al panel para que el contenido no quede tapado.
+----------------------------------------------------*/
+@media(max-width: 899px){
+  .container{
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .illus{ display:flex; }
-  .card{ max-width:420px; padding:28px; border-radius:16px; }
+  /* Mostrar la imagen en móvil y situarla antes (arriba) */
+  .illus-wrap{
+    display: block;
+    order: -1; /* fuerza que la imagen aparezca primero en el flujo visual */
+    flex: 0 0 auto;
+    width: 100%;
+    height: var(--mobile-illus-height);
+    margin-bottom: calc(-1 * var(--mobile-overlap)); /* solapa el panel */
+    z-index: 3; /* por encima del panel (visual) */
+    position: relative;
+  }
 
-  /* show social top inline, hide bottom if exists */
-  .social-row.social-top{ display:flex; }
-  .social-row.social-bottom{ display:none; }
+  /* Imagen ajustada para móvil */
+  .illus{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
 
-  /* ensure no page scrolling */
-  html, body { overflow: hidden; }
+  /* Panel: ocupa 100% y gana padding-top extra para compensar el solapamiento */
+  .panel{
+    flex: 0 0 auto;
+    max-width: 100%;
+    width: 100%;
+    min-height: auto;
+    /* sumar padding-top para "bajar" el contenido y que no quede tapado por la imagen */
+    padding: calc(20px + var(--mobile-overlap)) 20px 20px 20px;
+    margin: 0;
+    z-index: 2; /* debajo de la imagen visualmente (la imagen solapa) */
+  }
+
+  /* Ajustes del formulario en móvil */
+  form#loginForm{
+    max-width: 92%;
+  }
 }
 
-/* focus */
-button:focus, input:focus, a:focus{ outline:3px solid rgba(51,102,255,0.12); outline-offset:3px; }
+/* Pequeñas optimizaciones para pantallas muy pequeñas */
+@media(max-width: 420px){
+  .panel{ padding: calc(16px + var(--mobile-overlap)) 14px 14px 14px; }
+  form#loginForm{ max-width: 320px; }
+}
+
+/* foco accesible */
+button:focus, input:focus, a:focus{ outline:3px solid rgba(51,102,255,0.12); outline-offset:2px; }
+
+/* -----------------------------------
+  Reemplaza/añade estas reglas para que
+  <section class="illus-wrap"><img ...></section>
+  se adapte correctamente y funcione el solapamiento en móvil.
+------------------------------------*/
+
+/* variables útiles (si no las tienes, añade estas) */
+:root{
+  --mobile-illus-height: 260px;
+  --mobile-overlap: 48px;
+}
+
+/* contenedor de la ilustración */
+.illus-wrap{
+  position: relative;          /* contenedor de referencia para el img absoluto */
+  overflow: hidden;            /* recorta la imagen cuando use object-fit:cover */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f5f9;         /* fallback color si la imagen tarda en cargar */
+  width: 100%;
+  height: 100vh;               /* en desktop ocupa la altura de la ventana (hero) */
+  z-index: 1;
+}
+
+/* imagen interna: cubre siempre el contenedor y se recorta si hace falta */
+.illus-wrap > img {
+  position: absolute;          /* ocupa todo el contenedor */
+  inset: 0;                    /* top:0; right:0; bottom:0; left:0; */
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  display: block;
+  object-fit: cover;           /* clave: escala y recorta manteniendo proporciones */
+  object-position: center;     /* centra el foco de la imagen */
+  pointer-events: none;        /* evita interferir con toques o clicks */
+}
+
+/* Si quieres un overlay para mejorar contraste del texto sobre la imagen */
+.illus-wrap::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.04)); 
+  pointer-events: none;
+}
+
+/* Desktop: mantener la ilustración como hero a la derecha */
+@media(min-width:900px){
+  .illus-wrap{ height: 100vh; }
+  .illus-wrap > img{ height:100vh; }
+}
+
+/* MÓVIL: imagen arriba y solapamiento hacia el panel */
+@media(max-width:899px){
+  .illus-wrap{
+    display: block;
+    order: -1;                                 /* aparece antes en el flujo (arriba) */
+    height: var(--mobile-illus-height);        /* altura móvil controlable */
+    margin-bottom: calc(-1 * var(--mobile-overlap)); /* solapa el panel */
+    z-index: 3;                                /* por encima del panel visualmente */
+    position: relative;
+  }
+
+  /* la imagen ocupa el área y se recorta bien */
+  .illus-wrap > img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* desplaza contenido del panel para que no lo tape la imagen solapada */
+  .panel{
+    padding-top: calc(20px + var(--mobile-overlap)); /* añade espacio encima del contenido */
+    z-index: 2; /* debajo de la imagen visualmente */
+  }
+}
+
+/* Asegura que en casos de SVG embebido con viewBox se escale correctamente */
+.illus-wrap svg, .illus-wrap img.svg-inline {
+  width:100%;
+  height:100%;
+  object-fit: cover;
+}
+

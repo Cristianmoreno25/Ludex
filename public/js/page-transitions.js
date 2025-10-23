@@ -55,11 +55,37 @@
             const cls = a.dataset.anim; if(cls){ document.documentElement.classList.add(cls); } const vt = document.startViewTransition(go); vt.finished.finally(()=>{ if(cls){ document.documentElement.classList.remove(cls); } });
           } else {
             document.documentElement.classList.add('fade-out');
-            setTimeout(go, 180);
+            setTimeout(go, 80);
           }
         });
       });
     }
+
+    // Prefetch on hover/viewport for "Continuar sin cuenta" to speed up index -> browse
+    try {
+      const prefetch = (url) => {
+        try {
+          const l = document.createElement('link');
+          l.rel = 'prefetch';
+          l.href = url;
+          l.as = 'document';
+          document.head.appendChild(l);
+        } catch (_) {}
+      };
+      const ctas = Array.from(document.querySelectorAll('a[href$="browse.html"]'));
+      ctas.forEach((cta) => {
+        cta.addEventListener('pointerenter', () => prefetch(cta.href), { once: true });
+      });
+      if ('IntersectionObserver' in window && ctas.length) {
+        const io = new IntersectionObserver((entries) => {
+          if (entries.some(e => e.isIntersecting)) {
+            ctas.forEach((cta) => prefetch(cta.href));
+            io.disconnect();
+          }
+        });
+        ctas.forEach((cta) => io.observe(cta));
+      }
+    } catch (_) {}
   });
 })();
 

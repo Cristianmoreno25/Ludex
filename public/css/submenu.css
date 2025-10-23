@@ -1,8 +1,13 @@
 /* submenu.css - Desktop toggleable; mobile: sidebar & button hidden, bottom-nav visible */
 
 :root{
-  --submenu-width: 250px;
+  --submenu-width: 248px;
   --submenu-z: 1300;
+  --submenu-bg: #f9fafb;
+  --submenu-text: #1f2937;
+  --submenu-muted: #6b7280;
+  --submenu-border: #e5e7eb;
+  --submenu-hover-bg: #eef2ff;
 }
 
 /* ===== Base: sidebar oculta por transform (se muestra en desktop por media query) ===== */
@@ -12,22 +17,30 @@
   left: 0;
   width: var(--submenu-width);
   height: 100%;
-  background: #fff;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  background: var(--submenu-bg);
+  border-right: 1px solid var(--submenu-border);
   transform: translateX(-100%); /* hidden by default (mobile) */
   transition: transform 0.25s ease-in-out;
-  padding-top: 4rem;
+  padding-top: 3.2rem;
   z-index: var(--submenu-z);
 }
 
+/* Mostrar como overlay (no empuja el contenido) */
+body.submenu-open .submenu { transform: translateX(0); }
+body.submenu-open { overflow: hidden; }
+
 /* List styles */
 .submenu ul { list-style:none; margin:0; padding:0; }
-.submenu li { margin:1rem 0; }
+.submenu li { margin:.35rem 0; }
 .submenu a {
-  display:flex; align-items:center; gap:.75rem;
-  padding:.75rem 1.5rem; color:#333; text-decoration:none; font-weight:600;
+  display:flex; align-items:center; gap:.6rem;
+  padding:.6rem 1rem; color:var(--submenu-text); text-decoration:none; font-weight:500; font-size:14px;
+  border-radius: 10px;
+  margin: 0 .5rem;
 }
-.submenu a:hover, .submenu a:focus { background:#f4f4f4; color:#000; outline:none; }
+.submenu a i { font-size: 15px; color: var(--submenu-muted); }
+.submenu a:hover, .submenu a:focus { background:var(--submenu-hover-bg); color:#111827; outline:none; }
+.submenu a:hover i, .submenu a:focus i { color:#4f46e5; }
 
 /* Overlay used only if sidebar is opened as overlay (we won't use it in mobile per your request) */
 .overlay { display:none; }
@@ -40,47 +53,27 @@ body.submenu-open .overlay {
 
 /* ===== Button (shows in desktop; hidden in mobile) ===== */
 .menu-icon-button {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: calc(var(--submenu-z) + 10);
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
+  background: #ffffffcc;
+  border: 1px solid var(--submenu-border);
+  font-size: 1.05rem;
   display: none; /* visible only in desktop media query */
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 8px 9px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
+  color: #374151;
+  backdrop-filter: blur(6px);
+  margin-right: 8px;
 }
-.menu-icon-button:focus { outline: 2px solid rgba(51,102,255,0.25); outline-offset:2px; }
+.menu-icon-button:hover { background:#fff; }
+.menu-icon-button:focus { outline: 2px solid rgba(79,70,229,0.25); outline-offset:2px; }
 
 /* Bottom nav hidden by default -> visible in mobile */
 .bottom-nav { display:none; }
 
-/* ===== Desktop: show sidebar by default and allow collapse via body.sidebar-collapsed ===== */
+/* ===== Desktop: overlay, no empuje del layout ===== */
 @media (min-width: 901px) {
-  .submenu {
-    transform: translateX(0); /* visible */
-  }
-
-  /* If user collapses sidebar, apply this class to body */
-  body.sidebar-collapsed .submenu {
-    transform: translateX(calc(-1 * var(--submenu-width))); /* hide */
-  }
-
-  /* By default content is shifted to the right to not be under sidebar */
-  body {
-    padding-left: var(--submenu-width);
-    transition: padding-left .25s ease-in-out;
-  }
-
-  /* When collapsed remove the padding so content uses full width */
-  body.sidebar-collapsed {
-    padding-left: 0;
-  }
-
   /* Show the toggle button in desktop */
   .menu-icon-button {
     display: inline-flex;
@@ -90,13 +83,7 @@ body.submenu-open .overlay {
   .bottom-nav { display: none !important; }
 
   /* Overlay not used in desktop (sidebar fixed) */
-  .overlay { display:none !important; }
-
-   body .bottom-nav {
-    display: flex !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
+  .overlay { display:none; }
 }
 
 /* ===== Mobile: hide sidebar and button; show bottom nav ===== */
@@ -117,18 +104,29 @@ body.submenu-open .overlay {
     display:flex !important;
     position:fixed;
     left:0; right:0; bottom:0;
-    height:68px;
+    height:56px;
     justify-content:space-around;
     align-items:center;
     background:#fff;
-    border-top:1px solid var(--stroke, #e7eaf0);
-    padding:8px 0;
+    border-top:1px solid var(--submenu-border);
+    padding:6px 0;
     z-index:120;
   }
+  .bottom-nav .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:#6b7280; text-decoration:none; font-weight:500; font-size:11px; }
+  .bottom-nav .nav-item i { font-size:18px; color:#6b7280; }
+  .bottom-nav .nav-item:focus, .bottom-nav .nav-item:hover { color:#111827; }
 
   /* Overlay no mostrado por defecto en mobile (no abrimos sidebar en mobile) */
   .overlay { display:none !important; }
 }
+
+/* Auth section + separator */
+.submenu-sep { border:0; border-top:1px solid var(--submenu-border); margin: .75rem 1.1rem; }
+.auth-list { list-style:none; margin:0; padding:0; }
+.auth-list li { margin:.25rem 0; }
+.auth-list a { font-size:14px; font-weight:500; color:var(--submenu-text); }
+.auth-list a i { font-size:15px; color:var(--submenu-muted); }
+.auth-list a:hover i { color:#4f46e5; }
 
 /* Asegura que #submenu-container esté visible */
 #submenu-container, .submenu-root { display:block; }

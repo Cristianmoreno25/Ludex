@@ -22,17 +22,28 @@
       </button>
       <nav id="site-submenu" class="submenu" role="navigation" aria-label="Navegación principal">
         <ul>
-          <li><a href="/browse.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Inicio</a></li>
-          <li><a href="/notifications.html"><i class="fa-solid fa-bell" aria-hidden="true"></i> Notificaciones</a></li>
-          <li><a href="/wishlist.html"><i class="fa-solid fa-star" aria-hidden="true"></i> Juegos deseados</a></li>
-          <li><a href="/library.html"><i class="fa-solid fa-book" aria-hidden="true"></i> Librería</a></li>
+          <li><a href="./browse.html"><i class="fa-solid fa-house" aria-hidden="true"></i> Inicio</a></li>
+          <li><a href="./notifications.html"><i class="fa-solid fa-bell" aria-hidden="true"></i> Notificaciones</a></li>
+          <li><a href="./wishlist.html"><i class="fa-solid fa-star" aria-hidden="true"></i> Juegos deseados</a></li>
+          <li><a href="./library.html"><i class="fa-solid fa-book" aria-hidden="true"></i> Biblioteca</a></li>
+        </ul>
+        <hr class="submenu-sep">
+        <ul class="auth-list">
+          <li id="auth-user-row" style="display:none">
+            <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden="true"></i> <span id="auth-username">Usuario</span></a>
+          </li>
+          <li id="auth-login-row"><a href="./login.html"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a></li>
+          <li id="auth-register-row"><a href="./register.html"><i class="fa-solid fa-user-plus"></i> Registrarse</a></li>
+          <li id="auth-logout-row" style="display:none">
+            <a href="#" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+          </li>
         </ul>
       </nav>
       <nav class="bottom-nav" aria-label="Navegación inferior">
-        <a href="/browse.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Inicio</span></a>
-        <a href="/notifications.html" class="nav-item"><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Alertas</span></a>
-        <a href="/wishlist.html" class="nav-item"><i class="fa-solid fa-star" aria-hidden="true"></i><span>Favoritos</span></a>
-        <a href="/library.html" class="nav-item"><i class="fa-solid fa-bars" aria-hidden="true"></i><span>Biblioteca</span></a>
+        <a href="./browse.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Inicio</span></a>
+        <a href="./notifications.html" class="nav-item"><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Alertas</span></a>
+        <a href="./wishlist.html" class="nav-item"><i class="fa-solid fa-star" aria-hidden="true"></i><span>Favoritos</span></a>
+        <a href="./library.html" class="nav-item"><i class="fa-solid fa-bars" aria-hidden="true"></i><span>Biblioteca</span></a>
       </nav>
     </div>
   `;
@@ -53,6 +64,45 @@
     }
   }
 
+  function ensureSupabase() {
+    return new Promise((resolve, reject) => {
+      if (window.supabase?.createClient) return resolve();
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('No se pudo cargar supabase-js'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function getPublicEnv() {
+    try {
+      const r = await fetch('/api/public-env');
+      return await r.json();
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function dedupeMenuButton(root) {
+    try {
+      const header = document.querySelector('.topbar-left') || document.querySelector('.page-header .page-left') || document.querySelector('.page-left');
+      const headerBtn = header ? header.querySelector('#submenu-open-btn') : null;
+      const all = Array.from(document.querySelectorAll('#submenu-open-btn'));
+      const keep = headerBtn || all[0] || null;
+      all.forEach((node) => {
+        if (keep && node !== keep) node.remove();
+      });
+      // Además, elimina cualquier botón duplicado incluido dentro del partial cargado
+      if (root) {
+        const internal = root.querySelectorAll('#submenu-open-btn');
+        internal.forEach((n) => { if (!keep || n !== keep) n.remove(); });
+      }
+      return keep;
+    } catch (_) { return null; }
+  }
+
   async function fetchFirstAvailable(paths) {
     for (const p of paths) {
       try {
@@ -71,11 +121,26 @@
     return null;
   }
 
+  // Inserta el botón del menú lo antes posible para evitar retrasos visuales
+  function ensureEarlyButton() {
+    if (document.getElementById('submenu-open-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'menu-icon-button';
+    btn.id = 'submenu-open-btn';
+    btn.setAttribute('aria-label', 'Abrir menú');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
+    const hostLeft = document.querySelector('.topbar-left') || document.querySelector('.page-header .page-left') || document.querySelector('.page-left');
+    if (hostLeft) hostLeft.insertAdjacentElement('afterbegin', btn);
+    else document.body.appendChild(btn);
+  }
+
   function wireMenuInteractions(root) {
     // buscar elementos
-    let btn = root.querySelector('#submenu-open-btn') || root.querySelector('.menu-icon-button');
+    let btn = root.querySelector('#submenu-open-btn') || root.querySelector('.menu-icon-button') || document.getElementById('submenu-open-btn');
     let submenu = root.querySelector('#site-submenu') || root.querySelector('.submenu');
     let bottomNav = root.querySelector('.bottom-nav') || document.querySelector('.bottom-nav');
+    let overlay = root.querySelector('#submenu-overlay') || root.querySelector('.overlay');
 
     // si falta submenu, inyectar fallback
     if (!submenu) {
@@ -97,26 +162,37 @@
       document.body.appendChild(btn);
     }
 
-    // Atributos iniciales
+    // Colocar el botón dentro del header para que esté junto al título (no superpuesto)
+    try {
+      const hostLeft = document.querySelector('.topbar-left') || document.querySelector('.page-header .page-left') || document.querySelector('.page-left');
+      if (hostLeft && btn.parentNode !== hostLeft) {
+        hostLeft.insertAdjacentElement('afterbegin', btn);
+      }
+    } catch (_) {}
+
+    // Atributos iniciales (overlay cerrado por defecto)
     btn.setAttribute('aria-controls', submenu.id || 'site-submenu');
-    btn.setAttribute('aria-expanded', document.body.classList.contains('sidebar-collapsed') ? 'false' : 'true');
+    btn.setAttribute('aria-expanded', document.body.classList.contains('submenu-open') ? 'true' : 'false');
 
     // Toggle handler: en desktop hace collapse/expand; en mobile no hace nada (botón oculto por CSS)
     function toggleSidebarDesktop(e) {
       if (window.innerWidth <= MOBILE_BREAK) return; // no hacemos nada en mobile
       e && e.stopPropagation();
-      if (document.body.classList.contains('sidebar-collapsed')) {
-        document.body.classList.remove('sidebar-collapsed');
-        btn.setAttribute('aria-expanded', 'true');
-      } else {
-        document.body.classList.add('sidebar-collapsed');
-        btn.setAttribute('aria-expanded', 'false');
-      }
+      const isOpen = document.body.classList.toggle('submenu-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     }
 
     // Asignar listener (defensivo: remover antes)
     btn.removeEventListener('click', toggleSidebarDesktop);
     btn.addEventListener('click', toggleSidebarDesktop);
+
+    // Cerrar al pulsar overlay
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        document.body.classList.remove('submenu-open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    }
 
     // Cerrar sidebar si se redimensiona a mobile; si volvemos a desktop no forzamos open
     let resizeTimer = null;
@@ -124,18 +200,13 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         if (window.innerWidth <= MOBILE_BREAK) {
-          // limpiar clases que pudieran forzar aparecido del sidebar
-          if (document.body.classList.contains('sidebar-collapsed')) {
-            document.body.classList.remove('sidebar-collapsed');
-            btn.setAttribute('aria-expanded', 'true');
-          }
-          // también quitar cualquier clase overlay si existe
+          // Asegurar overlay cerrado en mobile
           if (document.body.classList.contains('submenu-open')) {
             document.body.classList.remove('submenu-open');
           }
+          btn.setAttribute('aria-expanded', 'false');
         } else {
-          // En desktop: si no existe la clase sidebar-collapsed, la barra estará visible por CSS.
-          // No forzamos apertura automática.
+          // En desktop no forzamos apertura automática (overlay)
         }
       }, 120);
     }
@@ -154,8 +225,81 @@
     });
   }
 
+  async function initAuthUI(root) {
+    try {
+      await ensureSupabase();
+      const { url, key } = await getPublicEnv();
+      if (!url || !key) throw new Error('Faltan variables públicas de Supabase');
+
+      const client = window.supabase.createClient(url, key);
+      const { data: { user } } = await client.auth.getUser();
+      const isLogged = !!user;
+
+      const $ = sel => root.querySelector(sel);
+      const loginRow = $('#auth-login-row');
+      const registerRow = $('#auth-register-row');
+      const logoutRow = $('#auth-logout-row');
+      const userRow = $('#auth-user-row');
+      const userNameSpan = $('#auth-username');
+
+      if (isLogged) {
+        const display = (user?.user_metadata?.usuario || user?.user_metadata?.nombre_completo || (user?.email ? user.email.split('@')[0] : 'Usuario'));
+        if (userNameSpan) userNameSpan.textContent = display;
+        if (userRow) userRow.style.display = '';
+        if (loginRow) loginRow.style.display = 'none';
+        if (registerRow) registerRow.style.display = 'none';
+        if (logoutRow) logoutRow.style.display = '';
+
+        const logoutLink = root.querySelector('#logoutLink');
+        if (logoutLink) {
+          logoutLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try { await client.auth.signOut(); } catch (_) {}
+            window.location.href = '/html/login.html';
+          });
+        }
+      } else {
+        if (userRow) userRow.style.display = 'none';
+        if (loginRow) loginRow.style.display = '';
+        if (registerRow) registerRow.style.display = '';
+        if (logoutRow) logoutRow.style.display = 'none';
+      }
+
+      // Topbar: nombre junto al icono de perfil; mantener enlaces existentes cuando no hay sesión
+      const topbarRight = document.querySelector('.topbar-right') || document.querySelector('.page-header .topbar-right');
+      if (topbarRight) {
+        const nameId = 'topbar-username';
+        let nameEl = topbarRight.querySelector('#' + nameId);
+        if (!nameEl) {
+          nameEl = document.createElement('span');
+          nameEl.id = nameId;
+          nameEl.style.marginLeft = '8px';
+          nameEl.style.fontWeight = '600';
+          nameEl.style.fontSize = '0.9rem';
+          topbarRight.appendChild(nameEl);
+        }
+
+        const profileLink = topbarRight.querySelector('a[href*="Profile.html"], a[title="Perfil"], a[aria-label="Perfil"]');
+        const cartLink = topbarRight.querySelector('a[href*="carrito.html"]');
+        if (isLogged) {
+          nameEl.textContent = userNameSpan?.textContent || '';
+          if (profileLink) profileLink.setAttribute('href', './Profile.html');
+          if (cartLink) cartLink.setAttribute('href', './carrito.html');
+        } else {
+          nameEl.textContent = '';
+          // Perfil debe llevar a login si no hay sesión
+          if (profileLink) profileLink.setAttribute('href', './login.html');
+        }
+      }
+    } catch (e) {
+      console.warn('[submenu.js] initAuthUI:', e && e.message ? e.message : e);
+    }
+  }
+
   // Init
   (async function init() {
+    // Mostrar el botón desde el primer render
+    ensureEarlyButton();
     ensureFontAwesome();
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     if (!placeholder) {
@@ -171,11 +315,15 @@
       console.warn('[submenu.js] Se inyectó fallback del submenu.');
     }
 
+    // Evitar botones duplicados (uno temprano y otro del partial)
+    dedupeMenuButton(placeholder);
+
     try {
       wireMenuInteractions(placeholder);
     } catch (err) {
       console.error('[submenu.js] Error wiring menu:', err);
     }
+    await initAuthUI(placeholder);
 
     console.info('[submenu.js] Inicializado correctamente.');
   })();

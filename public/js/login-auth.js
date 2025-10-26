@@ -42,8 +42,16 @@
       const email = await resolveIdentity(identity);
       const { url, key } = await getEnv();
       const client = window.supabase.createClient(url, key);
-      const { error } = await client.auth.signInWithPassword({ email, password });
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      
+      // Guardar información del usuario en localStorage
+      if (data.user) {
+        const username = data.user.email?.split('@')[0] || 'usuario';
+        localStorage.setItem('username', username);
+        localStorage.setItem('userEmail', data.user.email);
+      }
+      
       window.location.href = '/html/browse.html';
     } catch (err) {
       console.error(err);
@@ -57,11 +65,14 @@
     try {
       const { url, key } = await getEnv();
       const client = window.supabase.createClient(url, key);
-      const { error } = await client.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: `${window.location.origin}/html/browse.html` }
       });
       if (error) throw error;
+      
+      // Para Google OAuth, la información se guardará en el callback
+      // que se maneja en browse.html o donde se procese el redirect
     } catch (err) {
       console.error(err); showMessage('No se pudo iniciar con Google');
     }

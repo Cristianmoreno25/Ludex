@@ -6,6 +6,7 @@
   <title>Ludex — Perfil</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/profile.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- HEADER igual a Browse -->
@@ -33,9 +34,9 @@
     <!-- Avatar + username -->
     <div class="profile-info">
       <!-- Foto de perfil real en forma circular -->
-      <img src="https://i.pravatar.cc/150?img=3" alt="Foto de perfil de usuario" class="profile-avatar">
-      <div class="profile-username">@usuario_actual</div>
-      <button class="edit-btn" aria-label="Editar perfil">✎</button>
+      <img id="profile-avatar" src="https://i.pravatar.cc/150?img=3" alt="Foto de perfil de usuario" class="profile-avatar">
+      <div id="profile-username" class="profile-username">Cargando...</div>
+      <button class="edit-btn" aria-label="Editar perfil"><a href="./configuration.html" style="text-decoration: none;">✎</a></button>
     </div>
 
     <!-- Opciones -->
@@ -56,6 +57,82 @@
       </ul>
     </nav>
   </main>
+
+  <script>
+    // Función para cargar información dinámica del usuario desde Supabase
+    async function loadUserInfo() {
+      try {
+        // Obtener configuración de Supabase
+        const envResponse = await fetch('/api/public-env');
+        const { url, key } = await envResponse.json();
+        const client = window.supabase.createClient(url, key);
+        
+        // Verificar si hay un usuario autenticado
+        const { data: { user }, error: userError } = await client.auth.getUser();
+        
+        if (userError || !user) {
+          console.log('No hay usuario autenticado');
+          // Usar datos del localStorage como fallback
+          const username = localStorage.getItem('username') || 'Usuario';
+          document.getElementById('profile-username').textContent = '@' + username;
+          return;
+        }
+
+        // Mostrar información básica del usuario
+        let username = user.email?.split('@')[0] || 'usuario';
+        let avatarUrl = 'https://i.pravatar.cc/150?img=3'; // Avatar por defecto
+
+        // Buscar información adicional en la tabla usuarios
+        const { data: profileData, error: profileError } = await client
+          .from('usuarios')
+          .select('usuario, nombre_completo, avatar_path')
+          .eq('correo_electronico', user.email)
+          .maybeSingle();
+
+        if (!profileError && profileData) {
+          // Usar datos de la base de datos si están disponibles
+          username = profileData.usuario || user.email?.split('@')[0] || 'usuario';
+          
+          // Actualizar avatar si existe en la base de datos
+          if (profileData.avatar_path) {
+            avatarUrl = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(profileData.avatar_path)}`;
+          } else {
+            // Generar avatar único basado en el username
+            const hash = username.split('').reduce((a, b) => {
+              a = ((a << 5) - a) + b.charCodeAt(0);
+              return a & a;
+            }, 0);
+            const imgNumber = Math.abs(hash) % 70 + 1;
+            avatarUrl = `https://i.pravatar.cc/150?img=${imgNumber}`;
+          }
+        } else {
+          // Si no hay datos en la BD, generar avatar basado en email
+          const hash = user.email?.split('').reduce((a, b) => {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a;
+          }, 0) || 0;
+          const imgNumber = Math.abs(hash) % 70 + 1;
+          avatarUrl = `https://i.pravatar.cc/150?img=${imgNumber}`;
+        }
+
+        // Actualizar la interfaz
+        document.getElementById('profile-username').textContent = '@' + username;
+        document.getElementById('profile-avatar').src = avatarUrl;
+        
+        // Guardar en localStorage para futuras referencias
+        localStorage.setItem('username', username);
+
+      } catch (error) {
+        console.error('Error cargando perfil:', error);
+        // Fallback a datos del localStorage
+        const username = localStorage.getItem('username') || 'Usuario';
+        document.getElementById('profile-username').textContent = '@' + username;
+      }
+    }
+
+    // Cargar información al cargar la página
+    document.addEventListener('DOMContentLoaded', loadUserInfo);
+  </script>
 
 </body>
 </html>

@@ -130,18 +130,22 @@
     </div>
   </main>
 
-  <!-- SCRIPT: Usa ESM import para supabase (no expongas service key) -->
+  <!-- SCRIPT: Usa ESM import para supabase -->
   <script type="module">
-  /**
-   * REEMPLAZA estos valores por tus variables reales o inyectalos desde el servidor.
-   * Puedes usar placeholders y reemplazarlos en tu pipeline de despliegue.
-   */
-  const SUPABASE_URL = 'https://dsphuzkwrpixdgnccjdt.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcGh1emt3cnBpeGRnbmNjamR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDUwMjAsImV4cCI6MjA3NjE4MTAyMH0.FEtrArmTrVGfz6M_Rh21E-7kvA3rbs3-yEJz6f0b5q0';
-
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Obtener configuración de Supabase desde la API
+  let supabase;
+  async function initSupabase() {
+    try {
+      const envResponse = await fetch('/api/public-env');
+      const { url, key } = await envResponse.json();
+      supabase = createClient(url, key);
+    } catch (error) {
+      console.error('Error obteniendo configuración de Supabase:', error);
+      showMsg('Error de configuración', 'error');
+    }
+  }
 
   // Helpers DOM
   const $ = id => document.getElementById(id);
@@ -157,62 +161,77 @@
   async function loadProfile() {
     showMsg('Cargando perfil...', 'info', 0);
     try {
+      if (!supabase) {
+        await initSupabase();
+      }
+
       const { data: userResp, error: userErr } = await supabase.auth.getUser();
       if (userErr || !userResp?.user) {
         showMsg('No autenticado. Redirigiendo...', 'error');
         setTimeout(() => location.href = '/html/login.html', 800);
         return;
       }
+      
       const user = userResp.user;
-      // Mostrar nombre en card
-      $('ui-display-name').textContent = user.user_metadata?.full_name || user.email || 'Usuario';
-      $('ui-display-username').textContent = user.user_metadata?.username ? ('@' + user.user_metadata.username) : '';
+      console.log('Usuario autenticado:', user);
 
-      // Intentamos obtener fila en "usuarios" usando user_auth_id
+      // Buscar perfil en la tabla usuarios por correo_electronico
       const { data: perfil, error: perfErr } = await supabase
         .from('usuarios')
-        .select('usuario, correo_electronico, nombre_completo, telefono, fecha_nacimiento, pais_id')
-        .eq('user_auth_id', user.id)
+        .select('usuario, correo_electronico, nombre_completo, telefono, fecha_nacimiento, pais_id, avatar_path')
+        .eq('correo_electronico', user.email)
         .single();
 
-      if (perfErr && perfErr.code !== 'PGRST116') {
-        // PGRST116 = no row returned? (varía); ignorar si no existe y sigue
-        console.warn('perfil fetch err', perfErr);
+      console.log('Perfil encontrado:', perfil, 'Error:', perfErr);
+
+      // Mostrar información en la card
+      if (perfil) {
+        $('ui-display-name').textContent = perfil.nombre_completo || user.user_metadata?.full_name || user.email || 'Usuario';
+        $('ui-display-username').textContent = perfil.usuario ? ('@' + perfil.usuario) : ('@' + user.email?.split('@')[0]);
+        
+        // Cargar avatar si existe
+        if (perfil.avatar_path) {
+          const avatarImg = document.getElementById('avatar-img');
+          if (avatarImg) {
+            // Obtener la URL de Supabase desde la configuración
+            const envResponse = await fetch('/api/public-env');
+            const { url } = await envResponse.json();
+            avatarImg.src = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(perfil.avatar_path)}`;
+          }
+        }
+      } else {
+        $('ui-display-name').textContent = user.user_metadata?.full_name || user.email || 'Usuario';
+        $('ui-display-username').textContent = '@' + (user.email?.split('@')[0] || 'usuario');
       }
 
-      // Preferencias
+      // Llenar campos del formulario
+      $('input-name').value = perfil?.nombre_completo || user.user_metadata?.full_name || '';
+      $('input-username').value = perfil?.usuario || '';
+      $('input-email').value = perfil?.correo_electronico || user.email || '';
+      $('input-phone').value = perfil?.telefono || '';
+
+      // Cargar preferencias
       const { data: prefs, error: prefsErr } = await supabase
         .from('preferencias_usuarios')
         .select('notificaciones, idioma, tema, marketing_opt_in')
         .eq('user_auth_id', user.id)
         .single();
 
-      // Fill UI fields (prefer perfil values, fallback to auth)
-      if (perfil) {
-        $('input-name').value = perfil.nombre_completo || '';
-        $('input-username').value = perfil.usuario || '';
-        $('input-email').value = perfil.correo_electronico || user.email || '';
-        $('input-phone').value = perfil.telefono || '';
-      } else {
-        // Si no hay fila en usuarios, usar datos del auth
-        $('input-email').value = user.email || '';
-      }
-
       if (prefs) {
         $('input-notif').checked = !!prefs.notificaciones;
         $('input-idioma').value = prefs.idioma || 'es';
         $('input-tema').value = prefs.tema || 'system';
       } else {
-        // valores por defecto
+        // Valores por defecto
         $('input-notif').checked = true;
         $('input-idioma').value = 'es';
         $('input-tema').value = 'system';
       }
 
-      showMsg('Perfil cargado', 'success', 1200);
+      showMsg('Perfil cargado correctamente', 'success', 2000);
     } catch (err) {
-      console.error(err);
-      showMsg('Error cargando perfil', 'error', 3000);
+      console.error('Error cargando perfil:', err);
+      showMsg('Error cargando perfil: ' + err.message, 'error', 5000);
     }
   }
 
@@ -221,6 +240,10 @@
     e.preventDefault();
     showMsg('Guardando...', 'info', 0);
     try {
+      if (!supabase) {
+        await initSupabase();
+      }
+
       const { data: userResp } = await supabase.auth.getUser();
       if (!userResp?.user) return showMsg('Usuario no autenticado', 'error');
 
@@ -231,6 +254,8 @@
         telefono: $('input-phone').value.trim() || null
       };
 
+      console.log('Actualizando perfil con payload:', payload);
+
       // 1) Si email cambió -> update en Auth
       const newEmail = $('input-email').value.trim();
       if (newEmail && newEmail !== (user.email || '')) {
@@ -238,33 +263,56 @@
         if (upEmail.error) {
           return showMsg('Error actualizando email: ' + upEmail.error.message, 'error');
         }
-        // Nota: Supabase puede enviar confirmación a newEmail según settings
       }
 
-      // 2) Upsert en tabla usuarios (update si existe, else insert)
-      // Intentamos update, si no existe hacemos insert
-      const { error: updErr } = await supabase
+      // 2) Buscar si existe el perfil en la tabla usuarios
+      const { data: existingProfile } = await supabase
         .from('usuarios')
-        .update({ ...payload, correo_electronico: newEmail || user.email })
-        .eq('user_auth_id', user.id);
+        .select('id')
+        .eq('correo_electronico', user.email)
+        .single();
 
-      if (updErr) {
-        // Si falla por no existir fila, insertamos
+      if (existingProfile) {
+        // Actualizar perfil existente
+        const { error: updErr } = await supabase
+          .from('usuarios')
+          .update({ 
+            ...payload, 
+            correo_electronico: newEmail || user.email 
+          })
+          .eq('correo_electronico', user.email);
+
+        if (updErr) {
+          console.error('Error actualizando perfil:', updErr);
+          throw updErr;
+        }
+      } else {
+        // Crear nuevo perfil
         const { error: insErr } = await supabase.from('usuarios').insert({
-          user_auth_id: user.id,
           usuario: payload.usuario,
           correo_electronico: newEmail || user.email,
           nombre_completo: payload.nombre_completo,
-          telefono: payload.telefono
+          telefono: payload.telefono,
+          hash_contrasena: 'temp_password', // Temporal
+          acepto_terminos: true
         });
-        if (insErr) throw insErr;
+        
+        if (insErr) {
+          console.error('Error creando perfil:', insErr);
+          throw insErr;
+        }
+      }
+
+      // Actualizar localStorage con el nuevo username
+      if (payload.usuario) {
+        localStorage.setItem('username', payload.usuario);
       }
 
       await loadProfile();
-      showMsg('Datos personales actualizados', 'success');
+      showMsg('Datos personales actualizados correctamente', 'success', 3000);
     } catch (err) {
-      console.error(err);
-      showMsg('Error guardando perfil: ' + (err.message || err), 'error');
+      console.error('Error guardando perfil:', err);
+      showMsg('Error guardando perfil: ' + (err.message || err), 'error', 5000);
     }
   }
 
@@ -327,11 +375,17 @@
   }
 
   // Event binding
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Inicializar Supabase primero
+    await initSupabase();
+    
+    // Configurar event listeners
     $('form-profile').addEventListener('submit', handleProfileSave);
     $('form-pass').addEventListener('submit', handleChangePassword);
     $('form-prefs').addEventListener('submit', handleSavePrefs);
-    loadProfile();
+    
+    // Cargar perfil
+    await loadProfile();
   });
 
   </script>

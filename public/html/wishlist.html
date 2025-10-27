@@ -14,8 +14,19 @@
   <!-- CSS de la vista -->
   <link rel="stylesheet" href="../css/views.css">
 
-  <!-- CSS del submenú (asegúrate la ruta sea correcta) -->
+  <!-- CSS del submenú -->
   <link rel="stylesheet" href="../css/submenu.css">
+
+  <!-- Opcional: estilos pequeños para el grid si tu CSS no los incluye -->
+  <style>
+    /* Solo estilos mínimos para que el grid se vea bien si tu CSS no los define */
+    #wishlist-grid { display:flex; flex-wrap:wrap; gap:18px; margin-top:18px; }
+    .wishlist-card { width:240px; border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+    .wishlist-card-media { height:140px; background-size:cover; background-position:center; display:block; }
+    .wishlist-card-body { padding:12px; }
+    .btn-add-cart { padding:8px 12px; background:#0b74ff; color:#fff; border-radius:8px; text-decoration:none; font-size:13px; }
+    .star-delete { width:36px; height:36px; border-radius:50%; border:none; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer; }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -41,7 +52,7 @@
     </div>
   </header>
 
-  <!-- Placeholder para inyectar el submenú (botón, overlay, nav lateral y bottom-nav móvil) -->
+  <!-- Placeholder para inyectar el submenú -->
   <div id="submenu-container"></div>
 
   <!-- Main content -->
@@ -51,29 +62,30 @@
         <div class="star-mark">⭐</div>
         <div>
           <h3>Juegos Deseados</h3>
-          <p class="muted">5 juegos · Última actualización: hace 2 días</p>
+          <!-- span con id para que JS actualice el conteo y la última actualización -->
+          <p class="muted">
+            <span id="wishlist-count">0</span> juegos · Última actualización: <span id="wishlist-updated">--</span>
+          </p>
         </div>
       </div>
     </section>
 
     <section class="wishlist-grid">
-      <!-- grid of thumbnails -->
-      <div class="grid">
-        <div class="thumb-card"><img src="../images/game1.jpg" alt=""><div class="thumb-overlay">❤</div></div>
-        <div class="thumb-card"><img src="../images/game2.webp" alt=""><div class="thumb-overlay">❤</div></div>
-        <div class="thumb-card"><img src="../images/game3.webp" alt=""><div class="thumb-overlay">❤</div></div>
-        <div class="thumb-card"><img src="../images/game4.jpg" alt=""><div class="thumb-overlay">❤</div></div>
-        <div class="thumb-card"><img src="../images/game5.png" alt=""><div class="thumb-overlay">❤</div></div>
-        <div class="thumb-card"><img src="../images/game6.png" alt=""><div class="thumb-overlay">❤</div></div>
-        <!-- add more as needed -->
-      </div>
+      <!-- CONTENEDOR DINÁMICO: aquí se inyectan las tarjetas reales por wishlist.js -->
+      <div id="wishlist-grid" class="grid"></div>
     </section>
   </main>
 
-  <!-- script de la vista (si aplica) -->
+  <!-- script de la vista (opcional) -->
   <script src="../js/browse.js" defer></script>
 
-  <!-- Script que carga el submenú (asegúrate la ruta sea la correcta desde esta vista) -->
+  <!-- Script que carga el submenú -->
   <script src="../js/submenu.js"></script>
+
+  <!-- OPTIONAL: escucha de estrellas en páginas que muestran juegos (si existen botones con class 'js-star') -->
+  <script src="/html/star-listener.js" defer></script>
+
+  <!-- Script principal de la wishlist (se encargará de poblar #wishlist-grid) -->
+  <script src="/html/wishlist.js" defer></script>
 </body>
 </html>

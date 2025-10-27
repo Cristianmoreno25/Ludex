@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OAuth callback — Ludex</title>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, Arial; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+    .box { text-align:center; padding:24px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+    .muted { color:#666; margin-top:8px }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Iniciando sesión...</h2>
+    <p class="muted" id="msg">Estamos conectando tu sesión segura.</p>
+  </div>
+
+  <script>
+    (async function() {
+      const msgEl = document.getElementById('msg');
+
+      // Intenta obtener tokens desde diferentes fuentes (hash, query, sessionStorage, supabase client)
+      async function getTokensFallback() {
+        // 1) Hash o query
+        const hash = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+        const search = window.location.search ? window.location.search.replace(/^\?/, '') : '';
+        const ps = new URLSearchParams(hash || search);
+        let access_token = ps.get('access_token') || null;
+        let refresh_token = ps.get('refresh_token') || null;
+
+        // 2) sessionStorage (por ejemplo verification.js pudo haber guardado tokens ahí)
+        if ((!access_token || !refresh_token) && window.sessionStorage) {
+          try {
+            const s = sessionStorage.getItem('verify_tokens');
+            if (s) {
+              const parsed = JSON.parse(s);
+              access_token = access_token || parsed.access_token || null;
+              refresh_token = refresh_token || parsed.refresh_token || null;
+            }
+          } catch(e){ console.warn('No se pudo leer verify_tokens from sessionStorage', e); }
+        }
+
+        // 3) Supabase client (si la página inicializó supabase-js y guardó la sesión allí)
+        if ((!access_token || !refresh_token) && window.supabase && typeof window.supabase.auth?.getSession === 'function') {
+          try {
+            // supabase-js v2: auth.getSession()
+            const { data } = await window.supabase.auth.getSession();
+            const session = data?.session ?? data?.session ?? null;
+            if (session) {
+              access_token = access_token || session.access_token || null;
+              refresh_token = refresh_token || session.refresh_token || null;
+            }
+          } catch (e) {
+            console.warn('No fue posible leer session desde window.supabase.auth.getSession()', e);
+          }
+        }
+
+        // 4) Si la ventana fue abierta por otra (popup flow), intentar read from opener via postMessage pattern (opener debe soportarlo).
+        // No intentamos acceder a opener directly for security; solo fallback no-invasivo.
+        return { access_token, refresh_token };
+      }
+
+      // Borra tokens del hash y/o query para no exponerlos en la URL
+      function clearUrlTokens() {
+        try {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        } catch(e) { /* ignore */ }
+      }
+
+      try {
+        msgEl.textContent = 'Obteniendo tokens...';
+        const { access_token: atFromAll, refresh_token: rtFromAll } = await getTokensFallback();
+        let access_token = atFromAll;
+        let refresh_token = rtFromAll;
+
+        if (!access_token || !refresh_token) {
+          // Nada: avisar al usuario y redirigir a inicio (o a login)
+          msgEl.textContent = 'No se detectaron tokens. Redirigiendo...';
+          console.warn('OAuth callback: no access_token/refresh_token found from any source.');
+          // limpiar cualquier fragmento sensible antes de redirigir
+          clearUrlTokens();
+          setTimeout(() => window.location.href = '/', 1200);
+          return;
+        }
+
+        // Limpio la URL para no dejar tokens expuestos
+        clearUrlTokens();
+
+        msgEl.textContent = 'Sincronizando sesión con el servidor... (esto puede tardar un momento)';
+
+        // Enviar tokens al server - IMPORTANTE: credentials: 'include' para que navegador acepte Set-Cookie
+        const res = await fetch('/api/auth/sync-session', {
+          method: 'POST',
+          credentials: 'include', // <<-- clave para permitir que el navegador guarde cookies que envíe el servidor
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token, refresh_token })
+        });
+
+        if (!res.ok) {
+          // mostrar mensaje y loguear detalles para debug
+          let txt = null;
+          try { txt = await res.text(); } catch(_) {}
+          console.error('sync-session failed', res.status, txt);
+          msgEl.textContent = 'No se pudo sincronizar la sesión en el servidor. Intenta de nuevo.';
+          // Si quieres depuración adicional: abrir DevTools y revisar los response headers del POST /api/auth/sync-session
+          setTimeout(() => window.location.href = '/html/login.html', 2000);
+          return;
+        }
+
+        // Éxito: cookies deberían estar creadas en el dominio si el servidor devolvió Set-Cookie y el navegador las aceptó.
+        msgEl.textContent = 'Sesión sincronizada. Redirigiendo...';
+        setTimeout(() => window.location.href = '/protected/profile/lista-deseos', 600);
+      } catch (err) {
+        console.error('oauth-callback error', err);
+        msgEl.textContent = 'Error inesperado. Redirigiendo al inicio...';
+        setTimeout(() => window.location.href = '/html/login.html', 1500);
+      }
+    })();
+  </script>
+</body>
+</html>

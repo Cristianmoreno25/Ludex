@@ -73,13 +73,12 @@
             try {
               const { data: { session } } = await client.auth.getSession();
               if (session?.access_token && session?.refresh_token) {
+                // después
                 await fetch('/api/auth/sync-session', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    access_token: session.access_token,
-                    refresh_token: session.refresh_token,
-                  }),
+                  credentials: 'include',
+                  body: JSON.stringify({ access_token: session.access_token, refresh_token: session.refresh_token })
                 });
               }
             } catch {}

@@ -3,41 +3,73 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Completar perfil — Ludex</title>
+  <title>Completar perfil - Ludex</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/verification.css">
   <style>
-    /* Minimal, calm UI on top of verification.css */
-    body { background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%); }
-    .container { max-width: 760px; margin: 0 auto; padding: 24px; }
-    .card {
-      border: 1px solid #e5e7eb;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(15,23,42,0.06);
-      padding: 20px;
+    /* Visual polish layered over verification.css without touching logic */
+    :root{
+      --lx-accent: #6366f1;
+      --lx-accent-2: #8b5cf6;
+      --lx-bg-1: #f8fbff;
+      --lx-bg-2: #ffffff;
+      --lx-ring: rgba(99,102,241,.14);
+      --lx-border: #e5e7eb;
+      --lx-muted: #64748b;
     }
-    .title { letter-spacing: .2px; font-size: 22px; }
-    .subtitle { margin-top: 4px; }
+    body{
+      background:
+        radial-gradient(1200px 600px at -10% -20%, rgba(99,102,241,.08), transparent 60%),
+        radial-gradient(800px 400px at 110% -10%, rgba(139,92,246,.07), transparent 60%),
+        linear-gradient(180deg, var(--lx-bg-1) 0%, var(--lx-bg-2) 100%);
+    }
+    .container{ max-width: 860px; margin: 0 auto; padding: 28px; }
+    .card{
+      border: 1px solid var(--lx-border);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 18px 48px rgba(15,23,42,0.08);
+      padding: 24px;
+      backdrop-filter: saturate(120%) blur(2px);
+    }
 
-    .step-row { display:flex; align-items:center; gap:10px; justify-content:flex-start; margin-bottom:12px; }
-    .badge { padding:4px 10px; border-radius:999px; font-size:12px; color:#334155; background:#eef2ff; border:1px solid #e5e7eb; font-weight:600 }
+    .title{ letter-spacing:.2px; font-size: 24px; font-weight: 700; }
+    .subtitle{ margin-top: 6px; color: var(--lx-muted); }
 
-    .form .row { display:grid; grid-template-columns: 1fr; gap:12px; }
+    /* Step indicator */
+    .step-row{ display:flex; align-items:center; gap:12px; justify-content:flex-start; margin-bottom:14px; }
+    .badge{ padding:6px 12px; border-radius:999px; font-size:12px; color:#334155; background:#eef2ff; border:1px solid var(--lx-border); font-weight:600 }
+    .progress{ flex:1; height:8px; background:#eef2ff; border-radius:999px; position:relative; overflow:hidden; }
+    .progress span{ position:absolute; inset:0; width:100%; transform-origin:left; transform:scaleX(0); background:linear-gradient(90deg,var(--lx-accent),var(--lx-accent-2)); border-radius:inherit; animation: lxFill .9s ease forwards; }
+    @keyframes lxFill{ from{ transform:scaleX(0);} to{ transform:scaleX(1);} }
+
+    /* Form */
+    .form{ margin-top: 6px; }
+    .form .row{ display:grid; grid-template-columns: 1fr; gap:14px; }
     @media(min-width:720px){ .form .row { grid-template-columns: 1fr 1fr; } }
 
-    .form input, .form select {
+    .form input, .form select{
       background:#f9fafb;
-      border:1px solid #e5e7eb;
-      border-radius: 10px;
+      border:1px solid var(--lx-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      transition: box-shadow .15s ease, border-color .15s ease, background .15s ease, transform .05s ease;
     }
-    .form input:focus, .form select:focus {
-      border-color:#c7d2fe; box-shadow:0 0 0 6px rgba(99,102,241,.10); background:#fff;
+    .form input:hover, .form select:hover{ background:#f3f4f6; }
+    .form input:focus, .form select:focus{
+      border-color:#c7d2fe; box-shadow:0 0 0 6px var(--lx-ring); background:#fff; transform: translateY(-1px);
     }
-    .hint { font-size: 12px; color:#64748b; margin-top: -6px; margin-bottom: 8px; }
+    .form select{ appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M6.7 9.3a1 1 0 0 1 1.4 0L12 13.2l3.9-3.9a1 1 0 1 1 1.4 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L6.7 10.7a1 1 0 0 1 0-1.4Z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:40px; }
+    .hint{ font-size: 12px; color: var(--lx-muted); margin-top: -6px; margin-bottom: 8px; }
 
-    .btn.primary { box-shadow: 0 10px 18px rgba(99,102,241,.18); }
-    .btn.primary:hover { filter: brightness(1.03); transform: translateY(-1px); }
+    /* Status */
+    #status{ background: #f8fafc; border: 1px solid var(--lx-border); border-radius: 10px; padding: 8px 10px; font-size: 13px; }
+
+    /* Button */
+    .btn.primary{ box-shadow: 0 12px 22px rgba(99,102,241,.18); transition: transform .08s ease, filter .08s ease; }
+    .btn.primary:hover{ filter:brightness(1.03); transform: translateY(-1px); }
+    .btn.primary:disabled{ filter: grayscale(.1) brightness(.95); box-shadow:none; cursor: not-allowed; }
   </style>
   <style>html.pt-preload body{opacity:0} body{transition:opacity .25s ease} html.fade-out body{opacity:0} ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}</style></head>
 <body>
@@ -49,7 +81,7 @@
         <div class="progress" aria-hidden="true"><span></span></div>
       </div>
       <h1 id="title" class="title">Completa tu perfil</h1>
-      <p class="subtitle">Solo un momento, así personalizamos tu experiencia.</p>
+      <p class="subtitle">Solo un momento, asi personalizamos tu experiencia.</p>
       <div id="status" class="muted" aria-live="polite" style="margin-bottom:12px"></div>
 
       <form id="profileForm" class="form" novalidate>
@@ -57,7 +89,7 @@
           <div>
             <label class="sr-only" for="username">Username</label>
             <input id="username" placeholder="Nombre de usuario (obligatorio)" required />
-            <div class="hint">Debe ser único. Puedes usar letras, números y guiones.</div>
+            <div class="hint">Debe ser unico. Puedes usar letras, numeros y guiones.</div>
           </div>
           <div>
             <label class="sr-only" for="fullname">Nombre completo</label>
@@ -67,12 +99,12 @@
 
         <div class="row">
           <div>
-            <label class="sr-only" for="phone">Teléfono</label>
-            <input id="phone" placeholder="Teléfono" />
+            <label class="sr-only" for="phone">Telefono</label>
+            <input id="phone" placeholder="Telefono" />
           </div>
           <div>
             <select id="country">
-              <option value="">Selecciona tu país (opcional)</option>
+              <option value="">Selecciona tu pais (opcional)</option>
             </select>
           </div>
         </div>
@@ -142,7 +174,7 @@
         const { url, key } = await getPublicEnv();
         const client = window.supabase.createClient(url, key);
         const { data: sess } = await client.auth.getSession();
-        if(!sess?.session?.access_token){ setStatus('No hay sesión. Inicia de nuevo.','error'); saveBtn.disabled=false; return; }
+        if(!sess?.session?.access_token){ setStatus('No hay sesion. Inicia de nuevo.','error'); saveBtn.disabled=false; return; }
 
         const resp = await fetch('/api/auth/complete-profile', {
           method: 'POST',
@@ -160,5 +192,6 @@
     prefill();
   })();
   </script>
-  <script src="../js/page-transitions.js"></script>`r`n</body>
+  <script src="../js/page-transitions.js"></script>
+</body>
 </html>

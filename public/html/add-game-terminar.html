@@ -38,8 +38,9 @@
       <span class="brand-name">Ludex</span>
     </div>
 
-    <!-- Botón para terminar -->
-    <button class="btn-primary" onclick="window.location.href='developer.html';">Subir Juego</button>
+    <!-- Estado y finalizar -->
+    <div id="finishMsg" class="mb-2"></div>
+    <button id="finishBtn" class="btn-primary">Enviar a revisión</button>
   </main>
 
  <!-- NAV INFERIOR  -->
@@ -52,5 +53,7 @@
    </a>
 </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/add-game-terminar.js"></script>
 </body>
 </html>

@@ -26,66 +26,37 @@
       <span class="brand-name">Ludex</span>
     </div>
 
-    <!-- Botón Salir de modo desarrollador -->
-    <button 
-      class="btn-exit-dev" 
-      onclick="window.location.href='browse.html'" 
-      aria-label="Salir al inicio">
-      <i class="fa-solid fa-house"></i>
-    </button>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-sm btn-outline-light" id="openDevSettings" title="Ajustes de desarrollador">
+        <i class="fa-solid fa-user-gear"></i>
+        <span class="d-none d-sm-inline"> Ajustes</span>
+      </button>
+      <button 
+        class="btn-exit-dev" 
+        onclick="window.location.href='browse.html'" 
+        aria-label="Salir al inicio">
+        <i class="fa-solid fa-house"></i>
+      </button>
+    </div>
   </header>
 
   <main class="main dev-page" id="mainContent">
     <!-- JUEGOS SUBIDOS -->
-    <section class="section">
+    <section class="section" id="uploadedSection">
       <div class="section-header">
         <h2>Juegos Subidos</h2>
         <a href="./add-game.html" class="btn primary">Agregar un nuevo juego</a>
       </div>
-
-      <article class="game-card uploaded">
-        <header class="game-head">
-          <h3><em>Aventura Galáctica</em></h3>
-          <button class="btn danger small">Eliminar</button>
-        </header>
-        <p class="meta">Fecha de carga: 15 de septiembre de 2023</p>
-        <p class="desc">Una emocionante aventura espacial.</p>
-        <div class="actions">
-          <button class="btn secondary small" onclick="window.location.href='edit-game.html'">Editar</button>
-        </div>
-      </article>
-
-      <article class="game-card uploaded">
-        <header class="game-head">
-          <h3><em>Carreras Extremas</em></h3>
-          <button class="btn danger small">Eliminar</button>
-        </header>
-        <p class="meta">Fecha de carga: 8 de agosto de 2023</p>
-        <p class="desc">Compite en rápidas carreras épicas.</p>
-        <div class="actions">
-          <button class="btn secondary small" onclick="window.location.href='edit-game.html'">Editar</button>
-        </div>
-      </article>
+      <div id="uploadedList"></div>
     </section>
 
     <!-- JUEGOS VENDIDOS -->
-    <section class="section">
+    <section class="section" id="soldSection">
       <div class="section-header with-link">
         <h2>Juegos Vendidos</h2>
-        <a href="#" class="see-more" aria-label="Ver todos">›</a>
+        <a href="#" class="see-more" aria-label="Ver todos" id="seeAllSales">›</a>
       </div>
-
-      <article class="game-card sold">
-        <h3><em>Misterios del Bosque</em></h3>
-        <p class="meta">Total vendidos: 150</p>
-        <p class="desc">Explora los secretos del bosque.</p>
-      </article>
-
-      <article class="game-card sold">
-        <h3><em>Batalla de Robots</em></h3>
-        <p class="meta">Total vendidos: 200</p>
-        <p class="desc">Domina el campo de batalla robótico.</p>
-      </article>
+      <div id="soldList"></div>
     </section>
 
     <!-- ESTADÍSTICAS -->
@@ -216,10 +187,89 @@
     <a class="nav-btn active" aria-label="Panel de desarrollador" href="./Profile.html">
       <i class="fa-solid fa-user-gear"></i>
     </a>
-  </nav>
+</nav>
 
   <!-- Bootstrap JS bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Supabase SDK para validar acceso al panel -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Modal: Ajustes del Desarrollador -->
+  <div class="modal fade" id="devSettingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px;overflow:hidden">
+        <div class="modal-header" style="background:linear-gradient(90deg,#4338ca,#7c3aed);color:#fff">
+          <h5 class="modal-title">Ajustes de Desarrollador</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="devSettingsMsg" class="mb-2"></div>
+          <form id="devSettingsForm" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nombre del estudio</label>
+              <input type="text" class="form-control" id="ds_nombre_estudio" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Razón social</label>
+              <input type="text" class="form-control" id="ds_razon_social" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">NIT / Tax ID</label>
+              <input type="text" class="form-control" id="ds_nit" placeholder="No editable" disabled>
+              <div class="form-text">Para cambiar el NIT contacta soporte.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">País</label>
+              <select id="ds_pais_id" class="form-select"></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="ds_direccion">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" class="form-control" id="ds_telefono">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Sitio web</label>
+              <input type="url" class="form-control" id="ds_website" placeholder="https://...">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">GitHub / Portafolio</label>
+              <input type="url" class="form-control" id="ds_github" placeholder="https://github.com/...">
+            </div>
+          </form>
+          <div class="mt-3 d-flex justify-content-between align-items-center">
+            <button class="btn btn-danger" id="ds_delete">Dar de baja cuenta de desarrollador</button>
+            <button class="btn btn-primary" id="ds_save">Guardar cambios</button>
+          </div>
+          <div class="text-muted mt-2" style="font-size:.85rem">Al dar de baja, se elimina tu registro de desarrollador y tu rol volverá a 'cliente'.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (async function guardDeveloperPanel(){
+      try {
+        const env = await (await fetch('/api/public-env')).json();
+        const client = window.supabase.createClient(env.url, env.key);
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) { window.location.href = '/html/login.html'; return; }
+        const { data, error } = await client
+          .from('desarrolladores')
+          .select('estado_verificacion')
+          .eq('user_auth_id', user.id)
+          .maybeSingle();
+        if (error || !data || data.estado_verificacion !== 'verificado') {
+          window.location.href = '/html/developer-register.html';
+        }
+      } catch (e) {
+        // En caso de fallo, forzar a registro
+        window.location.href = '/html/developer-register.html';
+      }
+    })();
+  </script>
 
   <script>
     // ------------------ Configuración y utilidades ------------------
@@ -230,9 +280,10 @@
     const pager = document.getElementById('tablePager');
     const chartCtx = document.getElementById('statsChart');
     let chartInstance = null;
+    let tableData = [];
 
     // Leer todas las filas como un array
-    const allRows = Array.from(tbody.querySelectorAll('tr'));
+    let allRows = Array.from(tbody.querySelectorAll('tr'));
 
     // ---------- Paginador simple (cliente) ----------
     function renderPager(){
@@ -268,9 +319,9 @@
     function getVisibleRowsData(){
       const visible = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
       const labels = visible.map(r => r.children[0].textContent.trim());
-      const ventas = visible.map(r => Number(r.dataset.ventas || r.getAttribute('data-ventas') || r.children[1].textContent.replace(/[^0-9.-]/g,'')));
-      const descargas = visible.map(r => Number(r.dataset.descargas || r.getAttribute('data-descargas') || r.children[2].textContent.replace(/[^0-9.-]/g,'')));
-      const valor = visible.map(r => Number(r.dataset.valor || r.getAttribute('data-valor') || r.children[3].textContent.replace(/[^0-9.-]/g,'')));
+      const ventas = visible.map(r => Number(r.dataset.ventas || r.children[1].textContent.replace(/[^0-9.-]/g,'')));
+      const valor = visible.map(r => Number(r.dataset.valor || r.children[3].textContent.replace(/[^0-9.-]/g,'')));
+      const descargas = visible.map(() => 0);
       return { labels, ventas, descargas, valor };
     }
 
@@ -342,17 +393,212 @@
       const a = document.createElement('a'); a.href = url; a.download = 'estadisticas_juegos.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
-    // Inicialización
-    (function init(){
-      renderPager();
-      showPage(1);
-      renderChart(currentChartType);
-      document.getElementById('updatedAt').textContent = new Date().toLocaleString();
+    // Inicialización: cargar datos reales
+    (async function init(){
+      try {
+        const env = await (await fetch('/api/public-env')).json();
+        const client = window.supabase.createClient(env.url, env.key);
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) { window.location.href = '/html/login.html'; return; }
+
+        // Juegos subidos
+        const { data: games } = await client
+          .from('juegos')
+          .select('id, titulo, descripcion, estado, precio, precio_descuento, calificacion_media, calificaciones_total, actualizado_en')
+          .eq('developer_auth_id', user.id)
+          .order('actualizado_en', { ascending: false });
+        renderUploaded(games || []);
+
+        // Resumen de ventas por juego (RPC)
+        const { data: summary } = await client.rpc('dev_sales_summary');
+        renderSales(summary || []);
+        buildTableFromSummary(summary || []);
+
+        renderPager();
+        showPage(1);
+        renderChart(currentChartType);
+      } catch(e) {
+        console.error(e);
+      }
     })();
+
+    function renderUploaded(list){
+      const wrap = document.getElementById('uploadedList');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      if (!list || !list.length){
+        wrap.innerHTML = '<div class="text-muted">Aún no has subido juegos.</div>';
+        return;
+      }
+      list.forEach(j => {
+        const art = document.createElement('article');
+        art.className = 'game-card uploaded';
+        const precio = (j.precio_descuento ?? j.precio) || 0;
+        art.innerHTML = `
+          <header class="game-head">
+            <h3><em>${escapeHtml(j.titulo)}</em></h3>
+            <span class="badge bg-${j.estado==='publicado'?'success':(j.estado==='revision'?'warning':'secondary')}">${j.estado}</span>
+          </header>
+          <p class="meta">Actualizado: ${new Date(j.actualizado_en||Date.now()).toLocaleString()}</p>
+          <p class="desc">${escapeHtml(j.descripcion||'Sin descripción')}</p>
+          <div class="actions">
+            <span class="me-2">Precio: $${Number(precio).toFixed(2)}</span>
+            <button class="btn secondary small" onclick="window.location.href='edit-game.html?id=${j.id}'">Editar</button>
+          </div>`;
+        wrap.appendChild(art);
+      });
+    }
+
+    function renderSales(summary){
+      const wrap = document.getElementById('soldList');
+      if (!wrap) return;
+      wrap.innerHTML='';
+      const top = (summary||[]).filter(r=>Number(r.ventas)>0).slice(0,4);
+      if (!top.length){
+        wrap.innerHTML = '<div class="text-muted">Aún no hay ventas.</div>';
+        return;
+      }
+      top.forEach(r => {
+        const art = document.createElement('article');
+        art.className = 'game-card sold';
+        art.innerHTML = `
+          <h3><em>${escapeHtml(r.titulo)}</em></h3>
+          <p class="meta">Total vendidos: ${r.ventas}</p>
+          <p class="desc">Ingresos: $${Number(r.valor||0).toFixed(2)}</p>`;
+        wrap.appendChild(art);
+      });
+    }
+
+    function buildTableFromSummary(summary){
+      tbody.innerHTML = '';
+      tableData = [];
+      (summary||[]).forEach(r => {
+        const tr = document.createElement('tr');
+        tr.dataset.ventas = String(r.ventas||0);
+        tr.dataset.valor = String(r.valor||0);
+        tr.innerHTML = `
+          <td class="fw-semibold">${escapeHtml(r.titulo)}</td>
+          <td>${r.ventas||0}</td>
+          <td>—</td>
+          <td>$${Number(r.valor||0).toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+        tableData.push({ titulo: r.titulo, ventas: r.ventas||0, valor: r.valor||0 });
+      });
+      allRows = Array.from(tbody.querySelectorAll('tr'));
+      const up = document.getElementById('updatedAt'); if (up) up.textContent = new Date().toLocaleString();
+    }
+
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]||c));
+    }
 
     function salirModoDesarrollador() {
       window.location.href = "index.html"; 
     }
+
+    // -------- Ajustes del desarrollador (modal) --------
+    (function setupDevSettings(){
+      const btnOpen = document.getElementById('openDevSettings');
+      const modalEl = document.getElementById('devSettingsModal');
+      const msg = document.getElementById('devSettingsMsg');
+      const f = {
+        nombre: document.getElementById('ds_nombre_estudio'),
+        razon: document.getElementById('ds_razon_social'),
+        nit: document.getElementById('ds_nit'),
+        pais: document.getElementById('ds_pais_id'),
+        dir: document.getElementById('ds_direccion'),
+        tel: document.getElementById('ds_telefono'),
+        web: document.getElementById('ds_website'),
+        gh: document.getElementById('ds_github'),
+      };
+      let bsModal = null;
+
+      function showMsg(text, type='info'){
+        const cls = type==='error' ? 'alert-danger' : (type==='success'?'alert-success':'alert-secondary');
+        msg.innerHTML = `<div class="alert ${cls} py-2 mb-2">${text}</div>`;
+      }
+
+      async function loadCountries(){
+        try{
+          const r = await fetch('/api/paises');
+          const j = await r.json();
+          const list = j.paises || [];
+          f.pais.innerHTML = '<option value="">(Opcional)</option>' + list.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+        } catch{}
+      }
+
+      async function loadProfile(){
+        const env = await (await fetch('/api/public-env')).json();
+        const client = window.supabase.createClient(env.url, env.key);
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) { window.location.href = '/html/login.html'; return; }
+        const { data } = await client
+          .from('desarrolladores')
+          .select('*')
+          .eq('user_auth_id', user.id)
+          .maybeSingle();
+        if (data){
+          f.nombre.value = data.nombre_estudio || '';
+          f.razon.value = data.razon_social || '';
+          f.nit.value = data.nit || '';
+          f.dir.value = data.direccion || '';
+          f.tel.value = data.telefono || '';
+          try { f.pais.value = data.pais_id ? String(data.pais_id) : ''; } catch{}
+          const docs = data.documentos || {};
+          f.web.value = docs.website || '';
+          f.gh.value = docs.github || '';
+        }
+      }
+
+     btnOpen?.addEventListener('click', async ()=>{
+        await loadCountries();
+        await loadProfile();
+        // @ts-ignore
+        bsModal = new bootstrap.Modal(modalEl);
+        bsModal.show();
+        });
+        
+      document.getElementById('ds_save')?.addEventListener('click', async ()=>{
+        try{
+          showMsg('Guardando...');
+          const env = await (await fetch('/api/public-env')).json();
+          const client = window.supabase.createClient(env.url, env.key);
+          const { data: { user } } = await client.auth.getUser();
+          const patch = {
+            nombre_estudio: f.nombre.value.trim(),
+            razon_social: f.razon.value.trim(),
+            direccion: f.dir.value.trim() || null,
+            pais_id: f.pais.value ? Number(f.pais.value) : null,
+            telefono: f.tel.value.trim() || null,
+            documentos: { website: f.web.value.trim() || null, github: f.gh.value.trim() || null },
+          };
+          const { error } = await client
+            .from('desarrolladores')
+            .update(patch)
+            .eq('user_auth_id', user.id);
+          if (error) throw error;
+          showMsg('Cambios guardados', 'success');
+          setTimeout(()=> bsModal?.hide(), 600);
+        } catch(e){
+          showMsg(e.message||'No se pudo guardar', 'error');
+        }
+      });
+
+      document.getElementById('ds_delete')?.addEventListener('click', async ()=>{
+        if (!confirm('¿Seguro que deseas dar de baja tu cuenta de desarrollador?')) return;
+        try{
+          showMsg('Procesando baja...');
+          const env = await (await fetch('/api/public-env')).json();
+          const client = window.supabase.createClient(env.url, env.key);
+          const { error } = await client.rpc('dev_deregister');
+          if (error) throw error;
+          showMsg('Tu cuenta de desarrollador fue dada de baja.', 'success');
+          setTimeout(()=>{ window.location.href = '/html/Profile.html'; }, 700);
+        } catch(e){
+          showMsg(e.message||'No se pudo dar de baja', 'error');
+        }
+      });
+    })();
   </script>
 </body>
 </html>

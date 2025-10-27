@@ -32,57 +32,33 @@
   <main class="form-container">
     <section>
       <h2>Información del Juego</h2>
-      <label for="email">E-mail</label>
-      <input type="email" id="email" value="desarrollador@ejemplo.com" disabled>
-    </section>
-
-    <section>
-      <h2>Detalles del juego</h2>
-      
       <div class="form-group">
-        <label for="nombre">Nombre del Juego</label>
-        <input type="text" id="nombre" placeholder="Ej: Aventura Épica">
+        <label for="nombre">Título del Juego</label>
+        <input type="text" id="nombre" placeholder="Ej: Aventura Épica" required>
       </div>
-
       <div class="form-group">
         <label for="categoria">Categoría</label>
-        <input type="text" id="categoria" placeholder="Ej: Acción">
+        <select id="categoria" required>
+          <option value="">Cargando categorías...</option>
+        </select>
       </div>
-
+      <div class="form-group">
+        <label for="precio">Precio (USD)</label>
+        <input type="number" id="precio" step="0.01" min="0" placeholder="9.99" required>
+      </div>
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Un emocionante juego de aventuras."></textarea>
+        <textarea id="descripcion" placeholder="Describe tu juego" rows="5"></textarea>
       </div>
-
-      <div class="form-inline">
-        <div>
-          <label for="codigo">Código Postal</label>
-          <input type="text" id="codigo" placeholder="12345">
-        </div>
-        <div>
-          <label for="ciudad">Ciudad</label>
-          <input type="text" id="ciudad" placeholder="Ciudad de los Juegos">
-        </div>
-      </div>
-
       <div class="form-group">
-        <label for="pais">País</label>
-        <input type="text" id="pais" value="Colombia" disabled>
-      </div>
-
-      <div class="form-group">
-        <label for="genero">Género</label>
-        <select id="genero">
-          <option>Acción</option>
-          <option>Aventura</option>
-          <option>Estrategia</option>
-          <option>RPG</option>
-          <option>Deportes</option>
-        </select>
+        <label for="cover">Imagen de portada</label>
+        <input type="file" id="cover" accept="image/*">
+        <small class="hint">Se recomienda 1200x630, formato WEBP/PNG/JPG (máx 5MB).</small>
+        <div id="coverPreview" style="margin-top:8px"></div>
       </div>
     </section>
 
-    <button class="btn-primary" onclick="window.location.href='add-game-archivo.html';">Siguiente</button>
+    <button id="nextBtn" class="btn-primary">Siguiente</button>
   </main>
      <!-- NAV INFERIOR  -->
   <nav class="bottom-nav dev" aria-label="Navegación">
@@ -93,6 +69,7 @@
     <i class="fa-solid fa-user-gear"></i>
    </a>
 
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/add-game.js"></script>
 </body>
 </html>

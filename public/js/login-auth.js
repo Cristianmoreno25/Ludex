@@ -44,6 +44,20 @@
       const client = window.supabase.createClient(url, key);
       const { error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      // Sincronizar sesión a cookies para SSR/middleware
+      try {
+        const { data: { session } } = await client.auth.getSession();
+        if (session?.access_token && session?.refresh_token) {
+          await fetch('/api/auth/sync-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_token: session.access_token,
+              refresh_token: session.refresh_token,
+            }),
+          });
+        }
+      } catch {}
       window.location.href = '/html/browse.html';
     } catch (err) {
       console.error(err);

@@ -1,0 +1,103 @@
+<!doctype html>
+<html class="pt-preload" lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro de Desarrollador — Ludex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/developer-register.css">
+  <style>html.pt-preload body{opacity:0} body{transition:opacity .25s ease} html.fade-out body{opacity:0} ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" role="img" aria-label="Ludex">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#4f46e5"/>
+        <path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0z" fill="#fff" opacity="0.12"/>
+      </svg>
+      <span class="brand-name">Ludex</span>
+    </div>
+
+    <!-- En esta vista no mostramos acciones que saquen del flujo de solicitud -->
+    <nav class="top-actions" aria-hidden="true"></nav>
+  </header>
+
+  <main class="page" role="main">
+    <section class="card" aria-labelledby="title">
+      <div class="card-header">
+        <div class="step-row">
+          <span class="badge">Registro de desarrollador</span>
+          <div class="progress" aria-hidden="true"><span></span></div>
+        </div>
+        <h1 id="title" class="title">Solicita tu cuenta de desarrollador</h1>
+        <p class="subtitle">Cuéntanos sobre tu estudio. Revisaremos tu solicitud cuanto antes.</p>
+      </div>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+
+      <form id="devForm" class="form" novalidate>
+        <div class="grid two-col">
+          <label class="field">
+            <span class="field-label">Nombre del estudio</span>
+            <input id="nombre_estudio" name="nombre_estudio" type="text" placeholder="Ej. Pixel Forge" required>
+          </label>
+          <label class="field">
+            <span class="field-label">Razón social</span>
+            <input id="razon_social" name="razon_social" type="text" placeholder="Nombre legal de la empresa" required>
+          </label>
+        </div>
+
+        <div class="grid two-col">
+          <label class="field">
+            <span class="field-label">NIT / Tax ID</span>
+            <input id="nit" name="nit" type="text" placeholder="Ej. 900123456-7" required>
+            <small class="hint">Debe ser único. No compartas información sensible.</small>
+          </label>
+          <label class="field">
+            <span class="field-label">País</span>
+            <select id="pais_id" name="pais_id" required>
+              <option value="">Selecciona tu país</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid two-col">
+          <label class="field">
+            <span class="field-label">Dirección</span>
+            <input id="direccion" name="direccion" type="text" placeholder="Calle 123, Ciudad, CP" />
+          </label>
+          <label class="field">
+            <span class="field-label">Teléfono</span>
+            <input id="telefono" name="telefono" type="tel" placeholder="+57 300 000 0000" />
+          </label>
+        </div>
+
+        <div class="grid two-col">
+          <label class="field">
+            <span class="field-label">Sitio web</span>
+            <input id="website" name="website" type="url" placeholder="https://tu-estudio.com" />
+          </label>
+          <label class="field">
+            <span class="field-label">Portafolio / GitHub</span>
+            <input id="github" name="github" type="url" placeholder="https://github.com/tu-usuario" />
+          </label>
+        </div>
+
+        <div id="formMessage" aria-live="polite"></div>
+
+        <div class="actions">
+          <button id="submitBtn" class="btn primary" type="submit">Enviar solicitud</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer" aria-label="Información legal">
+    <p>© 2024 Ludex · <a href="#" class="link">Términos</a> · <a href="#" class="link">Privacidad</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/developer-register.js"></script>
+  <script src="../js/page-transitions.js"></script>
+</body>
+</html>

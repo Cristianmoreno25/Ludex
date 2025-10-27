@@ -34,9 +34,20 @@
     <div class="profile-info">
       <!-- Foto de perfil real en forma circular -->
       <img src="https://i.pravatar.cc/150?img=3" alt="Foto de perfil de usuario" class="profile-avatar">
-      <div class="profile-username">@usuario_actual</div>
+      <div class="profile-username" id="profileUsername">@usuario_actual</div>
       <button class="edit-btn" aria-label="Editar perfil">✎</button>
     </div>
+
+    <!-- Datos del usuario (autenticado) -->
+    <nav class="profile-nav" aria-label="Datos de cuenta">
+      <ul id="userDataList">
+        <li class="profile-item"><span>Email</span><span class="arrow" id="ud-email">—</span></li>
+        <li class="profile-item"><span>Nombre completo</span><span class="arrow" id="ud-name">—</span></li>
+        <li class="profile-item"><span>Teléfono</span><span class="arrow" id="ud-phone">—</span></li>
+        <li class="profile-item"><span>País</span><span class="arrow" id="ud-country">—</span></li>
+        <li class="profile-item"><span>Estado desarrollador</span><span class="arrow" id="ud-devstatus">—</span></li>
+      </ul>
+    </nav>
 
     <!-- Opciones -->
     <nav class="profile-nav">
@@ -44,7 +55,8 @@
         <li><a href="./mis-compras.html" class="profile-item">Mis Compras <span class="arrow">›</span></a></li>
         <li><a href="#" class="profile-item">Información de Pago <span class="arrow">›</span></a></li>
         <li><a href="./configuration.html" class="profile-item">Configuraciones <span class="arrow">›</span></a></li>
-        <li><a href="./developer.html" class="profile-item">Actualizar a desarrollador <span class="arrow">›</span></a></li>
+        <li><a id="developerLink" href="./developer-register.html" class="profile-item">Continuar como desarrollador <span class="arrow">›</span></a></li>
+        <li id="adminReviewItem" style="display:none"><a href="/admin/developers" class="profile-item">Revisar solicitudes <span class="arrow">›</span></a></li>
       </ul>
     </nav>
 
@@ -57,5 +69,7 @@
     </nav>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/profile.js"></script>
 </body>
 </html>

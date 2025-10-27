@@ -8,5 +8,5 @@ export async function middleware(request: NextRequest) {
 
 // 👇 SOLO protege /protected/**
 export const config = {
-  matcher: ["/protected/:path*"],
+  matcher: ["/protected/:path*", "/admin/:path*"],
 };

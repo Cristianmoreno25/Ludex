@@ -40,11 +40,13 @@
 
     <!-- Caja para cargar archivo -->
     <section class="upload-box">
-      <h3>Carga Archivo Zip</h3>
+      <h3>Carga tu build</h3>
       <div class="file-input">
-        <input type="file" id="archivo" accept=".zip">
+        <input type="file" id="archivo" accept=".zip,.exe,.msi,.apk,.dmg">
       </div>
-      <button class="btn-primary" onclick="window.location.href='add-game-terminar.html';">Siguiente</button>
+      <small class="hint">Se sube al bucket privado 'game-files'. Tamaño recomendado ≤ 100MB.</small>
+      <div id="uploadStatus" class="mt-2"></div>
+      <button id="uploadNext" class="btn-primary">Siguiente</button>
     </section>
   </main>
 
@@ -58,5 +60,7 @@
    </a>
 </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/add-game-archivo.js"></script>
 </body>
 </html>

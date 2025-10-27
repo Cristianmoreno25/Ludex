@@ -913,3 +913,227 @@ NOTAS
     usa subida autenticada o cambia políticas a validación por carpeta+developer.
   - Para producción, se recomienda API con URL firmadas para control más fino.
 */
+
+-- =====================================================================================
+--  STORAGE: AVATARS (REGISTRO Y GUÍA – CONFIGURADO POR UI)
+-- =====================================================================================
+/*
+Contexto
+  - Se creó un bucket público para avatares llamado 'avatars' usando la interfaz de Storage.
+  - Límite recomendado: 5 MB (5,242,880). MIME: image/png,image/jpeg,image/webp,image/avif
+  - Objetivo: que cada usuario suba/gestione su propio avatar y cualquiera pueda verlo.
+
+Convención de rutas
+  - avatars/<auth.uid()>/avatar-<timestamp>.<ext>
+  - Ejemplo: avatars/2d9f...9f/avatar-1717000000000.webp
+
+Políticas aplicadas en la UI (Policy definition)
+  - SELECT (Public):
+      bucket_id = 'avatars'
+  - INSERT (Authenticated):
+      bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text
+  - UPDATE (Authenticated):
+      bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text
+  - DELETE (Authenticated):
+      bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text
+
+Notas importantes
+  - (storage.foldername(name))[N] devuelve TEXT; por eso comparamos con auth.uid()::text
+    para evitar el error "operator does not exist: text = uuid".
+  - Si se sube desde el cliente autenticado, también se puede usar 'owner = auth.uid()' en
+    políticas (owner es UUID). La variante por carpeta funciona incluso si se sube con service role.
+  - Mostrar el avatar: usar getPublicUrl(path) porque el bucket es público.
+  - Guardar la ruta en user_metadata.avatar_path y opcionalmente en public.usuarios.avatar_path.
+*/
+INSERT INTO public.paises (codigo, nombre, codigo_moneda, tasa_iva) VALUES
+('CO', 'Colombia', 'COP', 19.00),
+('CL', 'Chile', 'CLP', 19.00),
+('AR', 'Argentina', 'ARS', 21.00),
+('US', 'United States', 'USD', 0.00),
+('ES', 'Spain', 'EUR', 21.00);
+
+-- =====================================================================================
+--  APPENDIX: RPCs para panel de desarrollador (ventas por juego y serie temporal)
+--  Cambios: AGREGAR funciones dev_sales_summary y dev_sales_timeseries.
+--  No se borran ni cambian objetos existentes.
+-- =====================================================================================
+
+-- Resumen de ventas por juego del desarrollador autenticado
+CREATE OR REPLACE FUNCTION public.dev_sales_summary()
+RETURNS TABLE(
+  juego_id BIGINT,
+  titulo TEXT,
+  ventas BIGINT,
+  valor NUMERIC
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public AS $$
+  SELECT
+    j.id AS juego_id,
+    j.titulo,
+    COALESCE(SUM(CASE WHEN c.estado = 'completado' THEN ci.cantidad ELSE 0 END), 0)::BIGINT AS ventas,
+    COALESCE(SUM(CASE WHEN c.estado = 'completado' THEN ci.cantidad * ci.precio_unitario ELSE 0 END), 0)::NUMERIC(12,2) AS valor
+  FROM public.juegos j
+  LEFT JOIN public.carrito_items ci ON ci.juego_id = j.id
+  LEFT JOIN public.carritos c ON c.id = ci.carrito_id
+  WHERE j.developer_auth_id = auth.uid()
+  GROUP BY j.id, j.titulo
+  ORDER BY valor DESC, ventas DESC, j.titulo ASC
+$$;
+
+-- Serie temporal de ventas del desarrollador autenticado
+CREATE OR REPLACE FUNCTION public.dev_sales_timeseries(p_interval TEXT DEFAULT 'month')
+RETURNS TABLE(
+  bucket TIMESTAMPTZ,
+  total NUMERIC
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public AS $$
+  SELECT
+    date_trunc(p_interval, c.actualizado_en) AS bucket,
+    COALESCE(SUM(ci.cantidad * ci.precio_unitario), 0)::NUMERIC(12,2) AS total
+  FROM public.juegos j
+  JOIN public.carrito_items ci ON ci.juego_id = j.id
+  JOIN public.carritos c ON c.id = ci.carrito_id AND c.estado = 'completado'
+  WHERE j.developer_auth_id = auth.uid()
+  GROUP BY 1
+  ORDER BY 1
+$$;
+
+
+-- =====================================================================================
+--  APPENDIX 2: Permitir baja del desarrollador por el dueño y RPC de desregistro
+--  Cambios: AGREGAR policy de DELETE y RPC dev_deregister().
+-- =====================================================================================
+
+DO $$ BEGIN
+  CREATE POLICY dev_owner_delete
+  ON public.desarrolladores
+  FOR DELETE
+  TO authenticated
+  USING (user_auth_id = auth.uid() OR public.is_admin());
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- RPC: dar de baja cuenta de desarrollador (elimina fila y vuelve rol a 'cliente')
+CREATE OR REPLACE FUNCTION public.dev_deregister()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY INVOKER
+AS $$
+DECLARE v_email TEXT;
+BEGIN
+  -- borrar registro de desarrollador del usuario actual (RLS aplica)
+  DELETE FROM public.desarrolladores WHERE user_auth_id = auth.uid();
+
+  -- intentar bajar rol en tabla usuarios usando email del JWT
+  v_email := auth.jwt() ->> 'email';
+  IF v_email IS NOT NULL THEN
+    UPDATE public.usuarios
+    SET rol = 'cliente', actualizado_en = NOW()
+    WHERE correo_electronico = v_email;
+  END IF;
+END;
+$$;
+
+-- =====================================================================================
+--  APPENDIX 3: Permitir que el dueño envíe juegos a 'revisión' (RLS update)
+--  Cambios: AGREGAR política adicional sin eliminar las existentes.
+-- =====================================================================================
+
+DO $$ BEGIN
+  CREATE POLICY juegos_owner_submit_review
+  ON public.juegos
+  FOR UPDATE
+  TO authenticated
+  USING (
+    auth.uid() = developer_auth_id
+    AND estado IN ('borrador','rechazado') -- OLD.estado
+  )
+  WITH CHECK (
+    auth.uid() = developer_auth_id
+    AND estado IN ('borrador','revision','rechazado') -- NEW.estado
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- =====================================================================================
+--  APPENDIX 4: Permitir que el dueño edite SIEMPRE (manteniendo publicación solo para admin)
+--  Cambios: AGREGAR una política de UPDATE amplia para el dueño y un trigger
+--           que impide poner estado='publicado' si no es admin.
+-- =====================================================================================
+DO $$ BEGIN
+  CREATE POLICY juegos_owner_update_any
+  ON public.juegos
+  FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = developer_auth_id)
+  WITH CHECK (auth.uid() = developer_auth_id);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+-- Trigger: solo admin puede establecer estado='publicado'
+CREATE OR REPLACE FUNCTION public.enforce_publish_admin()
+RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE v_is_admin boolean;
+BEGIN
+  v_is_admin := COALESCE((auth.jwt() ->> 'role') = 'admin' OR (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
+  IF NEW.estado = 'publicado' AND NOT v_is_admin THEN
+    RAISE EXCEPTION 'Solo admin puede establecer estado=publicado' USING ERRCODE = '42501';
+  END IF;
+  RETURN NEW;
+END; $$;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_enforce_publish_admin') THEN
+    CREATE TRIGGER trg_enforce_publish_admin
+    BEFORE UPDATE ON public.juegos
+    FOR EACH ROW EXECUTE FUNCTION public.enforce_publish_admin();
+  END IF;
+END $$;
+
+-- Versión mejorada del trigger: permite editar juegos ya publicados; bloquea solo la transición a 'publicado' si no es admin
+CREATE OR REPLACE FUNCTION public.enforce_publish_admin()
+RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE v_is_admin boolean;
+BEGIN
+v_is_admin := COALESCE(
+(auth.jwt() ->> 'role') = 'admin' OR
+(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin',
+false
+);
+
+-- Permitir editar juegos ya publicados; bloquear solo la TRANSICIÓN a 'publicado' si no es admin
+IF NEW.estado = 'publicado'
+AND (OLD.estado IS DISTINCT FROM 'publicado')
+AND NOT v_is_admin THEN
+RAISE EXCEPTION 'Solo admin puede establecer estado=publicado' USING ERRCODE = '42501';
+END IF;
+
+RETURN NEW;
+END; $$;
+
+-- =====================================================================================
+CREATE OR REPLACE FUNCTION public.enforce_publish_admin()
+RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+v_is_admin boolean;
+BEGIN
+-- Admin si:
+-- 1) El JWT trae role=admin (en raíz o app_metadata), o
+-- 2) La operación viene con la Service Role Key (current_user = 'service_role')
+v_is_admin := COALESCE(
+(auth.jwt() ->> 'role') = 'admin'
+OR (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin',
+false
+) OR current_user = 'service_role';
+
+-- Solo bloquear cuando se intenta TRANSICIONAR a 'publicado'
+IF NEW.estado = 'publicado'
+AND (OLD.estado IS DISTINCT FROM 'publicado')
+AND NOT v_is_admin THEN
+RAISE EXCEPTION 'Solo admin puede establecer estado=publicado' USING ERRCODE = '42501';
+END IF;
+
+RETURN NEW;
+END; $$;

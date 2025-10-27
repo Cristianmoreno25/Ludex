@@ -51,7 +51,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname !== "/" &&
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/html") &&
+    !request.nextUrl.pathname.startsWith("/public")
   ) {
     // Redirige a la vista HTML usada por el proyecto
     const url = request.nextUrl.clone();

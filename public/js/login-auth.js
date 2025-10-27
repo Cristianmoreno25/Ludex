@@ -42,8 +42,17 @@
       const email = await resolveIdentity(identity);
       const { url, key } = await getEnv();
       const client = window.supabase.createClient(url, key);
-      const { error } = await client.auth.signInWithPassword({ email, password });
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      try {
+        const u = data?.user || (await client.auth.getUser()).data.user;
+        if (u) {
+          const md = u.user_metadata || {};
+          const display = md.usuario || md.nombre_completo || (u.email ? u.email.split('@')[0] : 'Usuario');
+          sessionStorage.setItem('lx_display_name', String(display));
+          sessionStorage.setItem('lx_is_logged', '1');
+        }
+      } catch {}
       // Sincronizar sesión a cookies para SSR/middleware
       try {
         const { data: { session } } = await client.auth.getSession();
@@ -71,11 +80,17 @@
     try {
       const { url, key } = await getEnv();
       const client = window.supabase.createClient(url, key);
-      const { error } = await client.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/html/browse.html` }
+        // Usamos la misma ruta de verificación para centralizar el flujo
+        // Allí se hace setSession + sync-profile y si el proveedor es Google
+        // se redirige a complete-profile.html
+        options: { redirectTo: `${window.location.origin}/html/verification.html` }
       });
       if (error) throw error;
+      
+      // Para Google OAuth, la información se guardará en el callback
+      // que se maneja en browse.html o donde se procese el redirect
     } catch (err) {
       console.error(err); showMessage('No se pudo iniciar con Google');
     }

@@ -183,6 +183,7 @@
         });
         const j = await resp.json();
         if(!resp.ok){ throw new Error(j.error||'No se pudo guardar'); }
+        try { localStorage.setItem('profile_complete','1'); } catch(_){ }
         setStatus('Perfil actualizado. Redirigiendo...');
         setTimeout(()=>{ window.location.href = '/html/browse.html'; }, 1000);
       } catch (e){ setStatus(e.message||'Error', 'error'); saveBtn.disabled=false; }

@@ -67,9 +67,11 @@
             <div class="helper">También puedes iniciar sesión con:</div>
           </div>
 
-          <div style="display:flex;gap:8px;margin-top:6px">
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
             <button type="button" class="btn social" id="socialGoogle" aria-label="Iniciar con Google">Google</button>
-            <button type="button" class="btn social" id="socialFacebook" aria-label="Iniciar con Facebook">Facebook</button>
+            <button type="button" class="btn" id="accessBtn-login" aria-label="Continuar sin cuenta" style="flex:1 1 auto;min-width:180px;background:#fff;border:1px solid #e5e7eb;color:#0f172a;">
+              Continuar sin cuenta
+            </button>
           </div>
           <div class="caption">¿No tienes cuenta? <a href="../html/register.html" data-anim="slide-right" class="link-small">Crea una</a></div>
         </form>
@@ -86,6 +88,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/login-auth.js"></script>
+  <script src="../js/guest-access.js"></script>
   <script src="../js/page-transitions.js"></script>
 </body>
 </html>

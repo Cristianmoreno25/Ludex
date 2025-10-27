@@ -53,29 +53,44 @@
       const { error: sessErr } = await client.auth.setSession({ access_token, refresh_token });
       if (sessErr) throw sessErr;
 
+      // 1) Decidir destino: si NO tiene fila en usuarios -> completar perfil
+      //    Si ya tiene fila -> sincronizar perfil y llevar a browse
+      let tokenForCheck = access_token;
+      try {
+        const { data: { session } } = await client.auth.getSession();
+        if (session?.access_token) tokenForCheck = session.access_token;
+      } catch(_){}
+
+      const needsResp = await fetch('/api/auth/needs-completion', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${tokenForCheck}` },
+      });
+      if (!needsResp.ok) {
+        const j = await needsResp.json().catch(()=>({}));
+        throw new Error(j.error || 'No se pudo validar el estado del perfil');
+      }
+      const needsData = await needsResp.json();
+      const needs = !!needsData.needs;
+
+      if (needs) {
+        setStatus('Verificado. Vamos a completar tu perfil...');
+        setTimeout(() => { window.location.href = '/html/complete-profile.html'; }, 800);
+        return;
+      }
+
+      // Si no necesita completar, sincronizamos perfil y vamos a browse
       const sync = await fetch('/api/auth/sync-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access_token }),
+        body: JSON.stringify({ access_token })
       });
       if (!sync.ok) {
         const j = await sync.json().catch(() => ({}));
         throw new Error(j.error || 'No se pudo sincronizar el perfil');
       }
 
-      // decidir destino: si el proveedor es Google, ir a completar perfil; si no, al login
-      try {
-        const { data: { user } } = await client.auth.getUser();
-        const provider = user?.app_metadata?.provider;
-        if (provider === 'google') {
-          setStatus('Verificado. Vamos a completar tu perfil...');
-          setTimeout(() => { window.location.href = '/html/complete-profile.html'; }, 800);
-          return;
-        }
-      } catch (_) {}
-
-      setStatus('Cuenta verificada y perfil creado. Redirigiendo...');
-      setTimeout(() => { window.location.href = '/html/login.html'; }, 1200);
+      setStatus('Listo. Redirigiendo...');
+      setTimeout(() => { window.location.href = '/html/browse.html'; }, 800);
     } catch (e) {
       console.error(e);
       setStatus(e.message || 'Error durante la verificacion', 'error');

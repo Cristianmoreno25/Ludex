@@ -443,8 +443,35 @@
           <p class="desc">${escapeHtml(j.descripcion||'Sin descripción')}</p>
           <div class="actions">
             <span class="me-2">Precio: $${Number(precio).toFixed(2)}</span>
-            <button class="btn secondary small" onclick="window.location.href='edit-game.html?id=${j.id}'">Editar</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="toggle-details" aria-expanded="false" title="Ver más"><span>Detalles</span> <i class="fa-solid fa-chevron-down"></i></button>
+              <button class="btn secondary small" onclick="window.location.href='edit-game.html?id=${j.id}'">Editar</button>
+              ${j.estado==='publicado' || j.estado==='revision' ? `
+                <button class="btn danger small" disabled title="No puedes eliminar un juego en revisión/publicado">Eliminar</button>
+              ` : `
+                <button class="btn danger small delete-game" data-id="${j.id}">Eliminar</button>
+              `}
+            </div>
           </div>`;
+        // toggle expand
+        const btn = art.querySelector('.toggle-details');
+        btn?.addEventListener('click', () => {
+          const expanded = art.classList.toggle('expanded');
+          btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
+        // eliminar
+        const del = art.querySelector('.delete-game');
+        del?.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este juego y sus archivos? Esta acción no se puede deshacer.')) return;
+          try {
+            const env = await (await fetch('/api/public-env')).json();
+            const client = window.supabase.createClient(env.url, env.key);
+            const { error } = await client.from('juegos').delete().eq('id', j.id);
+            if (error) throw error;
+            toast('Juego eliminado');
+            art.remove();
+          } catch (e){ console.error(e); toast('No se pudo eliminar', true); }
+        });
         wrap.appendChild(art);
       });
     }
@@ -490,6 +517,17 @@
 
     function escapeHtml(s){
       return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]||c));
+    }
+    function toast(text, isError=false){
+      try{
+        const t = document.createElement('div');
+        t.style.cssText='position:fixed;right:16px;bottom:16px;z-index:9999;padding:10px 12px;border-radius:12px;color:#fff;box-shadow:0 10px 22px rgba(0,0,0,.25);';
+        t.style.background = isError ? '#ef4444' : '#10b981';
+        t.textContent = text;
+        document.body.appendChild(t);
+        setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; }, 1100);
+        setTimeout(()=> t.remove(), 1400);
+      } catch{}
     }
 
     function salirModoDesarrollador() {

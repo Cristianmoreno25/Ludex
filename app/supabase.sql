@@ -1137,3 +1137,19 @@ END IF;
 
 RETURN NEW;
 END; $$;
+
+-------------------------------------------------------------------------------------
+-- Permitir leer portadas (tipo 'otro') de juegos publicados a cualquiera
+DO $$ BEGIN
+CREATE POLICY files_public_covers_published
+ON public.juego_archivos
+FOR SELECT
+TO public
+USING (
+tipo = 'otro'
+AND EXISTS (
+SELECT 1 FROM public.juegos j
+WHERE j.id = juego_id AND j.estado = 'publicado'
+)
+);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

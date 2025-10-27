@@ -69,8 +69,8 @@
     .card-body { padding: 24px; }
 
     .social-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+      display: flex;
+      justify-content: center;
       gap: 12px;
     }
 
@@ -89,8 +89,7 @@
     .btn.social svg { flex: 0 0 auto; }
     .btn.social.google { background: #9ca3af; }
     .btn.social.google:hover { background: #1d2941; }
-    .btn.social.fb { background: #9ca3af; }
-    .btn.social.fb:hover { background: #1c2a45; }
+    /* Facebook removed */
 
     .divider { 
       display: flex; align-items: center; gap: 12px; 
@@ -189,20 +188,13 @@
       </header>
 
       <div class="card-body">
-        <!-- Social buttons row: Google + Facebook -->
+        <!-- Social button: Google -->
         <div class="social-row">
           <button class="btn social google" id="googleBtn" type="button" aria-label="Continuar con Google">
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
               <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.7 3.7-5.5 3.7-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.7C16.6 3.1 14.5 2 12 2 6.9 2 2.8 6.1 2.8 11.2S6.9 20.4 12 20.4c6.9 0 9.5-4.8 8.9-9.2H12z"/>
             </svg>
             <span>Continue with Google</span>
-          </button>
-
-          <button class="btn social fb" id="facebookBtn" type="button" aria-label="Continuar con Facebook">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
-              <path fill="#1877F2" d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.495V14.708H9.691v-3.62h3.129V8.413c0-3.1 1.893-4.787 4.657-4.787 1.325 0 2.463.099 2.795.143v3.24h-1.917c-1.504 0-1.796.715-1.796 1.765v2.316h3.59l-.467 3.62h-3.123V24h6.124C23.407 24 24 23.407 24 22.676V1.325C24 .593 23.407 0 22.675 0z"/>
-            </svg>
-            <span>Continue with Facebook</span>
           </button>
         </div>
 
@@ -340,8 +332,7 @@
         alert('No se pudo iniciar con Google.');
       }
     });
-    // Social sign-in (Facebook - pendiente de configurar)
-    document.getElementById('facebookBtn').addEventListener('click', function(){ alert('Facebook no está configurado.'); });
+    // Facebook removed
 
     // NUEVO handler: validaciones cliente + fetch al backend
     (function(){

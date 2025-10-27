@@ -235,5 +235,36 @@
 
   <!-- script que monta el submenú único -->
   <script src="../js/submenu.js" defer></script>
+  
+  <!-- Script para manejar información del usuario después del login -->
+  <script>
+    // Verificar si hay un usuario autenticado y guardar su información
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        // Obtener configuración de Supabase
+        const envResponse = await fetch('/api/public-env');
+        const { url, key } = await envResponse.json();
+        const client = window.supabase.createClient(url, key);
+        
+        // Verificar si hay un usuario autenticado
+        const { data: { user } } = await client.auth.getUser();
+        
+        if (user) {
+          // Guardar información del usuario en localStorage
+          const username = user.email?.split('@')[0] || 'usuario';
+          localStorage.setItem('username', username);
+          localStorage.setItem('userEmail', user.email);
+          
+          // Actualizar el username en el submenú si existe
+          const usernameElement = document.getElementById('auth-username');
+          if (usernameElement) {
+            usernameElement.textContent = username;
+          }
+        }
+      } catch (error) {
+        console.log('No hay usuario autenticado o error:', error);
+      }
+    });
+  </script>
 </body>
 </html>

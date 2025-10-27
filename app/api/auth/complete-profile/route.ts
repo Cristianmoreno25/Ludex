@@ -38,22 +38,50 @@ export async function POST(req: NextRequest) {
       pais_id: resolvedPais,
     };
 
-    // Primero probamos update normal
-    let { error: updErr } = await admin
+    // Intentar update; si no existe la fila, haremos upsert (crear)
+    const { data: checkRow } = await admin
       .from("usuarios")
-      .update(patch)
-      .eq("correo_electronico", user.email);
+      .select("correo_electronico")
+      .eq("correo_electronico", user.email)
+      .maybeSingle();
 
-    // Si falla por colisión en username, generamos uno único y reintentamos
-    if (updErr && /usuario/i.test(updErr.message)) {
-      patch.usuario = `${patch.usuario}-${user.id.slice(0,6)}`;
-      ({ error: updErr } = await admin
+    if (checkRow) {
+      // Update existente
+      let { error: updErr } = await admin
         .from("usuarios")
         .update(patch)
-        .eq("correo_electronico", user.email));
-    }
+        .eq("correo_electronico", user.email);
 
-    if (updErr) return NextResponse.json({ error: updErr.message }, { status: 400 });
+      if (updErr && /usuario/i.test(updErr.message)) {
+        patch.usuario = `${patch.usuario}-${user.id.slice(0,6)}`;
+        ({ error: updErr } = await admin
+          .from("usuarios")
+          .update(patch)
+          .eq("correo_electronico", user.email));
+      }
+      if (updErr) return NextResponse.json({ error: updErr.message }, { status: 400 });
+    } else {
+      // Crear fila nueva (upsert por correo)
+      const createPayload: any = {
+        usuario: String(patch.usuario).trim().toLowerCase(),
+        correo_electronico: user.email,
+        hash_contrasena: "auth_managed",
+        nombre_completo: patch.nombre_completo ?? null,
+        telefono: patch.telefono ?? null,
+        pais_id: patch.pais_id ?? null,
+        acepto_terminos: true,
+      };
+      let { error: insErr } = await admin
+        .from("usuarios")
+        .upsert([createPayload], { onConflict: "correo_electronico" });
+      if (insErr && /usuario/i.test(insErr.message)) {
+        createPayload.usuario = `${createPayload.usuario}-${user.id.slice(0,6)}`;
+        ({ error: insErr } = await admin
+          .from("usuarios")
+          .upsert([createPayload], { onConflict: "correo_electronico" }));
+      }
+      if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 });
+    }
 
     return NextResponse.json({ message: "Perfil actualizado", usuario: patch.usuario });
   } catch (e) {

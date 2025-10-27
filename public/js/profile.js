@@ -8,6 +8,7 @@
   const devStatusEl = qs('#ud-devstatus');
   const devLink = qs('#developerLink');
   const adminReviewItem = qs('#adminReviewItem');
+  const logoutLink = document.querySelector('.profile-item.logout');
 
   async function getPublicEnv(){ const r = await fetch('/api/public-env'); return r.json(); }
   async function getCountries(){ try{ const r = await fetch('/api/paises'); const j = await r.json(); return j.paises||[]; } catch { return []; } }
@@ -93,4 +94,29 @@
   }
 
   document.addEventListener('DOMContentLoaded', main);
+
+  // Cerrar sesión: desloguea y redirige a login.html
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      if (!logoutLink) return;
+      const env = await (await fetch('/api/public-env')).json();
+      const client = window.supabase.createClient(env.url, env.key);
+      logoutLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try { await client.auth.signOut(); } catch {}
+        // Opcional: limpiar cookie SSR estableciendo una sesión vacía
+        try {
+          const { data: { session } } = await client.auth.getSession();
+          if (session?.access_token && session?.refresh_token) {
+            await fetch('/api/auth/sync-session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ access_token: session.access_token, refresh_token: session.refresh_token })
+            });
+          }
+        } catch {}
+        window.location.href = '/html/login.html';
+      });
+    } catch {}
+  });
 })();

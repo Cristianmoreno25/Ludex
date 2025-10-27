@@ -3,41 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Verificacion de cuenta - Ludex</title>
+  <title>Verificando correo — Ludex</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/verification.css">
-  <style>html.pt-preload body{opacity:0} body{transition:opacity .25s ease} html.fade-out body{opacity:0} ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}</style></head>
+  <style>
+    html.pt-preload body{opacity:0}
+    body{transition:opacity .25s ease; margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#0f172a; background:linear-gradient(180deg,#f8fafc 0%, #ffffff 100%)}
+    html.fade-out body{opacity:0}
+    ::view-transition-old(root), ::view-transition-new(root){animation-duration:.25s}
+    .wrap{min-height:100dvh; display:grid; place-items:center; padding:24px}
+    .card{width:100%; max-width:520px; background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:28px; box-shadow:0 20px 60px rgba(2,6,23,.08)}
+    .head{display:flex; align-items:center; gap:12px; margin-bottom:12px}
+    .brand{display:flex; align-items:center; gap:8px; color:#111827; font-weight:700; letter-spacing:.2px}
+    .title{font-size:18px; margin:0}
+    .muted{color:#6b7280; font-size:14px}
+    .row{display:flex; align-items:center; gap:14px; margin-top:10px}
+    .spinner{width:22px;height:22px;border-radius:50%;border:3px solid #e5e7eb;border-top-color:#6366f1;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
+  <main class="wrap" role="main">
+    <section class="card" role="region" aria-labelledby="verify-title">
+      <div class="head">
         <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
-          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
+          <circle cx="12" cy="12" r="10" fill="#6366f1"/>
         </svg>
-        <span class="brand-name">Ludex</span>
+        <div class="brand">Ludex</div>
       </div>
-    </div>
-  </header>
-
-  <main class="page">
-    <section class="verify-card" role="region" aria-labelledby="verify-title">
-      <h1 id="verify-title" class="title">Verificacion de correo</h1>
-      <p class="subtitle">Haz clic en "Verificar" para completar tu registro.</p>
-
-      <div id="status" class="muted" aria-live="polite" style="margin-bottom:12px"></div>
-
-      <div class="shield" aria-hidden="true">
-        <svg width="60" height="60" viewBox="0 0 24 24"><path fill="#3366ff" d="M12 2l7 3v5c0 5-3.7 9.7-7 12-3.3-2.3-7-7-7-12V5l7-3z"/></svg>
-      </div>
-
-      <div class="form" id="verifyBox">
-        <button class="btn primary" id="verifyBtn" type="button">Verificar</button>
-        <button type="button" class="btn-link" id="resendBtn">Reenviar enlace</button>
+      <h1 id="verify-title" class="title">Verificando tu correo...</h1>
+      <div class="row">
+        <div class="spinner" aria-hidden="true"></div>
+        <div id="status" class="muted" aria-live="polite">Procesando verificación y preparando tu cuenta.</div>
       </div>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/html/verification.js"></script>
-  <script src="../js/page-transitions.js"></script>`r`n</body>
+  <script src="../js/page-transitions.js"></script>
+</body>
 </html>

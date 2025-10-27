@@ -232,6 +232,36 @@
       if (!url || !key) throw new Error('Faltan variables públicas de Supabase');
 
       const client = window.supabase.createClient(url, key);
+
+      // Esqueleto visual: reservar espacio para el nombre y evitar saltos
+      (function setNameSkeleton(){
+        const topbarRight = document.querySelector('.topbar-right') || document.querySelector('.page-header .topbar-right');
+        if (topbarRight) {
+          let nameEl = topbarRight.querySelector('#topbar-username');
+          if (!nameEl) {
+            nameEl = document.createElement('span');
+            nameEl.id = 'topbar-username';
+            nameEl.style.marginLeft = '8px';
+            nameEl.style.fontWeight = '600';
+            nameEl.style.fontSize = '0.9rem';
+            topbarRight.appendChild(nameEl);
+          }
+          nameEl.textContent = '';
+          nameEl.style.display = 'inline-block';
+          nameEl.style.minWidth = '10ch'; // evita salto
+          nameEl.style.opacity = '0.6';
+        }
+      })();
+
+      // Si venimos como invitado explícito (?guest=1), forzar signout cliente+SSR
+      try {
+        const qs = new URLSearchParams(location.search);
+        if (qs.get('guest') === '1') {
+          try { await client.auth.signOut(); } catch(_){ }
+          try { await fetch('/api/auth/signout', { method: 'POST' }); } catch(_){ }
+          try { sessionStorage.removeItem('lx_submenu_html_v2'); sessionStorage.removeItem('lx_submenu_html_v2_ts'); sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
+        }
+      } catch(_){ }
       const { data: { user } } = await client.auth.getUser();
       const isLogged = !!user;
 
@@ -243,7 +273,25 @@
       const userNameSpan = $('#auth-username');
 
       if (isLogged) {
+        // Asegurar que exista perfil en tabla usuarios y decidir si requiere completar
+        try {
+          const { data: { session } } = await client.auth.getSession();
+          const token = session?.access_token;
+          if (token) {
+            await fetch('/api/auth/sync-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ access_token: token }) });
+            const needsRes = await fetch('/api/auth/needs-completion', { headers: { Authorization: `Bearer ${token}` } });
+            const needsData = await needsRes.json().catch(()=>({}));
+            const provider = user?.app_metadata?.provider;
+            const onComplete = location.pathname.includes('/html/complete-profile.html');
+            if (provider === 'google' && needsData?.needs && !onComplete) {
+              window.location.href = '/html/complete-profile.html';
+              return;
+            }
+          }
+        } catch(_){ }
         const display = (user?.user_metadata?.usuario || user?.user_metadata?.nombre_completo || (user?.email ? user.email.split('@')[0] : 'Usuario'));
+        // ya no confiamos en caches previos para evitar mostrar nombres viejos
+        try { sessionStorage.setItem('lx_display_name', String(display)); sessionStorage.setItem('lx_is_logged', '1'); } catch(_){ }
         if (userNameSpan) userNameSpan.textContent = display;
         if (userRow) userRow.style.display = '';
         if (loginRow) loginRow.style.display = 'none';
@@ -255,6 +303,8 @@
           logoutLink.addEventListener('click', async (e) => {
             e.preventDefault();
             try { await client.auth.signOut(); } catch (_) {}
+            try { await fetch('/api/auth/signout', { method: 'POST' }); } catch (_){ }
+            try { sessionStorage.removeItem('lx_submenu_html_v2'); sessionStorage.removeItem('lx_submenu_html_v2_ts'); sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
             window.location.href = '/html/login.html';
           });
         }
@@ -263,6 +313,7 @@
         if (loginRow) loginRow.style.display = '';
         if (registerRow) registerRow.style.display = '';
         if (logoutRow) logoutRow.style.display = 'none';
+        try { sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
       }
 
       // Topbar: nombre junto al icono de perfil; mantener enlaces existentes cuando no hay sesión
@@ -283,10 +334,12 @@
         const cartLink = topbarRight.querySelector('a[href*="carrito.html"]');
         if (isLogged) {
           nameEl.textContent = userNameSpan?.textContent || '';
+          nameEl.style.opacity = '1';
           if (profileLink) profileLink.setAttribute('href', './Profile.html');
           if (cartLink) cartLink.setAttribute('href', './carrito.html');
         } else {
           nameEl.textContent = '';
+          nameEl.style.opacity = '0.6';
           // Perfil debe llevar a login si no hay sesión
           if (profileLink) profileLink.setAttribute('href', './login.html');
         }
@@ -298,6 +351,10 @@
 
   // Init
   (async function init() {
+    // Cache simple del HTML del submenu para mostrarlo instantáneamente
+    const CACHE_KEY = 'lx_submenu_html_v2';
+    const CACHE_TS = 'lx_submenu_html_v2_ts';
+    const CACHE_MAX_AGE_MS = 5 * 60 * 1000;
     // Mostrar el botón desde el primer render
     ensureEarlyButton();
     ensureFontAwesome();
@@ -307,23 +364,43 @@
       return;
     }
 
-    const fetched = await fetchFirstAvailable(possiblePaths);
-    if (fetched && fetched.html) {
-      placeholder.innerHTML = fetched.html;
-    } else {
-      placeholder.innerHTML = FALLBACK_HTML;
-      console.warn('[submenu.js] Se inyectó fallback del submenu.');
-    }
-
-    // Evitar botones duplicados (uno temprano y otro del partial)
-    dedupeMenuButton(placeholder);
-
+    let usedCache = false;
     try {
-      wireMenuInteractions(placeholder);
-    } catch (err) {
-      console.error('[submenu.js] Error wiring menu:', err);
-    }
-    await initAuthUI(placeholder);
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      const ts = Number(sessionStorage.getItem(CACHE_TS) || '0');
+      const freshEnough = Date.now() - ts < CACHE_MAX_AGE_MS;
+      if (cached && freshEnough) {
+        placeholder.innerHTML = cached;
+        usedCache = true;
+        dedupeMenuButton(placeholder);
+        try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (cache):', err); }
+        await initAuthUI(placeholder);
+      }
+    } catch(_){}
+
+    // Fetch en segundo plano (o si no había cache)
+    (async () => {
+      const fetched = await fetchFirstAvailable(possiblePaths);
+      let html = fetched && fetched.html ? fetched.html : FALLBACK_HTML;
+      if (!fetched || !fetched.html) console.warn('[submenu.js] Se inyectó fallback del submenu.');
+
+      const current = sessionStorage.getItem(CACHE_KEY) || '';
+      if (!usedCache || current !== html) {
+        const render = async () => {
+          placeholder.innerHTML = html;
+          dedupeMenuButton(placeholder);
+          try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (fresh):', err); }
+          await initAuthUI(placeholder);
+          try { sessionStorage.setItem(CACHE_KEY, html); sessionStorage.setItem(CACHE_TS, String(Date.now())); } catch(_){ }
+        };
+        if ('requestIdleCallback' in window) {
+          // @ts-ignore
+          requestIdleCallback(render, { timeout: 800 });
+        } else {
+          setTimeout(render, 0);
+        }
+      }
+    })();
 
     console.info('[submenu.js] Inicializado correctamente.');
   })();

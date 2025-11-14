@@ -4,70 +4,162 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Juego — Ludex</title>
+
+  <!-- Primary SEO -->
+  <meta name="description" content="Explora 'Juego' en Ludex: compra, descarga y juega ahora. Gráficos impresionantes, modo multijugador y actualizaciones frecuentes.">
+  <meta name="robots" content="index, follow">
+  <!-- TODO: reemplaza por la URL real de producción -->
+  <link rel="canonical" href="https://yourdomain.com/product/juego">
+
+  <!-- Open Graph (social preview) -->
+  <!-- TODO: actualiza og:url y og:image con tus rutas de producción -->
+  <meta property="og:site_name" content="Ludex">
+  <meta property="og:title" content="Juego — Ludex">
+  <meta property="og:description" content="Compra y juega 'Juego' en Ludex. Aventura multijugador, gráficos de última generación y actualizaciones constantes.">
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="https://yourdomain.com/product/juego">
+  <meta property="og:image" content="https://yourdomain.com/images/product-juego-og.png">
+  <meta property="og:image:alt" content="Portada del juego 'Juego'">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Juego — Ludex">
+  <meta name="twitter:description" content="Compra y juega 'Juego' en Ludex. Aventura multijugador, gráficos de última generación y actualizaciones constantes.">
+  <meta name="twitter:image" content="https://yourdomain.com/images/product-juego-og.png">
+
+  <!-- Structured data (Product) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Juego",
+    "image": [
+      "https://yourdomain.com/images/game-detail.jpg",
+      "https://yourdomain.com/images/game1.jpg",
+      "https://yourdomain.com/images/game2.jpg"
+    ],
+    "description": "Explora el mundo de aventuras en este juego emocionante. Disfruta de gráficos impresionantes y una jugabilidad adictiva.",
+    "brand": {
+      "@type": "Brand",
+      "name": "Ludex"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": "https://yourdomain.com/product/juego",
+      "priceCurrency": "USD",
+      "price": "4.99",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
+  <meta name="theme-color" content="#3366ff">
+
+  <!-- Fonts and styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/product.css">
+
+  <style>
+    /* Skip-link (accessibility) */
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+      z-index:1000;
+    }
+    .skip-link:focus{
+      left:10px;
+      top:10px;
+      width:auto;
+      height:auto;
+      padding:8px 12px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:4px;
+      text-decoration:none;
+    }
+
+    /* Minimal .sr-only for labels that need visually-hidden text */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  </style>
 </head>
 <body>
+  <!-- Skip link for keyboard/screenreader users -->
+  <a href="#mainContent" class="skip-link">Saltar al contenido</a>
+
   <!-- Topbar -->
-  <header class="topbar" role="banner">
+  <header class="topbar" role="banner" aria-label="Encabezado de la página">
     <div class="topbar-left">
       <button class="icon-btn" aria-label="Volver" id="backBtn">←</button>
-      <div class="brand">
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><circle cx="12" cy="12" r="10" fill="#3366ff"/></svg>
+      <div class="brand" aria-hidden="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="#3366ff"/></svg>
         <span class="brand-name">Ludex</span>
       </div>
     </div>
 
     <div class="topbar-right">
       <button class="icon-btn" aria-label="Carrito" title="Carrito">
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden><path d="M6 6h15l-1.5 9h-11z" fill="none" stroke="#111" stroke-width="1.2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h15l-1.5 9h-11z" fill="none" stroke="#111" stroke-width="1.2"/></svg>
       </button>
     </div>
   </header>
 
-  <main class="main">
+  <main id="mainContent" class="main" role="main" aria-labelledby="productTitle">
     <!-- Product panel -->
-    <article class="product">
+    <article class="product" role="article" aria-labelledby="productTitle">
       <div class="media">
-        <img src="images/game-detail.jpg" alt="Portada del juego" class="media-img">
+        <img src="images/game-detail.jpg" alt="Portada del juego — escena de batalla épica" class="media-img" loading="lazy" decoding="async">
       </div>
 
       <div class="meta">
-        <h1 class="title">Juego</h1>
-        <p class="subtitle">Compra y juega ahora</p>
+        <h1 id="productTitle" class="title">Juego</h1>
+        <p class="subtitle" id="productShort">Compra y juega ahora</p>
 
-        <div class="actions-row">
-          <button class="btn primary btn-buy" aria-label="Comprar">Comprar</button>
+        <div class="actions-row" aria-label="Acciones del producto">
+          <button class="btn primary btn-buy" aria-label="Comprar 'Juego'">Comprar</button>
 
           <!-- Favorite toggle -->
           <label class="fav-toggle" title="Agregar a favoritos">
             <input type="checkbox" id="fav" aria-label="Marcar favorito">
-            <span class="star" aria-hidden>★</span>
+            <span class="star" aria-hidden="true">★</span>
           </label>
         </div>
 
-        <p class="description">
+        <p class="description" id="productDescription">
           Explora el mundo de aventuras en este juego emocionante. Disfruta de gráficos impresionantes y una jugabilidad adictiva. ¡No te lo pierdas!
         </p>
 
         <!-- tags / pills -->
-        <div class="tags" aria-hidden="false" role="list">
-          <button class="pill">#Accion</button>
-          <button class="pill">#Aventura</button>
-          <button class="pill">#Multijugador</button>
+        <div class="tags" role="list" aria-label="Etiquetas del juego">
+          <button class="pill" role="listitem">#Accion</button>
+          <button class="pill" role="listitem">#Aventura</button>
+          <button class="pill" role="listitem">#Multijugador</button>
         </div>
 
         <!-- trailer thumbnail -->
-        <div class="trailer">
-          <div class="trailer-thumb" role="button" aria-label="Reproducir tráiler">
-            <img src="images/trailer-thumb.jpg" alt="Tráiler del juego">
-            <div class="play">▶</div>
+        <div class="trailer" aria-label="Tráiler del juego">
+          <div class="trailer-thumb" role="button" aria-label="Reproducir tráiler de 'Juego'" tabindex="0">
+            <img src="images/trailer-thumb.jpg" alt="Miniatura del tráiler de 'Juego' mostrando un personaje principal" loading="lazy" decoding="async">
+            <div class="play" aria-hidden="true">▶</div>
             <div class="trailer-meta">
               <div class="tm-left">
                 <strong>Tráiler del Juego</strong>
-                <span class="muted">Disponible · 2 hrs de</span>
+                <span class="muted">Disponible · 2 hrs</span>
               </div>
-              <button class="btn small ghost" aria-label="Reproducir">▶</button>
+              <button class="btn small ghost" aria-label="Reproducir tráiler">▶</button>
             </div>
           </div>
         </div>
@@ -75,10 +167,10 @@
     </article>
 
     <!-- "Ver Tráiler" section and sorting -->
-    <section class="section">
+    <section class="section" aria-labelledby="trailersTitle">
       <div class="section-head">
-        <h2>Ver Tráiler</h2>
-        <div class="sort">
+        <h2 id="trailersTitle">Ver Tráiler</h2>
+        <div class="sort" aria-label="Ordenar tráileres">
           <label for="sortSelect" class="sr-only">Ordenar por</label>
           <select id="sortSelect" aria-label="Ordenar por">
             <option value="recent">Recientes</option>
@@ -89,35 +181,35 @@
       </div>
 
       <!-- Updates / feed -->
-      <div class="feed">
-        <article class="feed-item">
+      <div class="feed" aria-live="polite">
+        <article class="feed-item" role="article" aria-labelledby="update1Title">
           <div class="feed-thumb">
-            <img src="images/game1.jpg" alt="">
+            <img src="images/game1.jpg" alt="Captura de actualización: escena de mapa" loading="lazy" decoding="async">
           </div>
           <div class="feed-body">
-            <h3 class="feed-title">Actualizaciones Recientes</h3>
+            <h3 id="update1Title" class="feed-title">Actualizaciones Recientes</h3>
             <p class="feed-meta muted">Última · 45 min</p>
             <p class="feed-text">Sumérgete en un mundo lleno de retos y sorpresas. Conoce a los personajes y descubre sus historias.</p>
-            <div class="feed-actions">
-              <button class="icon-ghost" aria-label="Compartir">🔗</button>
-              <button class="icon-ghost" aria-label="Más">⋯</button>
-              <button class="icon-play" aria-label="Reproducir">▶</button>
+            <div class="feed-actions" role="group" aria-label="Acciones de la actualización">
+              <button class="icon-ghost" aria-label="Compartir actualización">🔗</button>
+              <button class="icon-ghost" aria-label="Más opciones">⋯</button>
+              <button class="icon-play" aria-label="Reproducir actualización">▶</button>
             </div>
           </div>
         </article>
 
-        <article class="feed-item">
+        <article class="feed-item" role="article" aria-labelledby="update2Title">
           <div class="feed-thumb">
-            <img src="images/game2.jpg" alt="">
+            <img src="images/game2.jpg" alt="Captura de características: combate" loading="lazy" decoding="async">
           </div>
           <div class="feed-body">
-            <h3 class="feed-title">Características del Juego</h3>
+            <h3 id="update2Title" class="feed-title">Características del Juego</h3>
             <p class="feed-meta muted">Compatible · 1h</p>
             <p class="feed-text">Únete a la comunidad de jugadores y comparte tus experiencias. Atrévete a jugar y descubre lo que te espera.</p>
-            <div class="feed-actions">
-              <button class="icon-ghost" aria-label="Compartir">🔗</button>
-              <button class="icon-ghost" aria-label="Más">⋯</button>
-              <button class="icon-play" aria-label="Reproducir">▶</button>
+            <div class="feed-actions" role="group" aria-label="Acciones de la característica">
+              <button class="icon-ghost" aria-label="Compartir característica">🔗</button>
+              <button class="icon-ghost" aria-label="Más opciones">⋯</button>
+              <button class="icon-play" aria-label="Reproducir característica">▶</button>
             </div>
           </div>
         </article>
@@ -126,12 +218,19 @@
   </main>
 
   <!-- Bottom nav -->
-  <nav class="bottom-nav" aria-label="Navegación principal">
+  <nav class="bottom-nav" aria-label="Navegación principal" role="navigation">
     <button class="nav-btn" aria-label="Inicio">🏠</button>
     <button class="nav-btn" aria-label="Notificaciones">🔔</button>
     <button class="nav-btn" aria-label="Juegos deseados">⭐</button>
     <button class="nav-btn" aria-label="Librería">📚</button>
   </nav>
+
+  <!-- Small noscript hint for progressive enhancement -->
+  <noscript>
+    <div style="padding:12px;background:#fff4e5;border:1px solid #ffd8a8;color:#92400e;">
+      Algunas funcionalidades requieren JavaScript. Por favor habilita JavaScript para una mejor experiencia.
+    </div>
+  </noscript>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

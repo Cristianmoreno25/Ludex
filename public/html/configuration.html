@@ -130,264 +130,277 @@
     </div>
   </main>
 
-  <!-- SCRIPT: Usa ESM import para supabase -->
   <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-  // Obtener configuración de Supabase desde la API
-  let supabase;
-  async function initSupabase() {
-    try {
-      const envResponse = await fetch('/api/public-env');
-      const { url, key } = await envResponse.json();
-      supabase = createClient(url, key);
-    } catch (error) {
-      console.error('Error obteniendo configuración de Supabase:', error);
-      showMsg('Error de configuración', 'error');
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    
+    // Obtener configuración de Supabase desde la API
+    let supabase;
+    async function initSupabase() {
+      try {
+        const envResponse = await fetch('/api/public-env');
+        const { url, key } = await envResponse.json();
+        supabase = createClient(url, key);
+      } catch (error) {
+        console.error('Error obteniendo configuración de Supabase:', error);
+        showMsg('Error de configuración', 'error');
+      }
     }
-  }
-
-  // Helpers DOM
-  const $ = id => document.getElementById(id);
-  const msgEl = $('cfg-msg');
-  function showMsg(text, kind='info', timeout=3500) {
-    if (!msgEl) return alert(text);
-    msgEl.textContent = text;
-    msgEl.className = kind;
-    if (timeout) setTimeout(() => { msgEl.className=''; msgEl.style.display = kind? 'none' : ''; }, timeout);
-    msgEl.style.display = 'block';
-  }
-
-  async function loadProfile() {
-    showMsg('Cargando perfil...', 'info', 0);
-    try {
-      if (!supabase) {
-        await initSupabase();
+    
+    // Helpers DOM
+    const $ = id => document.getElementById(id);
+    const msgEl = $('cfg-msg');
+    function showMsg(text, kind='info', timeout=3500) {
+      if (!msgEl) return alert(text);
+      msgEl.textContent = text;
+      // limpiar clases anteriores
+      msgEl.className = '';
+      if (kind) msgEl.classList.add(kind);
+      msgEl.style.display = 'block';
+      if (timeout) {
+        setTimeout(() => {
+          // ocultar
+          msgEl.className = '';
+          msgEl.style.display = 'none';
+        }, timeout);
       }
-
-      const { data: userResp, error: userErr } = await supabase.auth.getUser();
-      if (userErr || !userResp?.user) {
-        showMsg('No autenticado. Redirigiendo...', 'error');
-        setTimeout(() => location.href = '/html/login.html', 800);
-        return;
-      }
-      
-      const user = userResp.user;
-      console.log('Usuario autenticado:', user);
-
-      // Buscar perfil en la tabla usuarios por correo_electronico
-      const { data: perfil, error: perfErr } = await supabase
-        .from('usuarios')
-        .select('usuario, correo_electronico, nombre_completo, telefono, fecha_nacimiento, pais_id, avatar_path')
-        .eq('correo_electronico', user.email)
-        .single();
-
-      console.log('Perfil encontrado:', perfil, 'Error:', perfErr);
-
-      // Mostrar información en la card
-      if (perfil) {
-        $('ui-display-name').textContent = perfil.nombre_completo || user.user_metadata?.full_name || user.email || 'Usuario';
-        $('ui-display-username').textContent = perfil.usuario ? ('@' + perfil.usuario) : ('@' + user.email?.split('@')[0]);
+    }
+    
+    async function loadProfile() {
+      showMsg('Cargando perfil...', 'info', 0);
+      try {
+        if (!supabase) {
+          await initSupabase();
+        }
+    
+        const { data: userResp, error: userErr } = await supabase.auth.getUser();
+        if (userErr || !userResp?.user) {
+          showMsg('No autenticado. Redirigiendo...', 'error');
+          setTimeout(() => location.href = '/html/login.html', 800);
+          return;
+        }
         
-        // Cargar avatar si existe
-        if (perfil.avatar_path) {
-          const avatarImg = document.getElementById('avatar-img');
-          if (avatarImg) {
-            // Obtener la URL de Supabase desde la configuración
+        const user = userResp.user;
+        console.log('Usuario autenticado:', user);
+    
+        // Intentamos leer la fila en public.usuarios (puede fallar por RLS)
+        let perfil = null;
+        try {
+          const { data: perfilData, error: perfErr } = await supabase
+            .from('usuarios')
+            .select('usuario, correo_electronico, nombre_completo, telefono, fecha_nacimiento, pais_id, avatar_path')
+            .eq('correo_electronico', user.email)
+            .single();
+          if (perfErr) {
+            console.log('No se pudo obtener perfil desde public.usuarios (posible RLS):', perfErr);
+          } else {
+            perfil = perfilData;
+          }
+        } catch (e) {
+          console.log('Error al leer public.usuarios:', e);
+        }
+    
+        // Priorizar datos de la tabla usuarios si existen, sino usar user.user_metadata
+        const md = user.user_metadata || {};
+        $('ui-display-name').textContent = perfil?.nombre_completo || md.full_name || user.email || 'Usuario';
+        $('ui-display-username').textContent = perfil?.usuario ? ('@' + perfil.usuario) : ('@' + (md.username || (user.email?.split('@')[0] || 'usuario')));
+        
+        // Avatar: preferir ruta en perfil, luego metadata, luego default
+        const avatarImg = $('avatar-img');
+        if (perfil?.avatar_path) {
+          // Construir URL público desde env
+          try {
             const envResponse = await fetch('/api/public-env');
             const { url } = await envResponse.json();
             avatarImg.src = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(perfil.avatar_path)}`;
+          } catch (e) {
+            console.log('No se pudo construir avatar desde storage:', e);
           }
+        } else if (md.avatar_path) {
+          avatarImg.src = md.avatar_path;
         }
-      } else {
-        $('ui-display-name').textContent = user.user_metadata?.full_name || user.email || 'Usuario';
-        $('ui-display-username').textContent = '@' + (user.email?.split('@')[0] || 'usuario');
+    
+        // Llenar campos del formulario
+        $('input-name').value = perfil?.nombre_completo || md.full_name || '';
+        $('input-username').value = perfil?.usuario || md.username || '';
+        $('input-email').value = perfil?.correo_electronico || user.email || '';
+        $('input-phone').value = perfil?.telefono || md.phone || '';
+    
+        // Cargar preferencias
+        try {
+          const { data: prefs, error: prefsErr } = await supabase
+            .from('preferencias_usuarios')
+            .select('notificaciones, idioma, tema, marketing_opt_in')
+            .eq('user_auth_id', user.id)
+            .single();
+    
+          if (prefs) {
+            $('input-notif').checked = !!prefs.notificaciones;
+            $('input-idioma').value = prefs.idioma || 'es';
+            $('input-tema').value = prefs.tema || 'system';
+          } else {
+            // Valores por defecto
+            $('input-notif').checked = true;
+            $('input-idioma').value = 'es';
+            $('input-tema').value = 'system';
+          }
+        } catch (err) {
+          console.log('Error cargando preferencias (posible RLS):', err);
+          // dejar valores por defecto
+          $('input-notif').checked = true;
+          $('input-idioma').value = 'es';
+          $('input-tema').value = 'system';
+        }
+    
+        showMsg('Perfil cargado correctamente', 'success', 2000);
+      } catch (err) {
+        console.error('Error cargando perfil:', err);
+        showMsg('Error cargando perfil: ' + (err.message || err), 'error', 5000);
       }
-
-      // Llenar campos del formulario
-      $('input-name').value = perfil?.nombre_completo || user.user_metadata?.full_name || '';
-      $('input-username').value = perfil?.usuario || '';
-      $('input-email').value = perfil?.correo_electronico || user.email || '';
-      $('input-phone').value = perfil?.telefono || '';
-
-      // Cargar preferencias
-      const { data: prefs, error: prefsErr } = await supabase
-        .from('preferencias_usuarios')
-        .select('notificaciones, idioma, tema, marketing_opt_in')
-        .eq('user_auth_id', user.id)
-        .single();
-
-      if (prefs) {
-        $('input-notif').checked = !!prefs.notificaciones;
-        $('input-idioma').value = prefs.idioma || 'es';
-        $('input-tema').value = prefs.tema || 'system';
-      } else {
-        // Valores por defecto
-        $('input-notif').checked = true;
-        $('input-idioma').value = 'es';
-        $('input-tema').value = 'system';
-      }
-
-      showMsg('Perfil cargado correctamente', 'success', 2000);
-    } catch (err) {
-      console.error('Error cargando perfil:', err);
-      showMsg('Error cargando perfil: ' + err.message, 'error', 5000);
     }
-  }
-
-  // Actualizar datos personales (nombre, username, telefono, email)
-  async function handleProfileSave(e) {
-    e.preventDefault();
-    showMsg('Guardando...', 'info', 0);
-    try {
-      if (!supabase) {
-        await initSupabase();
-      }
-
-      const { data: userResp } = await supabase.auth.getUser();
-      if (!userResp?.user) return showMsg('Usuario no autenticado', 'error');
-
-      const user = userResp.user;
-      const payload = {
-        nombre_completo: $('input-name').value.trim() || null,
-        usuario: $('input-username').value.trim() || null,
-        telefono: $('input-phone').value.trim() || null
-      };
-
-      console.log('Actualizando perfil con payload:', payload);
-
-      // 1) Si email cambió -> update en Auth
-      const newEmail = $('input-email').value.trim();
-      if (newEmail && newEmail !== (user.email || '')) {
-        const upEmail = await supabase.auth.updateUser({ email: newEmail });
-        if (upEmail.error) {
-          return showMsg('Error actualizando email: ' + upEmail.error.message, 'error');
+    
+    // Actualizar datos personales (ahora actualizamos primero Auth.user_metadata)
+    async function handleProfileSave(e) {
+      e.preventDefault();
+      showMsg('Guardando...', 'info', 0);
+      try {
+        if (!supabase) {
+          await initSupabase();
         }
-      }
-
-      // 2) Buscar si existe el perfil en la tabla usuarios
-      const { data: existingProfile } = await supabase
-        .from('usuarios')
-        .select('id')
-        .eq('correo_electronico', user.email)
-        .single();
-
-      if (existingProfile) {
-        // Actualizar perfil existente
-        const { error: updErr } = await supabase
-          .from('usuarios')
-          .update({ 
-            ...payload, 
-            correo_electronico: newEmail || user.email 
-          })
-          .eq('correo_electronico', user.email);
-
-        if (updErr) {
-          console.error('Error actualizando perfil:', updErr);
-          throw updErr;
+    
+        const { data: userResp, error: userErr } = await supabase.auth.getUser();
+        if (userErr || !userResp?.user) return showMsg('Usuario no autenticado', 'error');
+    
+        const user = userResp.user;
+        const newEmail = $('input-email').value.trim() || null;
+        const metadata = {
+          full_name: $('input-name').value.trim() || null,
+          username: $('input-username').value.trim() || null,
+          phone: $('input-phone').value.trim() || null
+        };
+    
+        console.log('Actualizando Auth user metadata con:', metadata, 'email:', newEmail);
+    
+        // 1) Actualizar en Auth (esto SÍ funciona desde cliente)
+        const updPayload = {};
+        if (newEmail && newEmail !== (user.email || '')) updPayload.email = newEmail;
+        updPayload.data = metadata;
+    
+        const { data: authUpdateData, error: authUpdateErr } = await supabase.auth.updateUser(updPayload);
+        if (authUpdateErr) {
+          console.error('Error actualizando Auth user:', authUpdateErr);
+          return showMsg('Error actualizando cuenta (Auth): ' + authUpdateErr.message, 'error');
         }
-      } else {
-        // Crear nuevo perfil
-        const { error: insErr } = await supabase.from('usuarios').insert({
-          usuario: payload.usuario,
-          correo_electronico: newEmail || user.email,
-          nombre_completo: payload.nombre_completo,
-          telefono: payload.telefono,
-          hash_contrasena: 'temp_password', // Temporal
-          acepto_terminos: true
+    
+        // 2) Intentar actualizar la tabla public.usuarios (esto puede fallar por RLS; lo intentamos pero no bloqueamos al usuario)
+        try {
+          // usamos el email antiguo para localizar la fila; si falla, lo atrapamos
+          const oldEmail = user.email;
+          if (oldEmail) {
+            const { error: updErr } = await supabase
+              .from('usuarios')
+              .update({ 
+                nombre_completo: metadata.full_name,
+                usuario: metadata.username,
+                telefono: metadata.phone,
+                correo_electronico: newEmail || oldEmail
+              })
+              .eq('correo_electronico', oldEmail);
+            if (updErr) {
+              console.log('No se pudo actualizar public.usuarios (posible RLS). Error:', updErr);
+              // no devolvemos error al usuario; ya está actualizado en Auth
+            } else {
+              console.log('Tabla usuarios actualizada OK');
+            }
+          }
+        } catch (dbErr) {
+          console.log('Excepción actualizando public.usuarios (posible RLS):', dbErr);
+        }
+    
+        // Actualizar localStorage con el nuevo username
+        if (metadata.username) {
+          localStorage.setItem('username', metadata.username);
+        }
+    
+        // Recargar perfil desde las fuentes (Auth + prefs)
+        await loadProfile();
+        showMsg('Datos personales actualizados correctamente', 'success', 3000);
+      } catch (err) {
+        console.error('Error guardando perfil:', err);
+        showMsg('Error guardando perfil: ' + (err.message || err), 'error', 5000);
+      }
+    }
+    
+    // Cambiar contraseña (valida contraseña actual antes)
+    async function handleChangePassword(e) {
+      e.preventDefault();
+      const curr = $('input-curr-pass').value;
+      const next = $('input-new-pass').value;
+      const confirm = $('input-new-pass-confirm').value;
+      if (!curr || !next || !confirm) return showMsg('Completa todos los campos de contraseña', 'error');
+      if (next !== confirm) return showMsg('Las contraseñas nuevas no coinciden', 'error');
+      showMsg('Verificando contraseña actual...', 'info', 0);
+    
+      try {
+        const email = $('input-email').value.trim();
+        // Re-autenticar: signInWithPassword. Esto actualizará la sesión si la contraseña es correcta.
+        const reauth = await supabase.auth.signInWithPassword({ email, password: curr });
+        if (reauth.error) {
+          return showMsg('Contraseña actual incorrecta', 'error');
+        }
+    
+        // Actualizar contraseña
+        const upd = await supabase.auth.updateUser({ password: next });
+        if (upd.error) return showMsg('Error cambiando contraseña: ' + upd.error.message, 'error');
+    
+        // Limpiar campos
+        $('input-curr-pass').value = '';
+        $('input-new-pass').value = '';
+        $('input-new-pass-confirm').value = '';
+    
+        showMsg('Contraseña actualizada', 'success');
+      } catch (err) {
+        console.error(err);
+        showMsg('Error cambiando contraseña', 'error');
+      }
+    }
+    
+    // Guardar preferencias usando RPC set_preferencias (ya existe en tu DB)
+    async function handleSavePrefs(e) {
+      e.preventDefault();
+      showMsg('Guardando preferencias...', 'info', 0);
+      try {
+        const notif = $('input-notif').checked;
+        const idioma = $('input-idioma').value;
+        const tema = $('input-tema').value;
+    
+        const rpc = await supabase.rpc('set_preferencias', {
+          p_notif: notif,
+          p_idioma: idioma,
+          p_tema: tema,
+          p_marketing: false
         });
-        
-        if (insErr) {
-          console.error('Error creando perfil:', insErr);
-          throw insErr;
-        }
+    
+        if (rpc.error) throw rpc.error;
+        showMsg('Preferencias guardadas', 'success');
+      } catch (err) {
+        console.error(err);
+        showMsg('Error guardando preferencias: ' + (err.message || err), 'error');
       }
-
-      // Actualizar localStorage con el nuevo username
-      if (payload.usuario) {
-        localStorage.setItem('username', payload.usuario);
-      }
-
+    }
+    
+    // Event binding
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Inicializar Supabase primero
+      await initSupabase();
+      
+      // Configurar event listeners
+      $('form-profile').addEventListener('submit', handleProfileSave);
+      $('form-pass').addEventListener('submit', handleChangePassword);
+      $('form-prefs').addEventListener('submit', handleSavePrefs);
+      
+      // Cargar perfil
       await loadProfile();
-      showMsg('Datos personales actualizados correctamente', 'success', 3000);
-    } catch (err) {
-      console.error('Error guardando perfil:', err);
-      showMsg('Error guardando perfil: ' + (err.message || err), 'error', 5000);
-    }
-  }
-
-  // Cambiar contraseña (valida contraseña actual antes)
-  async function handleChangePassword(e) {
-    e.preventDefault();
-    const curr = $('input-curr-pass').value;
-    const next = $('input-new-pass').value;
-    const confirm = $('input-new-pass-confirm').value;
-    if (!curr || !next || !confirm) return showMsg('Completa todos los campos de contraseña', 'error');
-    if (next !== confirm) return showMsg('Las contraseñas nuevas no coinciden', 'error');
-    showMsg('Verificando contraseña actual...', 'info', 0);
-
-    try {
-      const email = $('input-email').value.trim();
-      // Re-autenticar: signInWithPassword. Esto actualizará la sesión si la contraseña es correcta.
-      const reauth = await supabase.auth.signInWithPassword({ email, password: curr });
-      if (reauth.error) {
-        return showMsg('Contraseña actual incorrecta', 'error');
-      }
-
-      // Actualizar contraseña
-      const upd = await supabase.auth.updateUser({ password: next });
-      if (upd.error) return showMsg('Error cambiando contraseña: ' + upd.error.message, 'error');
-
-      // Limpiar campos
-      $('input-curr-pass').value = '';
-      $('input-new-pass').value = '';
-      $('input-new-pass-confirm').value = '';
-
-      showMsg('Contraseña actualizada', 'success');
-    } catch (err) {
-      console.error(err);
-      showMsg('Error cambiando contraseña', 'error');
-    }
-  }
-
-  // Guardar preferencias usando RPC set_preferencias (ya existe en tu DB)
-  async function handleSavePrefs(e) {
-    e.preventDefault();
-    showMsg('Guardando preferencias...', 'info', 0);
-    try {
-      const notif = $('input-notif').checked;
-      const idioma = $('input-idioma').value;
-      const tema = $('input-tema').value;
-
-      const rpc = await supabase.rpc('set_preferencias', {
-        p_notif: notif,
-        p_idioma: idioma,
-        p_tema: tema,
-        p_marketing: false
-      });
-
-      if (rpc.error) throw rpc.error;
-      showMsg('Preferencias guardadas', 'success');
-    } catch (err) {
-      console.error(err);
-      showMsg('Error guardando preferencias: ' + (err.message || err), 'error');
-    }
-  }
-
-  // Event binding
-  document.addEventListener('DOMContentLoaded', async () => {
-    // Inicializar Supabase primero
-    await initSupabase();
-    
-    // Configurar event listeners
-    $('form-profile').addEventListener('submit', handleProfileSave);
-    $('form-pass').addEventListener('submit', handleChangePassword);
-    $('form-prefs').addEventListener('submit', handleSavePrefs);
-    
-    // Cargar perfil
-    await loadProfile();
-  });
-
-  </script>
+    });
+    </script>
 </body>
 </html>

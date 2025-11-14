@@ -3,12 +3,113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
   <title>Ludex — Presentación / Inicio</title>
+  <meta name="description" content="Ludex: descubre, compra y comparte videojuegos. Plataforma para jugadores y creadores con experiencia rápida y segura.">
+  <meta name="robots" content="index, follow">
+  <!-- TODO: Reemplaza por la URL real de producción -->
+  <link rel="canonical" href="https://yourdomain.com/">
+
+  <!-- Performance hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+
+  <!-- Open Graph (social preview) -->
+  <!-- TODO: actualiza og:url y og:image con tus rutas de producción -->
+  <meta property="og:site_name" content="Ludex">
+  <meta property="og:title" content="Ludex — Presentación / Inicio">
+  <meta property="og:description" content="Descubre, compra y comparte videojuegos en Ludex. Explora catálogos, apoya creadores y juega en segundos.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta property="og:image" content="https://yourdomain.com/images/og-home.png">
+  <meta property="og:image:alt" content="Ilustración Ludex">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ludex — Presentación / Inicio">
+  <meta name="twitter:description" content="Descubre, compra y comparte videojuegos en Ludex. Explora catálogos, apoya creadores y juega en segundos.">
+  <meta name="twitter:image" content="https://yourdomain.com/images/og-home.png">
+
+  <!-- Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Ludex",
+        "url": "https://yourdomain.com",
+        "logo": "https://yourdomain.com/images/logo.png",
+        "sameAs": [
+          "https://facebook.com/yourpage",
+          "https://twitter.com/yourprofile"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "url": "https://yourdomain.com",
+        "name": "Ludex",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://yourdomain.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://yourdomain.com/"
+          }
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "name": "Inicio",
+        "description": "Ludex: descubre, compra y comparte videojuegos.",
+        "url": "https://yourdomain.com/"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#3366ff">
+
+  <!-- Fonts and styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/bienvenida.css">
 
   <!-- Base page fade + ViewTransitions duration -->
   <style>
+    /* Skip-link (accessibility) */
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+      z-index:1000;
+    }
+    .skip-link:focus{
+      left:10px;
+      top:10px;
+      width:auto;
+      height:auto;
+      padding:8px 12px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:4px;
+      text-decoration:none;
+    }
+
     html.pt-preload body{opacity:0}
     body{transition:opacity .25s ease}
     html.fade-out body{opacity:0}
@@ -99,7 +200,10 @@
   </style>
 </head>
 <body>
-  <div class="wrap" id="wrap">
+  <!-- Skip link for keyboard/screenreader users -->
+  <a href="#wrap" class="skip-link">Saltar al contenido</a>
+
+  <div class="wrap" id="wrap" role="main" aria-label="Contenido principal de Ludex">
     <div class="container-desktop">
       <!-- Hero -->
       <section class="hero reveal" aria-label="Presentación Ludex">
@@ -171,17 +275,17 @@
       <section class="section reveal" aria-label="Preguntas frecuentes">
         <h2 class="headline">FAQ</h2>
         <p class="sub">Resolvemos dudas comunes en pocos segundos.</p>
-        <div class="faq">
-          <div class="faq-item">
-            <button class="faq-q">¿Qué es Ludex? <span>+</span></button>
+        <div class="faq" role="list">
+          <div class="faq-item" role="listitem">
+            <button class="faq-q" aria-expanded="false">¿Qué es Ludex? <span aria-hidden="true">+</span></button>
             <div class="faq-a">Una plataforma para descubrir, publicar y comprar juegos de forma clara y segura.</div>
           </div>
-          <div class="faq-item">
-            <button class="faq-q">¿Puedo usarla sin registrarme? <span>+</span></button>
+          <div class="faq-item" role="listitem">
+            <button class="faq-q" aria-expanded="false">¿Puedo usarla sin registrarme? <span aria-hidden="true">+</span></button>
             <div class="faq-a">Sí. Puedes explorar y probar como invitado; con cuenta tendrás biblioteca y compras.</div>
           </div>
-          <div class="faq-item">
-            <button class="faq-q">¿Cómo protegen mis datos? <span>+</span></button>
+          <div class="faq-item" role="listitem">
+            <button class="faq-q" aria-expanded="false">¿Cómo protegen mis datos? <span aria-hidden="true">+</span></button>
             <div class="faq-a">Usamos autenticación de Supabase y buenas prácticas de seguridad y privacidad.</div>
           </div>
         </div>
@@ -190,6 +294,13 @@
       <div class="footer">© Ludex — Hecho con pasión por el gaming</div>
     </div>
   </div>
+
+  <!-- Small noscript hint for progressive enhancement -->
+  <noscript>
+    <div style="padding:12px;background:#fff4e5;border:1px solid #ffd8a8;color:#92400e;">
+      Algunas funcionalidades requieren JavaScript. Por favor habilita JavaScript para una mejor experiencia.
+    </div>
+  </noscript>
 
   <script src="../js/bienvenida.js"></script>
   <script src="../js/landing-effects.js"></script>

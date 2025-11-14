@@ -5,11 +5,72 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Juegos deseados — Ludex</title>
 
+  <!-- Primary SEO -->
+  <meta name="description" content="Guarda y gestiona tus juegos deseados en Ludex. Añade títulos a tu wishlist, comparte y compra cuando quieras.">
+  <meta name="robots" content="index, follow">
+  <!-- TODO: reemplaza por la URL real de producción -->
+  <link rel="canonical" href="https://yourdomain.com/wishlist">
+
+  <!-- Open Graph (social preview) -->
+  <!-- TODO: actualiza og:url y og:image con tus rutas de producción -->
+  <meta property="og:site_name" content="Ludex">
+  <meta property="og:title" content="Juegos deseados — Ludex">
+  <meta property="og:description" content="Guarda y gestiona tus juegos deseados en Ludex. Añade títulos a tu wishlist, comparte y compra cuando quieras.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com/wishlist">
+  <meta property="og:image" content="https://yourdomain.com/images/og-wishlist.png">
+  <meta property="og:image:alt" content="Wishlist Ludex — juegos deseados">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Juegos deseados — Ludex">
+  <meta name="twitter:description" content="Guarda y gestiona tus juegos deseados en Ludex. Añade títulos a tu wishlist, comparte y compra cuando quieras.">
+  <meta name="twitter:image" content="https://yourdomain.com/images/og-wishlist.png">
+
+  <!-- Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Ludex",
+        "url": "https://yourdomain.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://yourdomain.com/browse?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "name": "Juegos deseados",
+        "description": "Guarda y gestiona tus juegos deseados en Ludex.",
+        "url": "https://yourdomain.com/wishlist"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://yourdomain.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Juegos deseados", "item": "https://yourdomain.com/wishlist" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Performance hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <meta name="theme-color" content="#3366ff">
+
   <!-- Fuente -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome (iconos) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="" crossorigin="anonymous">
 
   <!-- CSS de la vista -->
   <link rel="stylesheet" href="../css/views.css">
@@ -19,6 +80,41 @@
 
   <!-- Opcional: estilos pequeños para el grid si tu CSS no los incluye -->
   <style>
+    /* Skip-link (accessibility) */
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+      z-index:1000;
+    }
+    .skip-link:focus{
+      left:10px;
+      top:10px;
+      width:auto;
+      height:auto;
+      padding:8px 12px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:4px;
+      text-decoration:none;
+    }
+
+    /* Minimal .sr-only for visually-hidden SEO heading / labels */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
     /* Solo estilos mínimos para que el grid se vea bien si tu CSS no los define */
     #wishlist-grid { display:flex; flex-wrap:wrap; gap:18px; margin-top:18px; }
     .wishlist-card { width:240px; border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
@@ -29,11 +125,14 @@
   </style>
 </head>
 <body>
+  <!-- Skip link for keyboard/screenreader users -->
+  <a href="#mainContent" class="skip-link">Saltar al contenido</a>
+
   <!-- Header -->
-  <header class="page-header">
+  <header class="page-header" role="banner" aria-label="Encabezado de la página">
     <div class="page-left">
       <!-- pequeño círculo/brand -->
-      <svg class="brand-mark" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+      <svg class="brand-mark" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <circle cx="12" cy="12" r="10" fill="#3366ff"/>
       </svg>
 
@@ -42,45 +141,55 @@
     </div>
 
     <!-- icons a la derecha (carrito + perfil) -->
-    <div class="topbar-right">
+    <div class="topbar-right" role="navigation" aria-label="Accesos rápidos">
       <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
-        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+        <a href="./carrito.html" rel="noopener noreferrer" aria-hidden="true"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i></a>
       </button>
       <button class="icon-btn" aria-label="Perfil" title="Perfil">
-        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+        <a href="./Profile.html" rel="noopener noreferrer" aria-hidden="true"><i class="fa-regular fa-user" aria-hidden="true"></i></a>
       </button>
     </div>
   </header>
 
   <!-- Placeholder para inyectar el submenú -->
-  <div id="submenu-container"></div>
+  <div id="submenu-container" aria-hidden="true"></div>
 
   <!-- Main content -->
-  <main class="container" id="mainContent">
-    <section class="wishlist-meta">
+  <main class="container" id="mainContent" role="main" aria-label="Wishlist - Juegos deseados">
+    <!-- Hidden H1 for SEO (visually hidden so it doesn't change your layout) -->
+    <h1 class="sr-only">Juegos deseados — Ludex</h1>
+
+    <section class="wishlist-meta" aria-labelledby="wishlistHeading">
       <div class="wishlist-head">
-        <div class="star-mark">⭐</div>
+        <div class="star-mark" aria-hidden="true">⭐</div>
         <div>
-          <h3>Juegos Deseados</h3>
+          <h3 id="wishlistHeading">Juegos Deseados</h3>
           <!-- span con id para que JS actualice el conteo y la última actualización -->
           <p class="muted">
-            <span id="wishlist-count">0</span> juegos · Última actualización: <span id="wishlist-updated">--</span>
+            <span id="wishlist-count" aria-live="polite" aria-atomic="true">0</span> juegos · Última actualización: <span id="wishlist-updated" aria-live="polite">--</span>
           </p>
         </div>
       </div>
     </section>
 
-    <section class="wishlist-grid">
+    <section class="wishlist-grid" aria-label="Lista de juegos deseados">
       <!-- CONTENEDOR DINÁMICO: aquí se inyectan las tarjetas reales por wishlist.js -->
-      <div id="wishlist-grid" class="grid"></div>
+      <div id="wishlist-grid" class="grid" role="list"></div>
     </section>
   </main>
+
+  <!-- Small noscript hint for progressive enhancement -->
+  <noscript>
+    <div style="padding:12px;background:#fff4e5;border:1px solid #ffd8a8;color:#92400e;">
+      Esta vista requiere JavaScript para cargar tu wishlist. Habilita JavaScript para ver tus juegos deseados.
+    </div>
+  </noscript>
 
   <!-- script de la vista (opcional) -->
   <script src="../js/browse.js" defer></script>
 
   <!-- Script que carga el submenú -->
-  <script src="../js/submenu.js"></script>
+  <script src="../js/submenu.js" defer></script>
 
   <!-- OPTIONAL: escucha de estrellas en páginas que muestran juegos (si existen botones con class 'js-star') -->
   <script src="/html/star-listener.js" defer></script>

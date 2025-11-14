@@ -109,17 +109,37 @@ button { font-family: inherit; }
 
 /* ===== FILTERS / PILLS ===== */
 .filters { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+
+/* Barra contenedora para dar estructura y mejorar estética */
+.filters-bar{
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border:1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding:10px 10px 12px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto; /* centra toda la barra respecto al contenido */
+}
+.filters-row{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; text-align:center; }
+.filters-row + .filters-row{ margin-top:8px; }
+.filters-label{ flex:0 0 auto; font-size:12px; color:var(--muted); font-weight:700; display:inline-flex; align-items:center; gap:8px; padding:6px 8px; border-radius:999px; background:#f8fafc; border:1px solid rgba(15,23,42,0.06); }
+.filters-label i{ color:var(--primary); opacity:.9; }
+
 .filter-group {
   display:flex;
   gap:12px;
   flex-wrap:wrap;
-  justify-content:center;
+  justify-content:center; /* centra las pill dentro del grupo */
   padding:6px 4px 8px;
 }
 /* En móviles permitir swipe horizontal si hay muchas */
 @media (max-width: 560px){
-  .filter-group { flex-wrap:nowrap; overflow:auto; -webkit-overflow-scrolling: touch; justify-content:flex-start; }
-  .filter-group::-webkit-scrollbar{ height:6px; }
+  /* En móvil: apilar etiqueta + pills y permitir que las pills se reacomoden en varias filas */
+  .filters-row { flex-direction: column; align-items: center; justify-content: center; text-align:center; }
+  .filters-label { align-self: center; }
+  .filter-group { flex: 0 1 auto; min-width: unset; max-width: 100%; flex-wrap: wrap; overflow: visible; justify-content: center; }
+  .pill { font-size: 12.5px; padding: 7px 10px; }
 }
 .pill {
   white-space:nowrap;
@@ -142,6 +162,11 @@ button { font-family: inherit; }
   box-shadow:0 10px 30px rgba(51,102,255,0.18);
 }
 .filter-group.small .pill { padding:6px 10px; font-size:12.5px; }
+
+/* Compactar ligeramente en pantallas muy pequeñas */
+@media (max-width: 380px){
+  .pill { padding:7px 10px; font-size:12.5px; }
+}
 
 /* Mejor alineación de los grupos con un título invisible para consistencia */
 .filters .filter-group::before { content:""; flex:0 0 0; }

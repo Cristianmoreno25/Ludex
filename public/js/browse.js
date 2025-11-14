@@ -161,6 +161,8 @@
             state.selectedPrice = p.dataset.price || 'all';
           }
           renderFilters();
+          // asegurar que la pill activa sea visible cuando hay scroll horizontal
+          try { p.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch(_){}
         });
       });
     }
@@ -244,11 +246,30 @@
     });
 
     // ensure we close sidebar when resizing to mobile
+    // Ajuste al cambiar de tamaño: garantiza que los grupos horizontales no se queden
+    // desplazados desde el estado de escritorio
+    function syncFilterScroll() {
+      document.querySelectorAll('.filter-group').forEach(group => {
+        const needsHorizontal = group.scrollWidth > (group.clientWidth + 4);
+        if (!needsHorizontal) { group.scrollLeft = 0; return; }
+        const active = group.querySelector('.pill.active');
+        if (active) {
+          try { active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }); } catch(_){}
+        } else {
+          group.scrollLeft = 0;
+        }
+      });
+    }
+
     window.addEventListener('resize', () => {
       if (!isDesktop() && sidebar && sidebar.classList.contains('open')) {
         closeSidebar();
       }
+      syncFilterScroll();
     });
+
+    // sincronizar en el primer render (por si la página abre en un ancho intermedio)
+    syncFilterScroll();
 
     // -------------------------
     // Side nav items (active state + optional actions)

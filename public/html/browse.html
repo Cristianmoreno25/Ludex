@@ -5,8 +5,68 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ludex — Buscar juegos</title>
 
+  <!-- Primary SEO -->
+  <meta name="description" content="Busca y descubre juegos en Ludex. Filtra por categoría, precio y encuentra ofertas, indie y lanzamientos destacados.">
+  <meta name="robots" content="index, follow">
+  <!-- TODO: reemplaza por la URL real de producción -->
+  <link rel="canonical" href="https://yourdomain.com/browse">
+
+  <!-- Open Graph (social preview) -->
+  <!-- TODO: actualiza og:url y og:image con tus rutas de producción -->
+  <meta property="og:site_name" content="Ludex">
+  <meta property="og:title" content="Ludex — Buscar juegos">
+  <meta property="og:description" content="Busca y descubre juegos en Ludex. Filtra por categoría, precio y encuentra ofertas, indie y lanzamientos destacados.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com/browse">
+  <meta property="og:image" content="https://yourdomain.com/images/og-browse.png">
+  <meta property="og:image:alt" content="Portada Ludex — Buscar juegos">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ludex — Buscar juegos">
+  <meta name="twitter:description" content="Busca y descubre juegos en Ludex. Filtra por categoría, precio y encuentra ofertas, indie y lanzamientos destacados.">
+  <meta name="twitter:image" content="https://yourdomain.com/images/og-browse.png">
+
+  <!-- Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Ludex",
+        "url": "https://yourdomain.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://yourdomain.com/browse?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://yourdomain.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Buscar juegos", "item": "https://yourdomain.com/browse" }
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "name": "Buscar juegos",
+        "description": "Busca y descubre juegos en Ludex."
+      }
+    ]
+  }
+  </script>
+
+  <!-- Performance hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <meta name="theme-color" content="#3366ff">
+
   <!-- Bootstrap CSS (v5) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="" crossorigin="anonymous">
 
   <!-- Fuente -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -22,6 +82,28 @@
 
   <!-- Estilos específicos para el carousel (puedes moverlos a browse.css) -->
   <style>
+    /* Skip-link (accessibility) */
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+      z-index:1000;
+    }
+    .skip-link:focus{
+      left:10px;
+      top:10px;
+      width:auto;
+      height:auto;
+      padding:8px 12px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:4px;
+      text-decoration:none;
+    }
+
     :root {
       --carousel-height: 320px; /* altura por defecto (móvil) */
     }
@@ -65,69 +147,64 @@
   </style>
 </head>
 <body>
-  <header class="topbar">
+  <!-- Skip link for keyboard/screenreader users -->
+  <a href="#mainContent" class="skip-link">Saltar al contenido</a>
+
+  <header class="topbar" role="banner" aria-label="Barra superior">
     <div class="topbar-left">
-      <div class="brand">
-        <svg class="brand-mark-mobile" width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+      <div class="brand" aria-hidden="false">
+        <svg class="brand-mark-mobile" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <circle cx="12" cy="12" r="10" fill="#3366ff"/>
         </svg>
         <span class="brand-name">Ludex</span>
       </div>
     </div>
 
-    <div class="topbar-right">
+    <div class="topbar-right" role="navigation" aria-label="Accesos rápidos">
       <button id="cartBtn" class="icon-btn" aria-label="Carrito" title="Carrito">
-        <a href="./carrito.html"><i class="fa-solid fa-cart-shopping" aria-hidden></i></a>
+        <a href="./carrito.html" rel="noopener noreferrer" aria-hidden="true"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i></a>
       </button>
       <button class="icon-btn" aria-label="Perfil" title="Perfil">
-        <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
+        <a href="./Profile.html" rel="noopener noreferrer" aria-hidden="true"><i class="fa-regular fa-user" aria-hidden="true"></i></a>
       </button>
     </div>
   </header>
 
   <!-- Placeholder donde se inyectará el submenú (botón, overlay, nav lateral y bottom-nav) -->
-  <div id="submenu-container"></div>
+  <div id="submenu-container" aria-hidden="true"></div>
 
-  <main class="main" id="mainContent">
+  <main class="main" id="mainContent" role="main" aria-label="Buscar juegos">
     <!-- Search -->
     <div class="search-wrap">
       <div class="search">
         <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35" stroke="#666" stroke-width="1.6" fill="none"/><circle cx="11" cy="11" r="6" stroke="#666" stroke-width="1.6" fill="none"/></svg>
-        <input type="search" id="search" placeholder="Buscar juegos, etiquetas, títulos..." aria-label="Buscar juegos">
-        <button class="clear" id="clearSearch" aria-label="Limpiar búsqueda">✕</button>
+        <input type="search" id="search" placeholder="Search games, tags, titles..." aria-label="Buscar juegos">
+        <button class="clear" id="clearSearch" aria-label="Clear search">✕</button>
       </div>
     </div>
 
     <!-- Filters pills -->
     <section class="filters" id="filtersSection">
-      <div class="filters-bar">
-        <div class="filters-row">
-          <span class="filters-label"><i class="fa-solid fa-grid-2" aria-hidden></i> Categorías</span>
-          <div class="filter-group" id="categories" aria-label="Categorías" role="tablist">
-            <button class="pill active category-pill" data-category="All Games">Todos los juegos</button>
-            <button class="pill category-pill" data-category="Adventure">Aventura</button>
-            <button class="pill category-pill" data-category="RPG">RPG</button>
-            <button class="pill category-pill" data-category="Puzzle">Puzzle</button>
-            <button class="pill category-pill" data-category="Simulation">Simulación</button>
-            <button class="pill category-pill" data-category="Strategy">Estrategia</button>
-          </div>
-        </div>
+      <div class="filter-group" id="categories" aria-label="Categorias" role="tablist">
+        <button class="pill active category-pill" data-category="All Games">All Games</button>
+        <button class="pill category-pill" data-category="Adventure">Adventure</button>
+        <button class="pill category-pill" data-category="RPG">RPG</button>
+        <button class="pill category-pill" data-category="Puzzle">Puzzle</button>
+        <button class="pill category-pill" data-category="Simulation">Simulation</button>
+        <button class="pill category-pill" data-category="Strategy">Strategy</button>
+      </div>
 
-        <div class="filters-row small">
-          <span class="filters-label"><i class="fa-solid fa-tags" aria-hidden></i> Precio</span>
-          <div class="filter-group small" id="prices" aria-label="Precios">
-            <button class="pill active price-pill" data-price="all">Todos</button>
-            <button class="pill price-pill" data-price="free">Gratuitos</button>
-            <button class="pill price-pill" data-price="lt5">Menores de 5$</button>
-            <button class="pill price-pill" data-price="lt15">Menores de 15$</button>
-          </div>
-        </div>
+      <div class="filter-group small" id="prices" aria-label="Precios">
+        <button class="pill active price-pill" data-price="all">Todos</button>
+        <button class="pill price-pill" data-price="free">Gratuitos</button>
+        <button class="pill price-pill" data-price="lt5">Menores de 5$</button>
+        <button class="pill price-pill" data-price="lt15">Menores de 15$</button>
       </div>
     </section>
 
     <!-- ========== CAROUSEL ========== -->
-    <section class="container carousel-section">
-      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" aria-label="Carrusel de banners">
+    <section class="container carousel-section" aria-label="Destacados">
+      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" aria-label="Carrusel de banners" role="region">
         <div class="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -194,41 +271,47 @@
     <!-- ========== FIN CAROUSEL ========== -->
 
     <!-- Content -->
-    <section class="catalog" id="catalog">
+    <section class="catalog" id="catalog" aria-label="Catálogo de juegos">
       <div class="section-head">
         <h2>En venta</h2>
-        <a class="see-all" href="#">Mostrar todo</a>
+        <a class="see-all" href="#" rel="noopener noreferrer">Mostrar todo</a>
       </div>
 
-      <div class="cards cards-sale" id="cardsGrid">
+      <div class="cards cards-sale" id="cardsGrid" aria-live="polite">
         <!-- Sample cards... -->
-        <article class="card" data-category="RPG" data-price="2" data-title="Juego de rol">
-          <div class="card-media"><img src="../images/game1.jpg" alt="Juego de rol"><span class="badge sale">-30%</span><button class="fav">★</button></div>
-          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de rol</a></h3><p class="card-sub">$3 <span class="muted"> $2 / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        <article class="card" data-category="RPG" data-price="2" data-title="Juego de rol" role="article" aria-label="Juego de rol">
+          <div class="card-media"><img src="../images/game1.jpg" alt="Portada del juego de rol" loading="lazy"><span class="badge sale">-30%</span><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html" rel="noopener noreferrer">Juego de rol</a></h3><p class="card-sub">$3 <span class="muted"> $2 / por</span></p><button class="btn small primary" aria-label="Añadir Juego de rol al carrito">Añadir al carrito</button></div>
         </article>
 
-        <article class="card" data-category="Action" data-price="1" data-title="Juego de Guerra">
-          <div class="card-media"><img src="../images/game2.webp" alt="Juego de guerra"><span class="badge sale">-30%</span><button class="fav">★</button></div>
-          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de Guerra</a></h3><p class="card-sub">$1 $1 / por</p><button class="btn small primary">Añadir al carrito</button></div>
+        <article class="card" data-category="Action" data-price="1" data-title="Juego de Guerra" role="article" aria-label="Juego de Guerra">
+          <div class="card-media"><img src="../images/game2.webp" alt="Portada del juego de guerra" loading="lazy"><span class="badge sale">-30%</span><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html" rel="noopener noreferrer">Juego de Guerra</a></h3><p class="card-sub">$1 $1 / por</p><button class="btn small primary" aria-label="Añadir Juego de Guerra al carrito">Añadir al carrito</button></div>
         </article>
 
-        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa">
-          <div class="card-media"><img src="../images/game3.webp" alt="Juego de mesa"><button class="fav">★</button></div>
-          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de aventura</a></h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa" role="article" aria-label="Juego de mesa">
+          <div class="card-media"><img src="../images/game3.webp" alt="Portada del juego de mesa" loading="lazy"><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html" rel="noopener noreferrer">Juego de aventura</a></h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary" aria-label="Añadir Juego de aventura al carrito">Añadir al carrito</button></div>
         </article>
 
-        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas">
-          <div class="card-media"><img src="../images/game4.jpg" alt="Juego de cartas"><button class="fav">★</button></div>
-          <div class="card-body"><h3 class="card-title"><a href="./product.html">Juego de desafios</a></h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div>
+        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas" role="article" aria-label="Juego de cartas">
+          <div class="card-media"><img src="../images/game4.jpg" alt="Portada del juego de cartas" loading="lazy"><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title"><a href="./product.html" rel="noopener noreferrer">Juego de desafios</a></h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary" aria-label="Añadir Juego de desafios al carrito">Añadir al carrito</button></div>
         </article>
       </div>
 
-      <div class="section-head" style="margin-top:18px"><h2>Repetido pedido</h2><a class="see-all" href="#">Mostrar todo</a></div>
+      <div class="section-head" style="margin-top:18px"><h2>Repetido pedido</h2><a class="see-all" href="#" rel="noopener noreferrer">Mostrar todo</a></div>
 
-      <div class="cards cards-regular" id="cardsGrid2">
-        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa"><div class="card-media"><img src="../images/game5.png" alt="Juego de mesa"><button class="fav">★</button></div><div class="card-body"><h3 class="card-title">Juego de lucha libre</h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div></article>
+      <div class="cards cards-regular" id="cardsGrid2" aria-live="polite">
+        <article class="card" data-category="Board" data-price="2" data-title="Juego de mesa" role="article" aria-label="Juego de lucha libre">
+          <div class="card-media"><img src="../images/game5.png" alt="Portada juego de lucha libre" loading="lazy"><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title">Juego de lucha libre</h3><p class="card-sub">$2 <span class="muted"> / por</span></p><button class="btn small primary" aria-label="Añadir Juego de lucha libre al carrito">Añadir al carrito</button></div>
+        </article>
 
-        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas"><div class="card-media"><img src="../images/game6.png" alt="Juego de cartas"><button class="fav">★</button></div><div class="card-body"><h3 class="card-title">Carrear por equipos</h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary">Añadir al carrito</button></div></article>
+        <article class="card" data-category="Card" data-price="5" data-title="Juego de cartas" role="article" aria-label="Carrear por equipos">
+          <div class="card-media"><img src="../images/game6.png" alt="Portada Carrear por equipos" loading="lazy"><button class="fav" aria-pressed="false" aria-label="Marcar como favorito">★</button></div>
+          <div class="card-body"><h3 class="card-title">Carrear por equipos</h3><p class="card-sub">$5 <span class="muted"> / por</span></p><button class="btn small primary" aria-label="Añadir Carrear por equipos al carrito">Añadir al carrito</button></div>
+        </article>
       </div>
     </section>
   </main>
@@ -236,7 +319,7 @@
   <!-- Nota: se eliminó el nav.bottom-nav porque el submenú inyectado proveerá la navegación -->
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/browse-data.js" defer></script>
   <script src="../js/browse.js" defer></script>

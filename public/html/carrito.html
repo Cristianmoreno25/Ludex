@@ -1,103 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carrito de compras</title>
-  <link rel="stylesheet" href="../css/carrito.css" />
-  <!-- FontAwesome para iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Carrito de compras</title>
+<link rel="stylesheet" href="../css/carrito.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <!-- Topbar -->
-  <header class="topbar">
-    <a href="browse.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-    <h1><i class="fas fa-shopping-cart"></i> Carrito de compras</h1>
-    <a href="./Profile.html"><i class="fa-regular fa-user" aria-hidden></i></a>
-  </header>
-
-  <main class="cart-container">
-    <!-- Lista de juegos -->
-    <section class="cart-items">
-      <div class="cart-item">
-        <img src="../images/juego1.png" alt="Juego 1">
-        <div class="item-info">
-          <h3>Juego 1</h3>
-          <p>$29.99</p>
-          <div class="quantity">
-            <button class="decrease">-</button>
-            <span>1</span>
-            <button class="increase">+</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="cart-item">
-        <img src="../images/juego2.png" alt="Juego 2">
-        <div class="item-info">
-          <h3>Juego 2</h3>
-          <p>$19.99</p>
-          <div class="quantity">
-            <button class="decrease">-</button>
-            <span>2</span>
-            <button class="increase">+</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Código de descuento -->
-    <section class="discount">
-      <input type="text" placeholder="Código de descuento">
-      <button>Aplicar</button>
-    </section>
-
-    <!-- Botón checkout -->
-    <div class="checkout-btn">
-      <a href="pago.html" class="btn-primary">Proceder al pago</a>
+<header class="topbar">
+  <a href="browse.html" class="back-btn" aria-label="Volver a la tienda"><i class="fas fa-arrow-left"></i></a>
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="#4f46e5" />
+    </svg>
+    <div>
+      <p class="eyebrow">Resumen de compra</p>
+      <h1><i class="fas fa-shopping-cart"></i> Carrito</h1>
     </div>
-  </main>
+  </div>
+  <a href="./Profile.html" class="profile-link" aria-label="Perfil"><i class="fa-regular fa-user" aria-hidden></i></a>
+</header>
 
-  <!-- Menú inferior (móvil) -->
-  <nav class="bottom-nav">
-    <a href="browse.html" class="nav-item">
-      <i class="fas fa-home"></i>
-      <span>Inicio</span>
-    </a>
-    <a href="wishlist.html" class="nav-item">
-      <i class="fas fa-heart"></i>
-      <span>Deseados</span>
-    </a>
-    <a href="carrito.html" class="nav-item active">
-      <i class="fas fa-shopping-cart"></i>
-      <span>Carrito</span>
-    </a>
-    <a href="library.html" class="nav-item">
-      <i class="fas fa-gamepad"></i>
-      <span>Biblioteca</span>
-    </a>
-  </nav>
 
-  <script>
-    // lógica de aumentar/disminuir unidades
-    document.querySelectorAll('.cart-item').forEach(item => {
-      const dec = item.querySelector('.decrease');
-      const inc = item.querySelector('.increase');
-      const span = item.querySelector('span');
-      let qty = parseInt(span.textContent);
+<main class="cart-container">
+  <!-- Contenedor con la lista real de ítems (se llena vía JS) -->
+  <section id="cartItems" class="cart-items" aria-live="polite">
+  <!-- Si está vacío se mostrará un mensaje -->
+  </section>
 
-      dec.addEventListener('click', () => {
-        if (qty > 1) {
-          qty--;
-          span.textContent = qty;
-        }
-      });
 
-      inc.addEventListener('click', () => {
-        qty++;
-        span.textContent = qty;
-      });
-    });
-  </script>
+  <!-- Resumen y acciones -->
+  <section class="cart-actions" aria-label="Resumen del pedido">
+    <div class="summary-card">
+      <h2>Resumen</h2>
+      <p class="summary-note">Revisa tu pedido antes de continuar.</p>
+
+      <div class="coupon-row">
+        <input id="couponCode" placeholder="Código de descuento" aria-label="Código de descuento" />
+        <button id="applyCoupon" class="btn small primary">Aplicar</button>
+      </div>
+
+      <div class="totals">
+        <div class="total-row">
+          <span>Artículos</span>
+          <span id="totalItems">0</span>
+        </div>
+        <div class="total-row total-amount">
+          <span>Total a pagar</span>
+          <strong id="totalMonto">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="checkout-row">
+        <button id="checkoutBtn" class="btn large primary">Proceder al pago</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+<!-- Scripts: Bootstrap (opcional), Supabase y el nuevo archivo carrito.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/carrito.js" defer></script>
 </body>
 </html>

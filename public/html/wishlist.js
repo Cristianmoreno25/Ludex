@@ -80,85 +80,50 @@
 
     const card = document.createElement('div');
     card.className = 'wishlist-card';
-    card.style.width = '240px';
-    card.style.borderRadius = '10px';
-    card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.06)';
-    card.style.overflow = 'hidden';
-    card.style.background = '#fff';
-    card.style.display = 'flex';
-    card.style.flexDirection = 'column';
 
     // media (click al detalle)
     const media = document.createElement('a');
     media.href = GAME_DETAIL_URL(juegoId, slug);
     media.className = 'wishlist-card-media';
-    media.style.display = 'block';
-    media.style.height = '140px';
     media.style.backgroundImage = `url(${image})`;
-    media.style.backgroundSize = 'cover';
-    media.style.backgroundPosition = 'center';
-    media.style.textDecoration = 'none';
 
     // cuerpo
     const body = document.createElement('div');
     body.className = 'wishlist-card-body';
-    body.style.padding = '12px';
-    body.style.display = 'flex';
-    body.style.flexDirection = 'column';
-    body.style.gap = '8px';
-    body.style.flex = '1';
 
-    const titleEl = document.createElement('h3');
+    const titleEl = document.createElement('h4');
     titleEl.textContent = title;
-    titleEl.style.margin = '0';
-    titleEl.style.fontSize = '15px';
-    titleEl.style.color = '#111';
+    titleEl.className = 'wishlist-card-title';
 
     // precio y acciones
     const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.justifyContent = 'space-between';
-    row.style.alignItems = 'center';
+    row.className = 'wishlist-price-row';
 
     const priceEl = document.createElement('div');
+    priceEl.className = 'wishlist-price';
     if (precioDesc > 0 && precioDesc < precio) {
-      priceEl.innerHTML = `<span style="color:#d63447;font-weight:700">$${precioDesc}</span> <small style="text-decoration:line-through;color:#888;margin-left:8px">$${precio}</small>`;
+      priceEl.innerHTML = `<span class="price-current">$${precioDesc}</span><del>$${precio}</del>`;
     } else {
       priceEl.textContent = `$${precio}`;
-      priceEl.style.color = '#0b74ff';
-      priceEl.style.fontWeight = '700';
     }
 
     const actions = document.createElement('div');
-    actions.style.display = 'flex';
-    actions.style.gap = '8px';
-    actions.style.alignItems = 'center';
+    actions.className = 'wishlist-card-actions';
 
     // boton "Añadir al carrito" => redirige al detalle (desde ahí se compra)
     const buyBtn = document.createElement('a');
     buyBtn.href = GAME_DETAIL_URL(juegoId, slug);
-    buyBtn.textContent = 'Añadir al carrito';
     buyBtn.className = 'btn-add-cart';
-    buyBtn.style.padding = '8px 12px';
-    buyBtn.style.background = '#0b74ff';
-    buyBtn.style.color = 'white';
-    buyBtn.style.borderRadius = '8px';
-    buyBtn.style.textDecoration = 'none';
-    buyBtn.style.fontSize = '13px';
+    buyBtn.innerHTML = '<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i><span>Añadir al carrito</span>';
+    buyBtn.setAttribute('aria-label', `Añadir ${title} al carrito`);
 
     // boton eliminar (estrella)
     const starBtn = document.createElement('button');
     starBtn.title = 'Eliminar de la lista';
     starBtn.dataset.juegoId = String(juegoId);
     starBtn.className = 'star-delete';
-    starBtn.style.width = '36px';
-    starBtn.style.height = '36px';
-    starBtn.style.borderRadius = '50%';
-    starBtn.style.border = 'none';
-    starBtn.style.background = '#fff';
-    starBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    starBtn.type = 'button';
     starBtn.textContent = '★';
-    starBtn.style.cursor = 'pointer';
 
     starBtn.addEventListener('click', async (ev) => {
       ev.preventDefault();

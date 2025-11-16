@@ -25,6 +25,13 @@
     return r.json();
   }
 
+  async function primeSubmenuSnapshot(accessToken){
+    if (!accessToken) return;
+    try {
+      await window.LudexSubmenuCache?.prime?.(accessToken);
+    } catch (_){}
+  }
+
   async function verifyAndSync() {
     try {
       if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Verificando...'; }
@@ -52,6 +59,7 @@
 
       const { error: sessErr } = await client.auth.setSession({ access_token, refresh_token });
       if (sessErr) throw sessErr;
+      try { sessionStorage.setItem('lx_last_provider', 'google'); } catch(_){}
 
       // 1) Decidir destino: si NO tiene fila en usuarios -> completar perfil
       //    Si ya tiene fila -> sincronizar perfil y llevar a browse
@@ -71,6 +79,7 @@
       }
       const needsData = await needsResp.json();
       const needs = !!needsData.needs;
+      await primeSubmenuSnapshot(tokenForCheck);
 
       if (needs) {
         setStatus('Verificado. Vamos a completar tu perfil...');

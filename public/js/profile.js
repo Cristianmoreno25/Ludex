@@ -1,33 +1,65 @@
 (function(){
   const qs = (sel)=>document.querySelector(sel);
   const usernameEl = qs('#profileUsername');
-  const emailEl = qs('#ud-email');
-  const nameEl = qs('#ud-name');
-  const phoneEl = qs('#ud-phone');
-  const countryEl = qs('#ud-country');
+  const avatarEl = qs('#profileAvatar');
+  const roleEl = qs('#profileRole');
   const devStatusEl = qs('#ud-devstatus');
   const devLink = qs('#developerLink');
   const adminReviewItem = qs('#adminReviewItem');
   const logoutLink = document.querySelector('.profile-item.logout');
+  const profileMain = qs('main.profile-page');
+  const loadingView = qs('#profileLoading');
 
   async function getPublicEnv(){ const r = await fetch('/api/public-env'); return r.json(); }
-  async function getCountries(){ try{ const r = await fetch('/api/paises'); const j = await r.json(); return j.paises||[]; } catch { return []; } }
 
-  function displayUser(user){
-    const md = user?.user_metadata || {};
-    const baseUser = (md.usuario || (user.email||'').split('@')[0] || '').toString().trim().toLowerCase();
-    if (usernameEl) usernameEl.textContent = baseUser ? `@${baseUser}` : '@usuario';
-    if (emailEl) emailEl.textContent = user.email || '—';
-    if (nameEl) nameEl.textContent = md.nombre_completo || '—';
-    if (phoneEl) phoneEl.textContent = md.telefono || '—';
+  async function fetchProfileRow(client, email) {
+    try {
+      const { data } = await client
+        .from('usuarios')
+        .select('usuario, avatar_path')
+        .eq('correo_electronico', email)
+        .maybeSingle();
+      return data || null;
+    } catch (e) {
+      console.log('No se pudo obtener perfil extendido:', e);
+      return null;
+    }
   }
 
-  async function displayCountry(md){
-    const pid = md?.pais_id ? Number(md.pais_id) : null;
-    if (!pid) { countryEl && (countryEl.textContent = '—'); return; }
-    const list = await getCountries();
-    const found = list.find(p=>Number(p.id)===pid);
-    countryEl && (countryEl.textContent = found ? found.nombre : `ID ${pid}`);
+  function displayUser(user, profileRow, baseUrl){
+    const md = user?.user_metadata || {};
+    const baseUser = (profileRow?.usuario || md.usuario || (user.email||'').split('@')[0] || '').toString().trim().toLowerCase();
+    if (usernameEl) usernameEl.textContent = baseUser ? `@${baseUser}` : '@usuario';
+    let avatarUrl = null;
+    if (profileRow?.avatar_path) {
+      avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${encodeURIComponent(profileRow.avatar_path)}`;
+    } else if (md.avatar_url) {
+      avatarUrl = md.avatar_url;
+    } else if (md.avatar_path) {
+      avatarUrl = `${baseUrl}/storage/v1/object/public/avatars/${encodeURIComponent(md.avatar_path)}`;
+    } else {
+      avatarUrl = md.picture || md.avatar || null;
+    }
+    if (avatarEl) {
+      if (avatarUrl) {
+        const img = document.createElement('img');
+        img.src = avatarUrl;
+        img.alt = 'Avatar del usuario';
+        avatarEl.innerHTML = '';
+        avatarEl.appendChild(img);
+      } else {
+        avatarEl.textContent = baseUser ? baseUser.charAt(0).toUpperCase() : 'U';
+      }
+    }
+    try {
+      sessionStorage.setItem('lx_display_name', baseUser || 'usuario');
+      if (avatarUrl) sessionStorage.setItem('lx_avatar_url', avatarUrl);
+      else sessionStorage.removeItem('lx_avatar_url');
+    } catch(_){}
+    if (roleEl) {
+      const role = String(user.app_metadata?.role || 'cliente');
+      roleEl.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+    }
   }
 
   async function displayDevStatus(client, uid){
@@ -44,9 +76,17 @@
       if (state === 'verificado') {
         devLink && (devLink.textContent = 'Ir al panel de desarrollador', devLink.setAttribute('href','./developer.html'));
       }
+      revealProfile(state);
     } catch {
       if (devStatusEl) devStatusEl.textContent = '—';
+      revealProfile('sin registro');
     }
+  }
+
+  function revealProfile(state){
+    if (profileMain) profileMain.hidden = false;
+    if (loadingView) loadingView.hidden = true;
+    // state string used for other UI updates later if needed
   }
 
   async function main(){
@@ -57,8 +97,8 @@
       const { data: { user } } = await client.auth.getUser();
       if (!user){ window.location.href = '/html/login.html'; return; }
 
-      displayUser(user);
-      await displayCountry(user.user_metadata || {});
+      const profileRow = await fetchProfileRow(client, user.email);
+      displayUser(user, profileRow, url);
       await displayDevStatus(client, user.id);
 
       // Mostrar acceso admin si corresponde

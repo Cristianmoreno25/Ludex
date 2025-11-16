@@ -35,11 +35,16 @@
   // Cached DOM refs (queried once on DOM ready)
   // -------------------------
   document.addEventListener('DOMContentLoaded', () => {
-    const cards = qSA('.card');
+    let cards = qSA('.card');
     const searchInput = qS('#search');
     const clearBtn = qS('#clearSearch');
     const categoryPills = qSA('.category-pill');
     const pricePills = qSA('.price-pill');
+    const ratingPills = qSA('.rating-pill');
+    const filtersSection = qS('#filtersSection');
+    const filtersToggle = qS('#filtersToggle');
+    const noResultsEl = qS('#noResultsMessage');
+    const heroSection = qS('#heroCarousel');
     const menuBtn = qS('#menuBtn');
     const sidebar = qS('#sidebar');
     const closeSidebarBtn = qS('#closeSidebar');
@@ -59,7 +64,8 @@
     let state = {
       q: '',
       selectedCategory: 'All Games',
-      selectedPrice: 'all'
+      selectedPrice: 'all',
+      selectedRating: 'all'
     };
 
     // -------------------------
@@ -81,6 +87,7 @@
       const title = (cardEl.dataset.title || '').toLowerCase();
       const category = (cardEl.dataset.category || '').toLowerCase();
       const priceNum = toNumber(cardEl.dataset.price || '0');
+      const ratingNum = toNumber(cardEl.dataset.rating || '0');
 
       // search:
       if (state.q) {
@@ -106,19 +113,39 @@
         // 'all' -> no restriction
       }
 
+      if (state.selectedRating && state.selectedRating !== 'all') {
+        const min = toNumber(state.selectedRating);
+        if (Number.isFinite(min)) {
+          if (!(ratingNum >= min)) return false;
+        }
+      }
+
       return true;
     }
 
     function renderFilters() {
-      // guard
+      cards = qSA('.card');
       if (!cards) return;
+      let shown = 0;
       for (const c of cards) {
         if (matchesFilters(c)) {
           c.style.display = '';
+          shown++;
         } else {
           c.style.display = 'none';
         }
       }
+      if (noResultsEl) {
+        noResultsEl.hidden = shown !== 0;
+      }
+      updateHeroVisibility();
+    }
+
+    function updateHeroVisibility() {
+      if (!heroSection) return;
+      const categoryDefault = (state.selectedCategory || '').toLowerCase() === 'all games';
+      const applied = Boolean(state.q) || !categoryDefault || state.selectedPrice !== 'all' || state.selectedRating !== 'all';
+      heroSection.style.display = applied ? 'none' : '';
     }
 
     // -------------------------
@@ -159,6 +186,8 @@
             state.selectedCategory = p.dataset.category || 'All Games';
           } else if (type === 'price') {
             state.selectedPrice = p.dataset.price || 'all';
+          } else if (type === 'rating') {
+            state.selectedRating = p.dataset.rating || 'all';
           }
           renderFilters();
           // asegurar que la pill activa sea visible cuando hay scroll horizontal
@@ -167,8 +196,15 @@
       });
     }
 
+    if (filtersToggle && filtersSection) {
+      filtersToggle.addEventListener('click', () => {
+        filtersSection.classList.toggle('collapsed');
+      });
+    }
+
     bindPills(categoryPills, 'category');
     bindPills(pricePills, 'price');
+    bindPills(ratingPills, 'rating');
 
     // -------------------------
     // Cart button (optional)
@@ -249,10 +285,10 @@
     // Ajuste al cambiar de tamaño: garantiza que los grupos horizontales no se queden
     // desplazados desde el estado de escritorio
     function syncFilterScroll() {
-      document.querySelectorAll('.filter-group').forEach(group => {
+      document.querySelectorAll('.chip-row').forEach(group => {
         const needsHorizontal = group.scrollWidth > (group.clientWidth + 4);
         if (!needsHorizontal) { group.scrollLeft = 0; return; }
-        const active = group.querySelector('.pill.active');
+        const active = group.querySelector('.chip.active, .pill.active');
         if (active) {
           try { active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }); } catch(_){}
         } else {

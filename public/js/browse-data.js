@@ -23,7 +23,7 @@
       // juegos publicados
       const { data: games, error } = await client
         .from('juegos')
-        .select('id, titulo, descripcion, categoria_id, precio, precio_descuento, actualizado_en, publicado_en')
+        .select('id, titulo, descripcion, categoria_id, precio, precio_descuento, calificacion_media, actualizado_en, publicado_en')
         .eq('estado', 'publicado')
         .order('publicado_en', { ascending: false, nullsFirst: false })
         .order('actualizado_en', { ascending: false });
@@ -63,6 +63,7 @@
         art.dataset.category = category;
         art.dataset.price = String(price);
         art.dataset.title = g.titulo;
+        art.dataset.rating = String(Number(g.calificacion_media || 0).toFixed(1));
         art.innerHTML = `
           <div class="card-media">
             <img src="${imgUrl}" alt="${esc(g.titulo)}" onerror="this.onerror=null;this.src='../images/game1.jpg'">

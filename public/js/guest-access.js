@@ -21,6 +21,7 @@
           try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
         }
       } catch {}
+      try { window.LudexSubmenuCache?.clear?.(); } catch(_){}
       // pequeña espera para asegurar limpieza
       setTimeout(navigate, 100);
     };

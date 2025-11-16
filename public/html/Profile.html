@@ -5,50 +5,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ludex — Perfil</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/views.css">
+  <link rel="stylesheet" href="../css/submenu.css">
   <link rel="stylesheet" href="../css/profile.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- HEADER igual a Browse -->
-  <header class="topbar">
-    
-    <div class="topbar-left">
-      <a href="./browse.html" class="back-btn" aria-label="Volver al pago">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-      <!-- Logo -->
-      <div class="brand">
-        <svg class="brand-mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden>
-          <circle cx="12" cy="12" r="10" fill="#3366ff"/>
-        </svg>
-        <span class="brand-name"><a href="./browse.html">Ludex</a></span>
+  <header class="page-header">
+    <div class="page-left">
+      <svg class="brand-mark" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="#4f46e5" />
+      </svg>
+      <div>
+        <span class="page-title">Perfil</span>
+        <p class="page-subtitle">Administra tu cuenta y tu rol en Ludex</p>
       </div>
     </div>
+    <div class="topbar-right" role="navigation" aria-label="Accesos rápidos">
+      <button class="icon-btn cart-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html" aria-hidden="true"><i class="fa-solid fa-cart-shopping"></i></a>
+      </button>
+      <!-- Avatar se inserta dinámicamente -->
+    </div>
   </header>
+  <div id="submenu-container" aria-hidden="true"></div>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="main profile-page">
+  <main class="main profile-page" hidden>
     <!-- Título -->
     <h1 class="profile-title">Perfil</h1>
 
     <!-- Avatar + username -->
     <div class="profile-info">
-      <!-- Foto de perfil real en forma circular -->
-      <img src="https://i.pravatar.cc/150?img=3" alt="Foto de perfil de usuario" class="profile-avatar">
+      <div class="profile-avatar" id="profileAvatar" aria-label="Avatar del usuario">A</div>
       <div class="profile-username" id="profileUsername">@usuario_actual</div>
-      <button class="edit-btn" aria-label="Editar perfil">✎</button>
+      <p class="profile-caption">Gestiona tu cuenta y mantén tu presencia como jugador o desarrollador.</p>
     </div>
 
-    <!-- Datos del usuario (autenticado) -->
-    <nav class="profile-nav" aria-label="Datos de cuenta">
-      <ul id="userDataList">
-        <li class="profile-item"><span>Email</span><span class="arrow" id="ud-email">—</span></li>
-        <li class="profile-item"><span>Nombre completo</span><span class="arrow" id="ud-name">—</span></li>
-        <li class="profile-item"><span>Teléfono</span><span class="arrow" id="ud-phone">—</span></li>
-        <li class="profile-item"><span>País</span><span class="arrow" id="ud-country">—</span></li>
-        <li class="profile-item"><span>Estado desarrollador</span><span class="arrow" id="ud-devstatus">—</span></li>
-      </ul>
-    </nav>
+    <section class="status-grid" aria-label="Estado de la cuenta">
+      <article class="status-card">
+        <p class="eyebrow">Rol en la plataforma</p>
+        <h3 id="profileRole">Cliente</h3>
+        <p class="muted">Se actualiza automáticamente según tus permisos.</p>
+      </article>
+      <article class="status-card">
+        <p class="eyebrow">Estado desarrollador</p>
+        <h3 id="ud-devstatus">—</h3>
+        <p class="muted">Controla si puedes acceder al panel de desarrollador.</p>
+      </article>
+    </section>
 
     <!-- Opciones -->
     <nav class="profile-nav">
@@ -70,6 +74,15 @@
     </nav>
   </main>
 
+  <section class="profile-loading" id="profileLoading">
+    <div class="locked-card">
+      <h2>Verificando tu perfil...</h2>
+      <p>Estamos cargando tu información y estado como desarrollador. Esto toma solo unos segundos.</p>
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <script src="../js/submenu.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/profile.js"></script>
 </body>

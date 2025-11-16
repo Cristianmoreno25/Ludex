@@ -3,404 +3,350 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Configuración</title>
+  <title>Configuración de cuenta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../css/views.css">
+  <link rel="stylesheet" href="../css/submenu.css">
   <link rel="stylesheet" href="../css/configuration.css">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    /* Pequeños estilos para mensajes (puedes moverlos a tu CSS) */
-    #cfg-msg { margin: 12px 0; padding: 8px 12px; border-radius: 6px; display:none; }
-    #cfg-msg.info{ display:block; background:#eef2ff; color:#1f3b79; }
-    #cfg-msg.success{ display:block; background:#ecfdf5; color:#065f46; }
-    #cfg-msg.error{ display:block; background:#fff1f2; color:#9f1239; }
-    .small{ font-size:0.9rem; color:#666; }
-    .password-section{ margin-top:12px; padding:12px; border-radius:8px; background:#fafafa; }
-  </style>
 </head>
 <body>
-  <header class="topbar" role="banner">
-    <a href="./Profile.html" class="back-btn" aria-label="Atrás">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" class="icon-arrow-left" aria-hidden="true" role="img">
-            <path d="M15 18l-6-6 6-6"/>
-        </svg>
-    </a>
-    <h1><i class="fa-solid fa-cog"></i> Configuración</h1>
-  </header>
-
-  <main class="main">
-    <div class="container">
-      <aside class="profile-card" aria-label="Resumen del usuario">
-        <div class="avatar-wrap">
-          <img src="/images/default-avatar.png" alt="Avatar" class="avatar" id="avatar-img">
-          <button class="upload-link" id="btn-upload-photo">Subir Foto</button>
-        </div>
-        <div>
-          <div class="user-name" id="ui-display-name">Usuario Actual</div>
-          <div class="user-handle" id="ui-display-username">@usuario_actual</div>
-        </div>
-      </aside>
-
-      <section class="panel" aria-label="Opciones de perfil">
-        <h2 class="section-title">Opciones</h2>
-
-        <div id="cfg-msg" class="info">Cargando...</div>
-
-        <!-- FORM: datos personales -->
-        <form class="profile-form" id="form-profile" autocomplete="off">
-          <div class="card">
-            <label>
-              <span class="label-text">Nombre</span>
-              <input type="text" id="input-name" name="name" placeholder="Nombre completo" />
-            </label>
-
-            <label>
-              <span class="label-text">User name</span>
-              <input type="text" id="input-username" name="username" placeholder="Nombre de usuario" />
-            </label>
-
-            <label>
-              <span class="label-text">Email</span>
-              <input type="email" id="input-email" name="email" placeholder="tu@correo.com" />
-            </label>
-
-            <label>
-              <span class="label-text">Teléfono</span>
-              <input type="tel" id="input-phone" name="phone" placeholder="+57..." />
-            </label>
-          </div>
-
-          <div class="form-actions" style="margin-top:12px">
-            <button type="submit" class="btn primary" id="btn-save-profile">Guardar Cambios</button>
-          </div>
-        </form>
-
-        <!-- Cambiar contraseña (sección desplegable) -->
-        <div class="password-section" aria-label="Cambiar contraseña">
-          <h3>Cambiar contraseña</h3>
-          <form id="form-pass" autocomplete="off">
-            <label class="small">
-              Contraseña actual
-              <input type="password" id="input-curr-pass" name="current_password" />
-            </label>
-            <label class="small">
-              Nueva contraseña
-              <input type="password" id="input-new-pass" name="new_password" />
-            </label>
-            <label class="small">
-              Repetir nueva contraseña
-              <input type="password" id="input-new-pass-confirm" name="new_password_confirm" />
-            </label>
-            <div style="margin-top:8px;">
-              <button type="submit" class="btn">Cambiar contraseña</button>
-              <a href="./recovery.html" class="small" style="margin-left:12px">Olvidé mi contraseña</a>
-            </div>
-          </form>
-        </div>
-
-        <!-- Preferencias -->
-        <form id="form-prefs" style="margin-top:16px;">
-          <h3>Preferencias</h3>
-          <label class="small">
-            <input type="checkbox" id="input-notif" /> Recibir notificaciones
-          </label>
-          <div style="margin-top:8px;">
-            <label class="small">Idioma
-              <select id="input-idioma">
-                <option value="es">Español</option>
-                <option value="en">English</option>
-              </select>
-            </label>
-            <label class="small" style="margin-left:12px">Tema
-              <select id="input-tema">
-                <option value="system">Sistema</option>
-                <option value="light">Claro</option>
-                <option value="dark">Oscuro</option>
-              </select>
-            </label>
-          </div>
-          <div style="margin-top:8px;">
-            <button type="submit" class="btn">Guardar preferencias</button>
-          </div>
-        </form>
-
-      </section>
+  <header class="page-header">
+    <div class="page-left">
+      <svg class="brand-mark" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="#4f46e5" />
+      </svg>
+      <div>
+        <span class="page-title">Configuraciones</span>
+        <p class="page-subtitle">Actualiza tus datos y preferencias</p>
+      </div>
     </div>
+    <div class="topbar-right" role="navigation" aria-label="Accesos rápidos">
+      <button class="icon-btn cart-btn" aria-label="Carrito" title="Carrito">
+        <a href="./carrito.html" aria-hidden="true"><i class="fa-solid fa-cart-shopping"></i></a>
+      </button>
+      <!-- Avatar inyectado por submenu.js -->
+    </div>
+  </header>
+  <div id="submenu-container" aria-hidden="true"></div>
+
+  <main class="settings-main">
+    <section class="settings-hero">
+      <div class="hero-avatar" id="cfgAvatar" aria-label="Avatar">U</div>
+      <div>
+        <h2 id="cfgName">Tu nombre</h2>
+        <p id="cfgHandle" class="muted">@usuario</p>
+        <p class="muted">Actualiza tus datos básicos o cambia tu contraseña cuando lo necesites.</p>
+        <div class="hero-actions">
+          <button class="btn ghost" id="btn-change-avatar" type="button">Cambiar foto</button>
+          <input type="file" id="avatarInput" accept="image/*" hidden>
+        </div>
+      </div>
+    </section>
+
+    <div id="cfg-msg" class="cfg-message" hidden></div>
+
+    <section class="settings-grid">
+      <article class="settings-card">
+        <header>
+          <h3>Editar perfil</h3>
+          <p class="muted">Estos cambios afectan cómo apareces en la plataforma.</p>
+        </header>
+        <form id="form-profile" autocomplete="off" class="form">
+          <label>Nombre completo
+            <input type="text" id="input-name" placeholder="Tu nombre">
+          </label>
+          <label>Nombre de usuario
+            <input type="text" id="input-username" placeholder="nombre_unico">
+          </label>
+          <label>Correo electrónico
+            <input type="email" id="input-email" placeholder="correo@ejemplo.com">
+          </label>
+          <label>Teléfono
+            <input type="tel" id="input-phone" placeholder="+57 300 000 0000">
+          </label>
+          <button type="submit" class="btn primary" id="btn-save-profile">Guardar cambios</button>
+        </form>
+      </article>
+
+      <article class="settings-card">
+        <header>
+          <h3>Cambiar contraseña</h3>
+          <p class="muted">Recomendamos actualizarla periódicamente.</p>
+        </header>
+        <form id="form-pass" autocomplete="off" class="form">
+          <label>Contraseña actual
+            <input type="password" id="input-curr-pass" placeholder="••••••">
+          </label>
+          <label>Nueva contraseña
+            <input type="password" id="input-new-pass" placeholder="••••••">
+          </label>
+          <label>Confirmar nueva contraseña
+            <input type="password" id="input-new-pass-confirm" placeholder="••••••">
+          </label>
+          <div class="form-row">
+            <button type="submit" class="btn">Actualizar contraseña</button>
+            <a href="./recovery.html" class="link">Olvidé mi contraseña</a>
+          </div>
+        </form>
+      </article>
+
+      <article class="settings-card">
+        <header>
+          <h3>Preferencias</h3>
+          <p class="muted">Controla las notificaciones asociadas a tu cuenta.</p>
+        </header>
+        <form id="form-prefs" class="form">
+          <label class="toggle">
+            <input type="checkbox" id="input-notif">
+            <span>Recibir notificaciones importantes</span>
+          </label>
+          <button type="submit" class="btn primary">Guardar preferencias</button>
+        </form>
+      </article>
+    </section>
   </main>
 
+  <script src="../js/submenu.js" defer></script>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    
-    // Obtener configuración de Supabase desde la API
-    let supabase;
-    async function initSupabase() {
-      try {
-        const envResponse = await fetch('/api/public-env');
-        const { url, key } = await envResponse.json();
-        supabase = createClient(url, key);
-      } catch (error) {
-        console.error('Error obteniendo configuración de Supabase:', error);
-        showMsg('Error de configuración', 'error');
-      }
-    }
-    
-    // Helpers DOM
-    const $ = id => document.getElementById(id);
+
+    const $ = (id) => document.getElementById(id);
     const msgEl = $('cfg-msg');
-    function showMsg(text, kind='info', timeout=3500) {
-      if (!msgEl) return alert(text);
+    const avatarEl = $('cfgAvatar');
+    const nameDisplay = $('cfgName');
+    const handleDisplay = $('cfgHandle');
+
+    let supabase;
+    let currentUser = null;
+
+    async function getClient() {
+      if (supabase) return supabase;
+      const env = await fetch('/api/public-env').then((r) => r.json());
+      supabase = createClient(env.url, env.key);
+      return supabase;
+    }
+
+    function showMsg(text, type = 'info', timeout = 4000) {
+      if (!msgEl) return;
       msgEl.textContent = text;
-      // limpiar clases anteriores
-      msgEl.className = '';
-      if (kind) msgEl.classList.add(kind);
-      msgEl.style.display = 'block';
+      msgEl.dataset.state = type;
+      msgEl.hidden = false;
       if (timeout) {
-        setTimeout(() => {
-          // ocultar
-          msgEl.className = '';
-          msgEl.style.display = 'none';
-        }, timeout);
+        setTimeout(() => (msgEl.hidden = true), timeout);
       }
     }
-    
+
+    function setAvatar(url, username) {
+      if (!avatarEl) return;
+      if (url) {
+        avatarEl.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Foto de perfil';
+        avatarEl.appendChild(img);
+      } else {
+        const letter = (username || 'u').charAt(0).toUpperCase();
+        avatarEl.textContent = letter;
+      }
+    }
+
     async function loadProfile() {
-      showMsg('Cargando perfil...', 'info', 0);
+      showMsg('Cargando perfil...', 'info', 2000);
+      const client = await getClient();
+      const { data, error } = await client.auth.getUser();
+      if (error || !data?.user) {
+        showMsg('Inicia sesión para continuar', 'error', 2000);
+        setTimeout(() => (window.location.href = '/html/login.html'), 1200);
+        return;
+      }
+      const user = data.user;
+      currentUser = user;
+      const md = user.user_metadata || {};
+
+      let perfil = null;
       try {
-        if (!supabase) {
-          await initSupabase();
-        }
-    
-        const { data: userResp, error: userErr } = await supabase.auth.getUser();
-        if (userErr || !userResp?.user) {
-          showMsg('No autenticado. Redirigiendo...', 'error');
-          setTimeout(() => location.href = '/html/login.html', 800);
-          return;
-        }
-        
-        const user = userResp.user;
-        console.log('Usuario autenticado:', user);
-    
-        // Intentamos leer la fila en public.usuarios (puede fallar por RLS)
-        let perfil = null;
-        try {
-          const { data: perfilData, error: perfErr } = await supabase
-            .from('usuarios')
-            .select('usuario, correo_electronico, nombre_completo, telefono, fecha_nacimiento, pais_id, avatar_path')
-            .eq('correo_electronico', user.email)
-            .single();
-          if (perfErr) {
-            console.log('No se pudo obtener perfil desde public.usuarios (posible RLS):', perfErr);
-          } else {
-            perfil = perfilData;
-          }
-        } catch (e) {
-          console.log('Error al leer public.usuarios:', e);
-        }
-    
-        // Priorizar datos de la tabla usuarios si existen, sino usar user.user_metadata
-        const md = user.user_metadata || {};
-        $('ui-display-name').textContent = perfil?.nombre_completo || md.full_name || user.email || 'Usuario';
-        $('ui-display-username').textContent = perfil?.usuario ? ('@' + perfil.usuario) : ('@' + (md.username || (user.email?.split('@')[0] || 'usuario')));
-        
-        // Avatar: preferir ruta en perfil, luego metadata, luego default
-        const avatarImg = $('avatar-img');
-        if (perfil?.avatar_path) {
-          // Construir URL público desde env
-          try {
-            const envResponse = await fetch('/api/public-env');
-            const { url } = await envResponse.json();
-            avatarImg.src = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(perfil.avatar_path)}`;
-          } catch (e) {
-            console.log('No se pudo construir avatar desde storage:', e);
-          }
-        } else if (md.avatar_path) {
-          avatarImg.src = md.avatar_path;
-        }
-    
-        // Llenar campos del formulario
-        $('input-name').value = perfil?.nombre_completo || md.full_name || '';
-        $('input-username').value = perfil?.usuario || md.username || '';
-        $('input-email').value = perfil?.correo_electronico || user.email || '';
-        $('input-phone').value = perfil?.telefono || md.phone || '';
-    
-        // Cargar preferencias
-        try {
-          const { data: prefs, error: prefsErr } = await supabase
-            .from('preferencias_usuarios')
-            .select('notificaciones, idioma, tema, marketing_opt_in')
-            .eq('user_auth_id', user.id)
-            .single();
-    
-          if (prefs) {
-            $('input-notif').checked = !!prefs.notificaciones;
-            $('input-idioma').value = prefs.idioma || 'es';
-            $('input-tema').value = prefs.tema || 'system';
-          } else {
-            // Valores por defecto
-            $('input-notif').checked = true;
-            $('input-idioma').value = 'es';
-            $('input-tema').value = 'system';
-          }
-        } catch (err) {
-          console.log('Error cargando preferencias (posible RLS):', err);
-          // dejar valores por defecto
-          $('input-notif').checked = true;
-          $('input-idioma').value = 'es';
-          $('input-tema').value = 'system';
-        }
-    
-        showMsg('Perfil cargado correctamente', 'success', 2000);
+        const { data: perfilData } = await client
+          .from('usuarios')
+          .select('usuario, correo_electronico, nombre_completo, telefono, avatar_path')
+          .eq('correo_electronico', user.email)
+          .maybeSingle();
+        perfil = perfilData;
+      } catch (e) {
+        console.log('No se pudo leer public.usuarios:', e);
+      }
+
+      const nombre = perfil?.nombre_completo || md.full_name || user.email || 'Usuario';
+      const usuario = perfil?.usuario || md.username || (user.email?.split('@')[0] || 'usuario');
+      const telefono = perfil?.telefono || md.phone || '';
+      const correo = perfil?.correo_electronico || user.email || '';
+
+      $('input-name').value = nombre || '';
+      $('input-username').value = usuario || '';
+      $('input-phone').value = telefono || '';
+      $('input-email').value = correo || '';
+
+      nameDisplay.textContent = nombre;
+      handleDisplay.textContent = '@' + usuario;
+
+      let avatarUrl = null;
+      if (perfil?.avatar_path) {
+        const env = await fetch('/api/public-env').then((r) => r.json());
+        avatarUrl = `${env.url}/storage/v1/object/public/avatars/${encodeURIComponent(perfil.avatar_path)}`;
+      } else {
+        avatarUrl = md.avatar_url || md.picture || null;
+      }
+      setAvatar(avatarUrl, usuario);
+
+      await loadPreferences(client, user.id);
+    }
+
+    async function loadPreferences(client, uid) {
+      try {
+        const { data } = await client
+          .from('preferencias_usuarios')
+          .select('notificaciones')
+          .eq('user_auth_id', uid)
+          .maybeSingle();
+        $('input-notif').checked = data ? !!data.notificaciones : true;
       } catch (err) {
-        console.error('Error cargando perfil:', err);
-        showMsg('Error cargando perfil: ' + (err.message || err), 'error', 5000);
+        console.log('No se pudo cargar preferencias:', err);
+        $('input-notif').checked = true;
       }
     }
-    
-    // Actualizar datos personales (ahora actualizamos primero Auth.user_metadata)
-    async function handleProfileSave(e) {
-      e.preventDefault();
-      showMsg('Guardando...', 'info', 0);
-      try {
-        if (!supabase) {
-          await initSupabase();
-        }
-    
-        const { data: userResp, error: userErr } = await supabase.auth.getUser();
-        if (userErr || !userResp?.user) return showMsg('Usuario no autenticado', 'error');
-    
-        const user = userResp.user;
-        const newEmail = $('input-email').value.trim() || null;
-        const metadata = {
-          full_name: $('input-name').value.trim() || null,
-          username: $('input-username').value.trim() || null,
-          phone: $('input-phone').value.trim() || null
-        };
-    
-        console.log('Actualizando Auth user metadata con:', metadata, 'email:', newEmail);
-    
-        // 1) Actualizar en Auth (esto SÍ funciona desde cliente)
-        const updPayload = {};
-        if (newEmail && newEmail !== (user.email || '')) updPayload.email = newEmail;
-        updPayload.data = metadata;
-    
-        const { data: authUpdateData, error: authUpdateErr } = await supabase.auth.updateUser(updPayload);
-        if (authUpdateErr) {
-          console.error('Error actualizando Auth user:', authUpdateErr);
-          return showMsg('Error actualizando cuenta (Auth): ' + authUpdateErr.message, 'error');
-        }
-    
-        // 2) Intentar actualizar la tabla public.usuarios (esto puede fallar por RLS; lo intentamos pero no bloqueamos al usuario)
-        try {
-          // usamos el email antiguo para localizar la fila; si falla, lo atrapamos
-          const oldEmail = user.email;
-          if (oldEmail) {
-            const { error: updErr } = await supabase
-              .from('usuarios')
-              .update({ 
-                nombre_completo: metadata.full_name,
-                usuario: metadata.username,
-                telefono: metadata.phone,
-                correo_electronico: newEmail || oldEmail
-              })
-              .eq('correo_electronico', oldEmail);
-            if (updErr) {
-              console.log('No se pudo actualizar public.usuarios (posible RLS). Error:', updErr);
-              // no devolvemos error al usuario; ya está actualizado en Auth
-            } else {
-              console.log('Tabla usuarios actualizada OK');
-            }
-          }
-        } catch (dbErr) {
-          console.log('Excepción actualizando public.usuarios (posible RLS):', dbErr);
-        }
-    
-        // Actualizar localStorage con el nuevo username
-        if (metadata.username) {
-          localStorage.setItem('username', metadata.username);
-        }
-    
-        // Recargar perfil desde las fuentes (Auth + prefs)
-        await loadProfile();
-        showMsg('Datos personales actualizados correctamente', 'success', 3000);
-      } catch (err) {
-        console.error('Error guardando perfil:', err);
-        showMsg('Error guardando perfil: ' + (err.message || err), 'error', 5000);
+
+    async function handleProfileSave(ev) {
+      ev.preventDefault();
+      showMsg('Guardando cambios...', 'info', 0);
+      const client = await getClient();
+      if (!currentUser) {
+        const { data, error } = await client.auth.getUser();
+        if (error || !data?.user) return showMsg('Sesión inválida', 'error');
+        currentUser = data.user;
       }
+      const user = currentUser;
+      const payload = {
+        full_name: $('input-name').value.trim() || null,
+        username: $('input-username').value.trim() || null,
+        phone: $('input-phone').value.trim() || null,
+      };
+      const newEmail = $('input-email').value.trim() || null;
+
+      const updateObj = { data: payload };
+      if (newEmail && newEmail !== user.email) updateObj.email = newEmail;
+
+      const upd = await client.auth.updateUser(updateObj);
+      if (upd.error) return showMsg('No se pudo actualizar: ' + upd.error.message, 'error');
+
+      try {
+        await client
+          .from('usuarios')
+          .update({
+            nombre_completo: payload.full_name,
+            usuario: payload.username,
+            telefono: payload.phone,
+            correo_electronico: newEmail || user.email,
+          })
+          .eq('correo_electronico', user.email);
+      } catch (dbErr) {
+        console.log('Actualización en usuarios falló (RLS probable):', dbErr);
+      }
+
+      showMsg('Perfil actualizado', 'success');
+      loadProfile();
     }
-    
-    // Cambiar contraseña (valida contraseña actual antes)
-    async function handleChangePassword(e) {
-      e.preventDefault();
-      const curr = $('input-curr-pass').value;
+
+    async function handleChangePassword(ev) {
+      ev.preventDefault();
+      const current = $('input-curr-pass').value;
       const next = $('input-new-pass').value;
       const confirm = $('input-new-pass-confirm').value;
-      if (!curr || !next || !confirm) return showMsg('Completa todos los campos de contraseña', 'error');
-      if (next !== confirm) return showMsg('Las contraseñas nuevas no coinciden', 'error');
-      showMsg('Verificando contraseña actual...', 'info', 0);
-    
-      try {
-        const email = $('input-email').value.trim();
-        // Re-autenticar: signInWithPassword. Esto actualizará la sesión si la contraseña es correcta.
-        const reauth = await supabase.auth.signInWithPassword({ email, password: curr });
-        if (reauth.error) {
-          return showMsg('Contraseña actual incorrecta', 'error');
-        }
-    
-        // Actualizar contraseña
-        const upd = await supabase.auth.updateUser({ password: next });
-        if (upd.error) return showMsg('Error cambiando contraseña: ' + upd.error.message, 'error');
-    
-        // Limpiar campos
-        $('input-curr-pass').value = '';
-        $('input-new-pass').value = '';
-        $('input-new-pass-confirm').value = '';
-    
-        showMsg('Contraseña actualizada', 'success');
-      } catch (err) {
-        console.error(err);
-        showMsg('Error cambiando contraseña', 'error');
-      }
+      if (!current || !next || !confirm) return showMsg('Completa todos los campos', 'error');
+      if (next !== confirm) return showMsg('Las contraseñas no coinciden', 'error');
+
+      const client = await getClient();
+      const email = $('input-email').value.trim();
+      const reauth = await client.auth.signInWithPassword({ email, password: current });
+      if (reauth.error) return showMsg('Contraseña actual incorrecta', 'error');
+
+      const upd = await client.auth.updateUser({ password: next });
+      if (upd.error) return showMsg('No se pudo actualizar: ' + upd.error.message, 'error');
+
+      $('input-curr-pass').value = '';
+      $('input-new-pass').value = '';
+      $('input-new-pass-confirm').value = '';
+      showMsg('Contraseña actualizada', 'success');
     }
-    
-    // Guardar preferencias usando RPC set_preferencias (ya existe en tu DB)
-    async function handleSavePrefs(e) {
-      e.preventDefault();
-      showMsg('Guardando preferencias...', 'info', 0);
+
+    async function handleSavePrefs(ev) {
+      ev.preventDefault();
+      const client = await getClient();
+      if (!currentUser) {
+        const { data, error } = await client.auth.getUser();
+        if (error || !data?.user) return showMsg('Sesión inválida', 'error');
+        currentUser = data.user;
+      }
+      const enabled = $('input-notif').checked;
       try {
-        const notif = $('input-notif').checked;
-        const idioma = $('input-idioma').value;
-        const tema = $('input-tema').value;
-    
-        const rpc = await supabase.rpc('set_preferencias', {
-          p_notif: notif,
-          p_idioma: idioma,
-          p_tema: tema,
-          p_marketing: false
-        });
-    
-        if (rpc.error) throw rpc.error;
+        await client
+          .from('preferencias_usuarios')
+          .upsert({ user_auth_id: currentUser.id, notificaciones: enabled }, { onConflict: 'user_auth_id' });
         showMsg('Preferencias guardadas', 'success');
       } catch (err) {
         console.error(err);
-        showMsg('Error guardando preferencias: ' + (err.message || err), 'error');
+        showMsg('No se pudieron guardar las preferencias', 'error');
       }
     }
-    
-    // Event binding
+
+    async function handleAvatarChange(ev) {
+      const file = ev.target.files?.[0];
+      if (!file) return;
+      if (file.size > 4 * 1024 * 1024) return showMsg('La imagen debe pesar menos de 4MB', 'error');
+      const client = await getClient();
+      if (!currentUser) {
+        const { data, error } = await client.auth.getUser();
+        if (error || !data?.user) return showMsg('Sesión inválida', 'error');
+        currentUser = data.user;
+      }
+
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = `${currentUser.id}/${Date.now()}.${ext}`;
+      showMsg('Subiendo avatar...', 'info', 0);
+      const { error: uploadError } = await client.storage.from('avatars').upload(path, file, { upsert: true });
+      if (uploadError) {
+        console.error(uploadError);
+        return showMsg('No se pudo subir el avatar', 'error');
+      }
+
+      try {
+        await client.from('usuarios').update({ avatar_path: path }).eq('correo_electronico', currentUser.email);
+      } catch (err) {
+        console.log('No se pudo guardar avatar en tabla usuarios:', err);
+      }
+
+      const env = await fetch('/api/public-env').then((r) => r.json());
+      const publicUrl = `${env.url}/storage/v1/object/public/avatars/${encodeURIComponent(path)}`;
+      try {
+        await client.auth.updateUser({ data: { ...currentUser.user_metadata, avatar_path: path, avatar_url: publicUrl } });
+        currentUser.user_metadata = { ...(currentUser.user_metadata || {}), avatar_path: path, avatar_url: publicUrl };
+        sessionStorage.setItem('lx_avatar_url', publicUrl);
+      } catch (metaErr) {
+        console.log('No se pudo actualizar metadata con avatar:', metaErr);
+      }
+      setAvatar(publicUrl, currentUser.user_metadata?.username || currentUser.email);
+      showMsg('Avatar actualizado', 'success');
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-      // Inicializar Supabase primero
-      await initSupabase();
-      
-      // Configurar event listeners
+      await getClient();
+      await loadProfile();
       $('form-profile').addEventListener('submit', handleProfileSave);
       $('form-pass').addEventListener('submit', handleChangePassword);
       $('form-prefs').addEventListener('submit', handleSavePrefs);
-      
-      // Cargar perfil
-      await loadProfile();
+      $('btn-change-avatar').addEventListener('click', () => $('avatarInput').click());
+      $('avatarInput').addEventListener('change', handleAvatarChange);
     });
-    </script>
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

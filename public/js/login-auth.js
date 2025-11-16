@@ -17,6 +17,15 @@
     return msg || 'Error al iniciar sesión';
   }
 
+  async function primeSubmenuSnapshot(accessToken){
+    if (!accessToken) return;
+    const helper = window.LudexSubmenuCache?.prime;
+    if (typeof helper !== 'function') return;
+    try {
+      await helper(accessToken);
+    } catch (_){}
+  }
+
   async function resolveIdentity(identity){
     const v = String(identity || '').trim();
     if (v.includes('@')) return v; // email
@@ -51,12 +60,15 @@
           const display = md.usuario || md.nombre_completo || (u.email ? u.email.split('@')[0] : 'Usuario');
           sessionStorage.setItem('lx_display_name', String(display));
           sessionStorage.setItem('lx_is_logged', '1');
+          sessionStorage.setItem('lx_last_provider', 'password');
         }
       } catch {}
       // Sincronizar sesión a cookies para SSR/middleware
+      let cachedSession = null;
       try {
         const { data: { session } } = await client.auth.getSession();
         if (session?.access_token && session?.refresh_token) {
+          cachedSession = session;
           await fetch('/api/auth/sync-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,6 +79,9 @@
           });
         }
       } catch {}
+      if (cachedSession?.access_token) {
+        await primeSubmenuSnapshot(cachedSession.access_token);
+      }
       window.location.href = '/html/browse.html';
     } catch (err) {
       console.error(err);

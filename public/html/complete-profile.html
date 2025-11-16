@@ -116,6 +116,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/submenu-cache.js"></script>
+  <script src="../js/submenu-cache.js"></script>
   <script>
   (function(){
     const statusBox = document.getElementById('status');
@@ -183,7 +185,13 @@
         });
         const j = await resp.json();
         if(!resp.ok){ throw new Error(j.error||'No se pudo guardar'); }
-        try { localStorage.setItem('profile_complete','1'); } catch(_){ }
+        try {
+          localStorage.setItem('profile_complete','1');
+          sessionStorage.setItem('lx_needs_completion','0');
+          sessionStorage.setItem('lx_force_completion','0');
+          sessionStorage.setItem('lx_submenu_snapshot_ts', String(Date.now()));
+        } catch(_){ }
+        try { window.LudexSubmenuCache?.prime?.(sess.session.access_token); } catch(_){}
         setStatus('Perfil actualizado. Redirigiendo...');
         setTimeout(()=>{ window.location.href = '/html/browse.html'; }, 1000);
       } catch (e){ setStatus(e.message||'Error', 'error'); saveBtn.disabled=false; }

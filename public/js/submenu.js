@@ -1,19 +1,48 @@
 // js/submenu.js - control de sidebar: toggle en desktop, oculto en mobile
 (() => {
+  if (document.body) document.body.classList.add('submenu-loading');
+  let submenuReady = false;
+  const markPageReady = () => {
+    if (submenuReady) return;
+    submenuReady = true;
+    if (document.body) {
+      document.body.classList.remove('submenu-loading');
+      document.body.classList.add('submenu-ready');
+    }
+  };
   const possiblePaths = [
-    '/partials/submenu.html',
+    '/html/submenu.html',
     '/submenu.html',
-    '/partials/partials/submenu.html',
-    'partials/submenu.html',
-    './partials/submenu.html',
-    '../partials/submenu.html',
     './submenu.html',
     '../submenu.html',
-    'submenu.html'
+    'submenu.html',
+    '/partials/submenu.html'
   ];
 
   const PLACEHOLDER_ID = 'submenu-container';
   const MOBILE_BREAK = 900;
+  const SNAPSHOT_TS_KEY = 'lx_submenu_snapshot_ts';
+  const SNAPSHOT_MAX_AGE = 5 * 60 * 1000; // 5 min
+  const NEEDS_KEY = 'lx_needs_completion';
+  const PROVIDER_KEY = 'lx_last_provider';
+  const FORCE_KEY = 'lx_force_completion';
+  let globalMenuHandlerAttached = false;
+  let trackedMenuButton = null;
+
+  function attachGlobalMenuHandler() {
+    if (globalMenuHandlerAttached) return;
+    document.addEventListener('click', (event) => {
+      const target = event.target && event.target.closest ? event.target.closest('#submenu-open-btn') : null;
+      if (!target) return;
+      if (window.innerWidth <= MOBILE_BREAK) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = document.body.classList.toggle('submenu-open');
+      const btn = trackedMenuButton || target;
+      if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }, true);
+    globalMenuHandlerAttached = true;
+  }
 
   const FALLBACK_HTML = `
     <div class="submenu-root" id="site-submenu-root">
@@ -34,8 +63,8 @@
           </li>
           <li id="auth-login-row"><a href="./login.html"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a></li>
           <li id="auth-register-row"><a href="./register.html"><i class="fa-solid fa-user-plus"></i> Registrarse</a></li>
-          <li id="auth-logout-row" style="display:none">
-            <a href="#" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+      <li id="auth-logout-row" style="display:none">
+        <a href="#" id="logoutLink" data-logout="true"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
           </li>
         </ul>
       </nav>
@@ -77,9 +106,20 @@
   }
 
   async function getPublicEnv() {
+    if (window.__LUD_publicEnv) return window.__LUD_publicEnv;
+    try {
+      const cached = sessionStorage.getItem('lx_public_env');
+      if (cached) {
+        window.__LUD_publicEnv = JSON.parse(cached);
+        return window.__LUD_publicEnv;
+      }
+    } catch (_){}
     try {
       const r = await fetch('/api/public-env');
-      return await r.json();
+      const data = await r.json();
+      window.__LUD_publicEnv = data;
+      try { sessionStorage.setItem('lx_public_env', JSON.stringify(data)); } catch(_){}
+      return data;
     } catch (_) {
       return {};
     }
@@ -121,6 +161,108 @@
     return null;
   }
 
+  function applyTopbarSnapshot(isLogged, displayName, avatarUrl) {
+    try {
+      const topbarRight = document.querySelector('.topbar-right') || document.querySelector('.page-header .topbar-right');
+      if (!topbarRight) return;
+      let avatarLink = topbarRight.querySelector('#topbar-avatar-link');
+      if (!avatarLink) {
+        avatarLink = document.createElement('a');
+        avatarLink.id = 'topbar-avatar-link';
+        avatarLink.className = 'avatar-link';
+        avatarLink.setAttribute('aria-label', 'Perfil');
+        avatarLink.setAttribute('data-topbar-profile', 'true');
+        topbarRight.appendChild(avatarLink);
+      }
+      let avatarEl = avatarLink.querySelector('#topbar-avatar');
+      if (!avatarEl) {
+        avatarEl = document.createElement('span');
+        avatarEl.id = 'topbar-avatar';
+        avatarLink.appendChild(avatarEl);
+      }
+      let loginCTA = topbarRight.querySelector('#topbar-login-link');
+      if (!loginCTA) {
+        loginCTA = document.createElement('a');
+        loginCTA.id = 'topbar-login-link';
+        loginCTA.className = 'login-link';
+        loginCTA.textContent = 'Iniciar sesión';
+        loginCTA.href = './login.html';
+        topbarRight.appendChild(loginCTA);
+      }
+      const cartLink = topbarRight.querySelector('a[href*="carrito.html"]');
+      if (isLogged) {
+        avatarEl.innerHTML = '';
+        if (avatarUrl) {
+          const img = document.createElement('img');
+          img.src = avatarUrl;
+          img.alt = 'Avatar';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          avatarEl.appendChild(img);
+        } else {
+          avatarEl.textContent = (displayName || 'U').charAt(0).toUpperCase();
+        }
+        avatarLink.setAttribute('href', './Profile.html');
+        avatarLink.style.display = 'inline-flex';
+        loginCTA.style.display = 'none';
+        if (cartLink) cartLink.setAttribute('href', './carrito.html');
+      } else {
+        avatarLink.style.display = 'none';
+        loginCTA.style.display = 'inline-flex';
+        loginCTA.href = './login.html';
+        if (cartLink) cartLink.setAttribute('href', './login.html');
+      }
+    } catch (_){}
+  }
+
+  function primeAuthUIFromCache(root) {
+    if (!root) return;
+    try {
+      const isLogged = sessionStorage.getItem('lx_is_logged') === '1';
+      const displayName = sessionStorage.getItem('lx_display_name') || 'Usuario';
+      const avatarUrl = sessionStorage.getItem('lx_avatar_url') || '';
+
+      const loginRow = root.querySelector('#auth-login-row');
+      const registerRow = root.querySelector('#auth-register-row');
+      const logoutRow = root.querySelector('#auth-logout-row');
+      const userRow = root.querySelector('#auth-user-row');
+      const userNameSpan = root.querySelector('#auth-username');
+      const authList = root.querySelector('.auth-list');
+      let guestRow = root.querySelector('#auth-guest-row');
+      authList?.querySelectorAll('#auth-guest-row').forEach((node) => {
+        if (!guestRow) guestRow = node;
+        if (guestRow && node !== guestRow) node.remove();
+      });
+      const ensureGuest = () => {
+        if (guestRow || !authList) return;
+        guestRow = document.createElement('li');
+        guestRow.id = 'auth-guest-row';
+        guestRow.className = 'guest-info';
+        guestRow.innerHTML = '<p>Inicia sesión para ver tu perfil.</p><div><a href="./login.html">Iniciar sesión</a> · <a href="./register.html">Registrarse</a></div>';
+        authList.prepend(guestRow);
+      };
+
+      if (isLogged) {
+        if (userRow) userRow.style.display = '';
+        if (userNameSpan) userNameSpan.textContent = displayName;
+        if (loginRow) loginRow.style.display = 'none';
+        if (registerRow) registerRow.style.display = 'none';
+        if (logoutRow) logoutRow.style.display = '';
+        if (guestRow) guestRow.style.display = 'none';
+      } else {
+        if (userRow) userRow.style.display = 'none';
+        if (loginRow) loginRow.style.display = 'none';
+        if (registerRow) registerRow.style.display = 'none';
+        if (logoutRow) logoutRow.style.display = 'none';
+        ensureGuest();
+        if (guestRow) guestRow.style.display = '';
+      }
+
+      applyTopbarSnapshot(isLogged, displayName, avatarUrl);
+    } catch (_){}
+  }
+
   // Inserta el botón del menú lo antes posible para evitar retrasos visuales
   function ensureEarlyButton() {
     if (document.getElementById('submenu-open-btn')) return;
@@ -133,6 +275,31 @@
     const hostLeft = document.querySelector('.topbar-left') || document.querySelector('.page-header .page-left') || document.querySelector('.page-left');
     if (hostLeft) hostLeft.insertAdjacentElement('afterbegin', btn);
     else document.body.appendChild(btn);
+  }
+
+  async function performLogout(client) {
+    try {
+      await client.auth.signOut();
+    } catch (_){}
+    try {
+      await fetch('/api/auth/signout', { method: 'POST' });
+    } catch (_){}
+    try { window.LudexSubmenuCache?.clear?.(); } catch (_){}
+    try {
+      sessionStorage.removeItem('lx_submenu_html_v2');
+      sessionStorage.removeItem('lx_submenu_html_v2_ts');
+      sessionStorage.removeItem('lx_display_name');
+      sessionStorage.removeItem('lx_is_logged');
+      sessionStorage.removeItem('lx_avatar_url');
+      sessionStorage.removeItem(SNAPSHOT_TS_KEY);
+      sessionStorage.removeItem(NEEDS_KEY);
+      sessionStorage.removeItem(PROVIDER_KEY);
+      sessionStorage.removeItem(FORCE_KEY);
+    } catch(_){}
+    document.body.classList.remove('submenu-open');
+    const btn = document.getElementById('submenu-open-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+    window.location.href = '/html/login.html';
   }
 
   function wireMenuInteractions(root) {
@@ -173,18 +340,8 @@
     // Atributos iniciales (overlay cerrado por defecto)
     btn.setAttribute('aria-controls', submenu.id || 'site-submenu');
     btn.setAttribute('aria-expanded', document.body.classList.contains('submenu-open') ? 'true' : 'false');
-
-    // Toggle handler: en desktop hace collapse/expand; en mobile no hace nada (botón oculto por CSS)
-    function toggleSidebarDesktop(e) {
-      if (window.innerWidth <= MOBILE_BREAK) return; // no hacemos nada en mobile
-      e && e.stopPropagation();
-      const isOpen = document.body.classList.toggle('submenu-open');
-      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }
-
-    // Asignar listener (defensivo: remover antes)
-    btn.removeEventListener('click', toggleSidebarDesktop);
-    btn.addEventListener('click', toggleSidebarDesktop);
+    trackedMenuButton = btn;
+    attachGlobalMenuHandler();
 
     // Cerrar al pulsar overlay
     if (overlay) {
@@ -226,6 +383,34 @@
   }
 
   async function initAuthUI(root) {
+    const forcedGuest = (() => {
+      try {
+        return new URLSearchParams(location.search).get('guest') === '1';
+      } catch (_){ return false; }
+    })();
+    if (forcedGuest) {
+      try {
+        sessionStorage.removeItem('lx_submenu_html_v2');
+        sessionStorage.removeItem('lx_submenu_html_v2_ts');
+        sessionStorage.removeItem('lx_display_name');
+        sessionStorage.removeItem('lx_is_logged');
+        sessionStorage.removeItem('lx_avatar_url');
+        sessionStorage.removeItem(SNAPSHOT_TS_KEY);
+        sessionStorage.removeItem(NEEDS_KEY);
+        sessionStorage.removeItem(PROVIDER_KEY);
+        sessionStorage.removeItem(FORCE_KEY);
+      } catch (_){}
+    }
+    primeAuthUIFromCache(root);
+    const snapshotTs = Number(sessionStorage.getItem(SNAPSHOT_TS_KEY) || '0');
+    const hasFreshSnapshot = !forcedGuest && snapshotTs && (Date.now() - snapshotTs < SNAPSHOT_MAX_AGE);
+    const cachedNeeds = sessionStorage.getItem(NEEDS_KEY) === '1';
+    const cachedProvider = sessionStorage.getItem(PROVIDER_KEY) || '';
+    const onCompletePage = location.pathname.includes('/html/complete-profile.html');
+    const forceCompletion = sessionStorage.getItem(FORCE_KEY) === '1';
+    const shouldForceCheck = !forcedGuest && cachedNeeds && forceCompletion && cachedProvider === 'google' && !onCompletePage;
+    const skipServerFetch = hasFreshSnapshot && !shouldForceCheck;
+
     try {
       await ensureSupabase();
       const { url, key } = await getPublicEnv();
@@ -237,32 +422,71 @@
       (function setNameSkeleton(){
         const topbarRight = document.querySelector('.topbar-right') || document.querySelector('.page-header .topbar-right');
         if (topbarRight) {
+          const oldBtn = topbarRight.querySelector('.icon-btn a[href*="Profile.html"]');
+          if (oldBtn && oldBtn.parentElement) oldBtn.parentElement.remove();
           let nameEl = topbarRight.querySelector('#topbar-username');
           if (!nameEl) {
             nameEl = document.createElement('span');
             nameEl.id = 'topbar-username';
-            nameEl.style.marginLeft = '8px';
             nameEl.style.fontWeight = '600';
             nameEl.style.fontSize = '0.9rem';
             topbarRight.appendChild(nameEl);
           }
-          nameEl.textContent = '';
-          nameEl.style.display = 'inline-block';
-          nameEl.style.minWidth = '10ch'; // evita salto
-          nameEl.style.opacity = '0.6';
+          const cachedName = sessionStorage.getItem('lx_display_name') || '';
+          nameEl.textContent = cachedName;
+          nameEl.style.display = 'none';
+          nameEl.style.minWidth = '0';
+          nameEl.style.opacity = '0';
+
+          let avatarLink = topbarRight.querySelector('#topbar-avatar-link');
+          if (!avatarLink) {
+            avatarLink = document.createElement('a');
+            avatarLink.id = 'topbar-avatar-link';
+            avatarLink.className = 'avatar-link';
+            avatarLink.setAttribute('aria-label', 'Perfil');
+            avatarLink.setAttribute('data-topbar-profile', 'true');
+            topbarRight.appendChild(avatarLink);
+          }
+          let avatar = avatarLink.querySelector('#topbar-avatar');
+          if (!avatar) {
+            avatar = document.createElement('span');
+            avatar.id = 'topbar-avatar';
+            avatarLink.appendChild(avatar);
+          }
+          const cachedAvatar = sessionStorage.getItem('lx_avatar_url');
+          if (cachedAvatar) {
+            avatar.innerHTML = `<img src="${cachedAvatar}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">`;
+          } else {
+            avatar.textContent = (cachedName || 'U').charAt(0).toUpperCase();
+          }
         }
       })();
 
       // Si venimos como invitado explícito (?guest=1), forzar signout cliente+SSR
-      try {
-        const qs = new URLSearchParams(location.search);
-        if (qs.get('guest') === '1') {
-          try { await client.auth.signOut(); } catch(_){ }
-          try { await fetch('/api/auth/signout', { method: 'POST' }); } catch(_){ }
-          try { sessionStorage.removeItem('lx_submenu_html_v2'); sessionStorage.removeItem('lx_submenu_html_v2_ts'); sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
-        }
-      } catch(_){ }
+      if (forcedGuest) {
+        try { await client.auth.signOut(); } catch(_){}
+        try { await fetch('/api/auth/signout', { method: 'POST' }); } catch(_){}
+        try {
+          const newQs = new URLSearchParams(location.search);
+          newQs.delete('guest');
+          const newUrl = location.pathname + (newQs.toString() ? `?${newQs}` : '') + location.hash;
+          window.history.replaceState({}, document.title, newUrl);
+        } catch(_){}
+      }
       const { data: { user } } = await client.auth.getUser();
+      let profileRow = null;
+      if (user?.email) {
+        try {
+          const { data: row } = await client
+            .from('usuarios')
+            .select('avatar_path')
+            .eq('correo_electronico', user.email)
+            .maybeSingle();
+          profileRow = row || null;
+        } catch (fetchErr) {
+          console.debug('[submenu] No se pudo obtener avatar personalizado:', fetchErr.message);
+        }
+      }
       const isLogged = !!user;
 
       const $ = sel => root.querySelector(sel);
@@ -271,17 +495,38 @@
       const logoutRow = $('#auth-logout-row');
       const userRow = $('#auth-user-row');
       const userNameSpan = $('#auth-username');
+      const authList = root.querySelector('.auth-list');
+      let guestRow = $('#auth-guest-row');
+      const hideGuestBlock = () => {
+        if (guestRow) guestRow.style.display = 'none';
+        authList?.querySelectorAll('#auth-guest-row').forEach((n, idx) => { if (!guestRow || n !== guestRow) n.remove(); });
+      };
+      const removeGuestRows = () => {
+        authList?.querySelectorAll('#auth-guest-row').forEach(node => {
+          if (guestRow && node === guestRow) return;
+          node.remove();
+        });
+      };
 
       if (isLogged) {
         // Asegurar que exista perfil en tabla usuarios y decidir si requiere completar
         try {
           const { data: { session } } = await client.auth.getSession();
           const token = session?.access_token;
-          if (token) {
-            await fetch('/api/auth/sync-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ access_token: token }) });
-            const needsRes = await fetch('/api/auth/needs-completion', { headers: { Authorization: `Bearer ${token}` } });
-            const needsData = await needsRes.json().catch(()=>({}));
-            const provider = user?.app_metadata?.provider;
+      if (token && !skipServerFetch) {
+        await fetch('/api/auth/sync-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ access_token: token }) });
+        const needsRes = await fetch('/api/auth/needs-completion', { headers: { Authorization: `Bearer ${token}` } });
+        const needsData = await needsRes.json().catch(()=>({}));
+        const provider = user?.app_metadata?.provider;
+        try {
+              sessionStorage.setItem(NEEDS_KEY, needsData?.needs ? '1' : '0');
+              sessionStorage.setItem(SNAPSHOT_TS_KEY, String(Date.now()));
+              if (provider === 'google') {
+                sessionStorage.setItem(FORCE_KEY, needsData?.needs ? '1' : '0');
+              } else {
+                sessionStorage.setItem(FORCE_KEY, '0');
+              }
+            } catch(_){}
             const onComplete = location.pathname.includes('/html/complete-profile.html');
             if (provider === 'google' && needsData?.needs && !onComplete) {
               window.location.href = '/html/complete-profile.html';
@@ -291,61 +536,131 @@
         } catch(_){ }
         const display = (user?.user_metadata?.usuario || user?.user_metadata?.nombre_completo || (user?.email ? user.email.split('@')[0] : 'Usuario'));
         // ya no confiamos en caches previos para evitar mostrar nombres viejos
-        try { sessionStorage.setItem('lx_display_name', String(display)); sessionStorage.setItem('lx_is_logged', '1'); } catch(_){ }
+        try {
+          sessionStorage.setItem('lx_display_name', String(display));
+          sessionStorage.setItem('lx_is_logged', '1');
+          sessionStorage.setItem(SNAPSHOT_TS_KEY, String(Date.now()));
+        } catch(_){ }
         if (userNameSpan) userNameSpan.textContent = display;
         if (userRow) userRow.style.display = '';
         if (loginRow) loginRow.style.display = 'none';
         if (registerRow) registerRow.style.display = 'none';
         if (logoutRow) logoutRow.style.display = '';
+        hideGuestBlock();
+        removeGuestRows();
 
-        const logoutLink = root.querySelector('#logoutLink');
-        if (logoutLink) {
+        const logoutLinks = root.querySelectorAll('#logoutLink, [data-logout="true"]');
+        logoutLinks.forEach((logoutLink) => {
           logoutLink.addEventListener('click', async (e) => {
             e.preventDefault();
-            try { await client.auth.signOut(); } catch (_) {}
-            try { await fetch('/api/auth/signout', { method: 'POST' }); } catch (_){ }
-            try { sessionStorage.removeItem('lx_submenu_html_v2'); sessionStorage.removeItem('lx_submenu_html_v2_ts'); sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
-            window.location.href = '/html/login.html';
+            await performLogout(client);
           });
-        }
+        });
       } else {
         if (userRow) userRow.style.display = 'none';
-        if (loginRow) loginRow.style.display = '';
-        if (registerRow) registerRow.style.display = '';
+        if (loginRow) loginRow.style.display = 'none';
+        if (registerRow) registerRow.style.display = 'none';
         if (logoutRow) logoutRow.style.display = 'none';
-        try { sessionStorage.removeItem('lx_display_name'); sessionStorage.removeItem('lx_is_logged'); } catch(_){ }
+        hideGuestBlock();
+        if (!guestRow && authList) {
+          guestRow = document.createElement('li');
+          guestRow.id = 'auth-guest-row';
+          guestRow.className = 'guest-info';
+          guestRow.innerHTML = '<p>Inicia sesión para ver tu perfil.</p><div><a href="./login.html">Iniciar sesión</a> · <a href="./register.html">Registrarse</a></div>';
+          authList.prepend(guestRow);
+        }
+        if (guestRow) guestRow.style.display = '';
+        try {
+          sessionStorage.setItem('lx_is_logged', '0');
+          sessionStorage.removeItem('lx_display_name');
+          sessionStorage.removeItem('lx_avatar_url');
+          sessionStorage.removeItem(SNAPSHOT_TS_KEY);
+          sessionStorage.removeItem(NEEDS_KEY);
+        } catch(_){ }
       }
 
-      // Topbar: nombre junto al icono de perfil; mantener enlaces existentes cuando no hay sesión
+      // Top bar avatar entry
       const topbarRight = document.querySelector('.topbar-right') || document.querySelector('.page-header .topbar-right');
       if (topbarRight) {
-        const nameId = 'topbar-username';
-        let nameEl = topbarRight.querySelector('#' + nameId);
-        if (!nameEl) {
-          nameEl = document.createElement('span');
-          nameEl.id = nameId;
-          nameEl.style.marginLeft = '8px';
-          nameEl.style.fontWeight = '600';
-          nameEl.style.fontSize = '0.9rem';
-          topbarRight.appendChild(nameEl);
+        const nameEl = topbarRight.querySelector('#topbar-username');
+        if (nameEl) nameEl.remove();
+
+        let avatarLink = topbarRight.querySelector('#topbar-avatar-link');
+        if (!avatarLink) {
+          avatarLink = document.createElement('a');
+          avatarLink.id = 'topbar-avatar-link';
+          avatarLink.className = 'avatar-link';
+          avatarLink.setAttribute('aria-label', 'Perfil');
+          avatarLink.setAttribute('data-topbar-profile', 'true');
+          topbarRight.appendChild(avatarLink);
+        } else {
+          avatarLink.style.display = 'inline-flex';
         }
 
-        const profileLink = topbarRight.querySelector('a[href*="Profile.html"], a[title="Perfil"], a[aria-label="Perfil"]');
+        let avatarEl = avatarLink.querySelector('#topbar-avatar');
+        if (!avatarEl) {
+          avatarEl = document.createElement('span');
+          avatarEl.id = 'topbar-avatar';
+          avatarEl.textContent = 'U';
+          avatarLink.appendChild(avatarEl);
+        }
+        let loginCTA = topbarRight.querySelector('#topbar-login-link');
+        if (!loginCTA) {
+          loginCTA = document.createElement('a');
+          loginCTA.id = 'topbar-login-link';
+          loginCTA.className = 'login-link';
+          loginCTA.textContent = 'Iniciar sesión';
+          loginCTA.href = './login.html';
+          topbarRight.appendChild(loginCTA);
+        }
+
         const cartLink = topbarRight.querySelector('a[href*="carrito.html"]');
+
+        const applyAvatar = (url, fallback) => {
+          avatarEl.innerHTML = '';
+          if (url) {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Avatar';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            avatarEl.appendChild(img);
+            try { sessionStorage.setItem('lx_avatar_url', url); } catch(_){}
+          } else {
+            avatarEl.textContent = fallback || 'U';
+            try { sessionStorage.removeItem('lx_avatar_url'); } catch(_){}
+          }
+        };
+
         if (isLogged) {
-          nameEl.textContent = userNameSpan?.textContent || '';
-          nameEl.style.opacity = '1';
-          if (profileLink) profileLink.setAttribute('href', './Profile.html');
+          const letter = (userNameSpan?.textContent || 'U').charAt(0).toUpperCase();
+          let avatarUrl = null;
+          if (profileRow?.avatar_path) {
+            avatarUrl = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(profileRow.avatar_path)}`;
+          } else if (user?.user_metadata?.avatar_url) {
+            avatarUrl = user.user_metadata.avatar_url;
+          } else if (user?.user_metadata?.avatar_path) {
+            avatarUrl = `${url}/storage/v1/object/public/avatars/${encodeURIComponent(user.user_metadata.avatar_path)}`;
+          }
+          applyAvatar(avatarUrl, letter);
+          avatarLink.setAttribute('href', './Profile.html');
+          avatarLink.style.display = 'inline-flex';
+          if (loginCTA) loginCTA.style.display = 'none';
           if (cartLink) cartLink.setAttribute('href', './carrito.html');
         } else {
-          nameEl.textContent = '';
-          nameEl.style.opacity = '0.6';
-          // Perfil debe llevar a login si no hay sesión
-          if (profileLink) profileLink.setAttribute('href', './login.html');
+          applyAvatar(null, 'U');
+          avatarLink.setAttribute('href', './login.html');
+          avatarLink.style.display = 'none';
+          if (loginCTA) {
+            loginCTA.style.display = 'inline-flex';
+            loginCTA.href = './login.html';
+          }
         }
       }
     } catch (e) {
       console.warn('[submenu.js] initAuthUI:', e && e.message ? e.message : e);
+      markPageReady();
     }
   }
 
@@ -357,14 +672,17 @@
     const CACHE_MAX_AGE_MS = 5 * 60 * 1000;
     // Mostrar el botón desde el primer render
     ensureEarlyButton();
+    attachGlobalMenuHandler();
     ensureFontAwesome();
     const placeholder = document.getElementById(PLACEHOLDER_ID);
     if (!placeholder) {
       console.error(`[submenu.js] No se encontró el placeholder #${PLACEHOLDER_ID}.`);
+      markPageReady();
       return;
     }
 
     let usedCache = false;
+    let fallbackRendered = false;
     try {
       const cached = sessionStorage.getItem(CACHE_KEY);
       const ts = Number(sessionStorage.getItem(CACHE_TS) || '0');
@@ -375,8 +693,18 @@
         dedupeMenuButton(placeholder);
         try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (cache):', err); }
         await initAuthUI(placeholder);
+        markPageReady();
       }
     } catch(_){}
+
+    if (!usedCache) {
+      placeholder.innerHTML = FALLBACK_HTML;
+      dedupeMenuButton(placeholder);
+      try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (fallback):', err); }
+      await initAuthUI(placeholder);
+      markPageReady();
+      fallbackRendered = true;
+    }
 
     // Fetch en segundo plano (o si no había cache)
     (async () => {
@@ -387,10 +715,19 @@
       const current = sessionStorage.getItem(CACHE_KEY) || '';
       if (!usedCache || current !== html) {
         const render = async () => {
-          placeholder.innerHTML = html;
-          dedupeMenuButton(placeholder);
-          try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (fresh):', err); }
-          await initAuthUI(placeholder);
+          const wasOpen = document.body.classList.contains('submenu-open');
+          if (!fallbackRendered || html !== FALLBACK_HTML) {
+            placeholder.innerHTML = html;
+            dedupeMenuButton(placeholder);
+            try { wireMenuInteractions(placeholder); } catch (err) { console.error('[submenu.js] wiring (fresh):', err); }
+            await initAuthUI(placeholder);
+            if (wasOpen && window.innerWidth > MOBILE_BREAK) {
+              document.body.classList.add('submenu-open');
+              const btn = document.getElementById('submenu-open-btn');
+              if (btn) btn.setAttribute('aria-expanded', 'true');
+            }
+            markPageReady();
+          }
           try { sessionStorage.setItem(CACHE_KEY, html); sessionStorage.setItem(CACHE_TS, String(Date.now())); } catch(_){ }
         };
         if ('requestIdleCallback' in window) {

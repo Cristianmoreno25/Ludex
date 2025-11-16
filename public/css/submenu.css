@@ -10,6 +10,35 @@
   --submenu-hover-bg: #eef2ff;
 }
 
+body.submenu-loading::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(6px);
+  z-index:2000;
+  pointer-events:none;
+}
+
+.guest-info {
+  margin:0 .8rem 0;
+  padding:.8rem;
+  background:#eef2ff;
+  border-radius:12px;
+  font-size:.85rem;
+  color:#1e3a8a;
+}
+.guest-info div {
+  margin-top:.4rem;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.guest-info a {
+  color:#4f46e5;
+  font-weight:600;
+}
+
 /* ===== Base: sidebar oculta por transform (se muestra en desktop por media query) ===== */
 .submenu {
   position: fixed;

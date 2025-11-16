@@ -4,26 +4,33 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Carrito de compras</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/views.css" />
 <link rel="stylesheet" href="../css/carrito.css" />
+<link rel="stylesheet" href="../css/submenu.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-<header class="topbar">
-  <a href="browse.html" class="back-btn" aria-label="Volver a la tienda"><i class="fas fa-arrow-left"></i></a>
-  <div class="brand">
-    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+<header class="page-header">
+  <div class="page-left">
+    <svg class="brand-mark" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10" fill="#4f46e5" />
     </svg>
     <div>
-      <p class="eyebrow">Resumen de compra</p>
-      <h1><i class="fas fa-shopping-cart"></i> Carrito</h1>
+      <span class="page-title">Carrito</span>
+      <p class="page-subtitle">Revisa tus juegos antes de pagar</p>
     </div>
   </div>
-  <a href="./Profile.html" class="profile-link" aria-label="Perfil"><i class="fa-regular fa-user" aria-hidden></i></a>
+  <div class="topbar-right">
+    <button class="icon-btn" aria-label="Carrito" title="Carrito">
+      <a href="./carrito.html" aria-hidden="true"><i class="fa-solid fa-cart-shopping"></i></a>
+    </button>
+    <!-- avatar se inyecta dinámicamente -->
+  </div>
 </header>
+<div id="submenu-container" aria-hidden="true"></div>
 
-
-<main class="cart-container">
+<main class="cart-container" role="main" aria-label="Carrito de compras">
   <!-- Contenedor con la lista real de ítems (se llena vía JS) -->
   <section id="cartItems" class="cart-items" aria-live="polite">
   <!-- Si está vacío se mostrará un mensaje -->
@@ -61,6 +68,7 @@
 
 
 <!-- Scripts: Bootstrap (opcional), Supabase y el nuevo archivo carrito.js -->
+<script src="../js/submenu.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/carrito.js" defer></script>

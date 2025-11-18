@@ -638,5 +638,116 @@
       });
     })();
   </script>
+<!-- CHAT EMERGENTE (IMAGE+GIF) -->
+<div id="petChat" aria-live="polite">
+  <button id="petButton" class="pet-button" aria-label="Abrir chat de mascota" title="Abrir chat">
+    <!-- sin width/height para no forzar deformaciones -->
+    <img id="petIcon" src="../images/pet_icon.png" alt="Mascota Ludex" />
+  </button>
+
+  <div id="petChatWindow" class="chat-window" role="dialog" aria-modal="false" aria-hidden="true">
+    <header class="chat-header">
+      <div class="chat-title">Mascota Ludex</div>
+      <button id="petClose" class="chat-close" aria-label="Cerrar chat">&times;</button>
+    </header>
+    <div class="chat-body" id="petMessages" role="log" aria-live="polite"></div>
+    <footer class="chat-footer">
+      <input id="petInput" type="text" placeholder="Escribe aquí..." aria-label="Escribe un mensaje" />
+      <button id="petSend" class="btn btn-sm">Enviar</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STATIC_ICON = '../images/pet_icon.png';
+  const JUMP_GIF    = '../images/pet_jump.gif';
+  const GIF_DURATION_MS = 100;
+
+  const petButton = document.getElementById('petButton');
+  const petIcon = document.getElementById('petIcon');
+  const chatWindow = document.getElementById('petChatWindow');
+  const petClose = document.getElementById('petClose');
+  const petMessages = document.getElementById('petMessages');
+  const petInput = document.getElementById('petInput');
+  const petSend = document.getElementById('petSend');
+
+  petIcon.src = STATIC_ICON;
+
+  function openChat() {
+    chatWindow.setAttribute('aria-hidden','false');
+    chatWindow.classList.add('open');
+    petInput.focus();
+    appendBotMessage('¡Hola! Soy tu mascota — escribe \"hola\" para saludarme.');
+  }
+  function closeChat() {
+    chatWindow.setAttribute('aria-hidden','true');
+    chatWindow.classList.remove('open');
+  }
+  function playJump() {
+    petIcon.src = JUMP_GIF;
+    void petIcon.offsetWidth;
+    setTimeout(() => { petIcon.src = STATIC_ICON; }, GIF_DURATION_MS);
+  }
+  petButton.addEventListener('click', () => {
+    playJump();
+    const isOpen = chatWindow.classList.contains('open');
+    if (!isOpen) openChat(); else closeChat();
+  });
+  petClose.addEventListener('click', closeChat);
+
+  function appendMessage(text, who='user') {
+    const el = document.createElement('div');
+    el.className = 'msg ' + (who === 'user' ? 'msg-user' : 'msg-bot');
+    el.textContent = text;
+    petMessages.appendChild(el);
+    petMessages.scrollTop = petMessages.scrollHeight;
+  }
+  function appendBotMessage(text) { appendMessage(text, 'bot'); }
+  function appendUserMessage(text) { appendMessage(text, 'user'); }
+
+  function handleSend() {
+    const txt = petInput.value.trim();
+    if (!txt) return;
+    appendUserMessage(txt);
+    petInput.value = '';
+    const n = txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if (n === 'hola') {
+      setTimeout(()=> appendBotMessage('hola'), 300);
+    } else {
+      setTimeout(()=> appendBotMessage('Perdón, no puedo entenderte'), 300);
+    }
+    playJump();
+  }
+  petSend.addEventListener('click', handleSend);
+  petInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeChat(); });
+
+  // --- Auto-ajusta tamaño del botón al tamaño natural de la imagen (mantiene proporción) ---
+  (function autoSizePetIcon() {
+    const img = petIcon;
+    const btn = petButton;
+    if (!img || !btn) return;
+    const MAX_DIM = 250;
+    const MIN_DIM = 250;
+    function applySize() {
+      const w = img.naturalWidth || img.width || 64;
+      const h = img.naturalHeight || img.height || 64;
+      if (!w || !h) return;
+      const scale = Math.min(1, MAX_DIM / Math.max(w, h));
+      let newW = Math.round(w * scale);
+      let newH = Math.round(h * scale);
+      newW = Math.max(MIN_DIM, newW);
+      newH = Math.max(MIN_DIM, newH);
+      btn.style.width = newW + 'px';
+      btn.style.height = newH + 'px';
+    }
+    if (img.complete) applySize(); else img.addEventListener('load', applySize);
+    window.addEventListener('resize', applySize);
+  })();
+
+})();
+</script>
+
 </body>
 </html>
